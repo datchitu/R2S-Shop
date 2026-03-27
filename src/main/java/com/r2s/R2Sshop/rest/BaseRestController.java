@@ -48,6 +48,7 @@ public class BaseRestController{
                 .build();
         return new ResponseEntity<>(errorResponse, responseCode.getHttpStatus());
     }
+
     /**
      * Configure GlobalExceptionHandler with Builder.
      * <p>
@@ -68,23 +69,20 @@ public class BaseRestController{
     /**
      * Handle type mismatch.
      * <p>
-     * This function Handles type mismatch.
+     * This function handles type mismatch.
      * Specifically, it handles situations where the parameters passed in do not match the required data types.
      * code, message and timestamp if an exception occurs.
      * @param methodArTypeMismkEx
      * @return buildErrorResponse(responseCode)
-     * @return "Invalid param '" + parameterName + "'!", responseCode.getHttpStatus()
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> handleTypeMismatch(MethodArgumentTypeMismatchException methodArTypeMismkEx) {
         String parameterName = methodArTypeMismkEx.getName();
         ResponseCode responseCode = (ResponseCode.INVALID_PARAM);
-        if ("id".equals(parameterName)) {
-            return buildErrorResponse(responseCode);
-        }
-        return new ResponseEntity<>("Invalid param '" + parameterName + "'!", responseCode.getHttpStatus());
+//        return new ResponseEntity<>("Invalid param '" + parameterName + "'!", responseCode.getHttpStatus());
+        return buildErrorResponse(responseCode);
     }
 
 }

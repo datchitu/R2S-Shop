@@ -14,6 +14,7 @@ import java.util.Map;
 public class ProductDTOResponse {
     private Long id;
     private String name;
+    private Boolean deleted;
     private List<Map<String, Object>> variantProducts;
 
     /**
@@ -22,11 +23,12 @@ public class ProductDTOResponse {
      * This function customizes the output product information, including ID, name and list variantProducts as a JSON file.
      * @param product
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     public ProductDTOResponse(Product product) {
         this.id = product.getId();
         this.name = product.getName();
+        this.deleted = product.getDeleted();
         this.variantProducts = new ArrayList<>();
         if (!ObjectUtils.isEmpty(product.getVariantProducts())) {
             for (VariantProduct variantProduct : product.getVariantProducts()) {
