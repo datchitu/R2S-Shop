@@ -6,9 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/variant_product")
+@RequestMapping(path = "/variant_products")
 public class VariantProductController {
     private VariantProductRepository variantProductRepository;
-
 
 }

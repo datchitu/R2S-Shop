@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @Entity
-@Table(name = "order_infor")
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +18,12 @@ public class Order {
 
     @Column(name = "delivery_time")
     private Date deliveryTime;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean status;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean deleted;
 
     @Column(name = "order_datetime")
     private Date orderDatetime;

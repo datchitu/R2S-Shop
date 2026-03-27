@@ -7,16 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class CategoryService {
-    @Autowired
-    private CategoryRepository categoryRepository;
+public interface CategoryService {
 
-    public List<Category> getAllCategory() {
-        return this.categoryRepository.findAll();
-    }
+    List<Category> getAllCategory();
 
-    public Category findCategoryById(long id){
-        return this.categoryRepository.findById(id).orElse(null);
-    }
+    Category findCategoryById(Long id);
 }

@@ -6,20 +6,12 @@ import com.r2s.R2Sshop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
+import java.util.List;
 
-    private CategoryService categoryService;
 
-    public Product findProductById(long id){
-        return this.productRepository.findById(id).orElse(null);
-    }
+public interface ProductService {
 
-//    public Product findAllProductsByCategory(long id){
-//
-//        return this.productRepository.findById(id).orElse(null);
-//    }
+    Product findProductById(Long id);
 
+    List<Product> findAllProductByCategoryId(Long categoriesId);
 }
