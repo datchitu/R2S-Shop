@@ -66,15 +66,13 @@ public class ProductController extends BaseRestController{
      * @return product by id
      * @throws AppException(ResponseCode.NOT_FOUND) if the Product cannot be found by id
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @GetMapping("/get-product-by-id")
     public ResponseEntity<?> getProductById(@RequestParam(name = "id", required = false
             , defaultValue = "1") long id) {
-        Product foundProduct = this.productService.findProductById(id);
-        if (ObjectUtils.isEmpty(foundProduct)){
-            throw new AppException(ResponseCode.NOT_FOUND);
-        }
+        Product foundProduct = this.productService.findProductById(id)
+                .orElseThrow(() -> new AppException(ResponseCode.NOT_FOUND));
         return super.success(new ProductDTOResponse(foundProduct));
     }
 }

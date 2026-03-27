@@ -61,15 +61,13 @@ public class CategoryController extends BaseRestController{
      * @return category by id
      * @throws AppException(ResponseCode.NOT_FOUND) if the Category cannot be found by categoriesId
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @GetMapping("/get-category-by-id")
     public ResponseEntity<?> getCategoryById(@RequestParam(name = "id", required = false
             , defaultValue = "1") Long id) {
-        Category foundCategory = this.categoryService.findCategoryById(id);
-        if (ObjectUtils.isEmpty(foundCategory)) {
-            throw new AppException(ResponseCode.NOT_FOUND);
-        }
+        Category foundCategory = this.categoryService.findCategoryById(id)
+                .orElseThrow(() -> new AppException(ResponseCode.NOT_FOUND));
         return super.success(new CategoryDTOResponse(foundCategory));
     }
 }
