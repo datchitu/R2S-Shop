@@ -1,16 +1,16 @@
 package com.r2s.R2Sshop.DTO;
 
-import com.r2s.R2Sshop.model.Category;
 import com.r2s.R2Sshop.model.Product;
 import com.r2s.R2Sshop.model.VariantProduct;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.util.ObjectUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Data
+@AllArgsConstructor
 public class ProductDTOResponse {
     private Long id;
     private String name;
@@ -20,7 +20,8 @@ public class ProductDTOResponse {
     /**
      * Customize the output product information as a JSON file.
      * <p>
-     * This function customizes the output product information, including ID, name and list variantProducts as a JSON file.
+     * This function customizes the output product information, including
+     * ID, name, deleted and list variantProducts as a JSON file.
      * @param product
      * @author HoangVu
      * @since 1.1

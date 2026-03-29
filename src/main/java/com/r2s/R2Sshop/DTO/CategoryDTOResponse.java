@@ -19,7 +19,8 @@ public class CategoryDTOResponse {
     /**
      * Customize the output category information as a JSON file.
      * <p>
-     * This function customizes the output category information, including ID, name and list products as a JSON file.
+     * This function customizes the output category information, including
+     * ID, name, deleted and list products as a JSON file.
      * @param category
      * @author HoangVu
      * @since 1.1

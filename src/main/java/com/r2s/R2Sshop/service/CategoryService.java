@@ -6,12 +6,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryService {
+    List<Category> getAll();
 
-    List<Category> getAllCategory();
+    List<Category> getAllByDeleted(Boolean deleted);
 
-    List<Category> getAllCategoryByDeleted(Boolean deleted);
-
-    Optional<Category> findCategoryById(Long id);
+    Optional<Category> findById(Long id);
 
     boolean existsById(Long id);
 }

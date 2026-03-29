@@ -8,7 +8,6 @@ import com.r2s.R2Sshop.repository.ProductRepository;
 import com.r2s.R2Sshop.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -29,23 +28,24 @@ public class CategoryController extends BaseRestController{
      * Return category list.
      * <p>
      * This function returns category list by status.
+     * @param status
      * @return super.success(responses)
      * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
      * @author HoangVu
      * @since 1.2
      */
     @GetMapping("")
-    public ResponseEntity<?> getAllCategoryByStatus(@RequestParam(defaultValue = "-1") Integer status) {
+    public ResponseEntity<?> getAllyByStatus(@RequestParam(defaultValue = "-1") Integer status) {
         if (!Arrays.asList(-1, 0, 1).contains(status)) {
             throw new AppException(ResponseCode.INVALID_PARAM);
         }
         List<Category> categories;
         if (status == -1) {
-            categories = this.categoryService.getAllCategory();
+            categories = this.categoryService.getAll();
         } else if (status == 0){
-            categories = this.categoryService.getAllCategoryByDeleted(false);
+            categories = this.categoryService.getAllByDeleted(false);
         } else {
-            categories = this.categoryService.getAllCategoryByDeleted(true);
+            categories = this.categoryService.getAllByDeleted(true);
         }
         List<CategoryDTOResponse> responses = categories.stream()
                 .map(CategoryDTOResponse :: new)
@@ -63,10 +63,10 @@ public class CategoryController extends BaseRestController{
      * @author HoangVu
      * @since 1.2
      */
-    @GetMapping("/get-category-by-id")
-    public ResponseEntity<?> getCategoryById(@RequestParam(name = "id", required = false
+    @GetMapping("/get-by-id")
+    public ResponseEntity<?> getById(@RequestParam(name = "id", required = false
             , defaultValue = "1") Long id) {
-        Category foundCategory = this.categoryService.findCategoryById(id)
+        Category foundCategory = this.categoryService.findById(id)
                 .orElseThrow(() -> new AppException(ResponseCode.NOT_FOUND));
         return super.success(new CategoryDTOResponse(foundCategory));
     }

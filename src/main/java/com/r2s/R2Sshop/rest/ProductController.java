@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,14 +35,16 @@ public class ProductController extends BaseRestController{
      * This function returns all product by categoryId, with the categoryId as the input parameter
      * and pagination is applied.
      * @param categoryId
+     * @param offset
+     * @param limit
      * @return products by categoryId
      * @throws AppException(ResponseCode.NOT_FOUND) if the Category cannot be found by categoryId
      * based on the passed-in ID parameter
      * @author HoangVu
      * @since 1.1
      */
-    @RequestMapping("/get-products-by-category-id")
-    public ResponseEntity<?> getAllProductsByCategory(@RequestParam(name = "categoriesId", required = false,
+    @RequestMapping("/get-by-category-id")
+    public ResponseEntity<?> getAllByCategory(@RequestParam(name = "categoriesId", required = false,
                                                                   defaultValue = "1") Long categoryId,
                                                       @RequestParam(defaultValue = "0") Integer offset,
                                                       @RequestParam(defaultValue = "2") Integer limit) {
@@ -51,7 +52,7 @@ public class ProductController extends BaseRestController{
             throw new AppException(ResponseCode.NOT_FOUND);
         }
         Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").descending());
-        Page<Product> productPage = this.productService.findAllProductsByCategoryId(categoryId, pageable);
+        Page<Product> productPage = this.productService.findAllByCategoryId(categoryId, pageable);
         List<ProductDTOResponse> responses = productPage.stream()
                 .map(ProductDTOResponse :: new)
                 .collect(Collectors.toList());
@@ -68,10 +69,10 @@ public class ProductController extends BaseRestController{
      * @author HoangVu
      * @since 1.2
      */
-    @GetMapping("/get-product-by-id")
-    public ResponseEntity<?> getProductById(@RequestParam(name = "id", required = false
+    @GetMapping("/get-by-id")
+    public ResponseEntity<?> getById(@RequestParam(name = "id", required = false
             , defaultValue = "1") long id) {
-        Product foundProduct = this.productService.findProductById(id)
+        Product foundProduct = this.productService.findById(id)
                 .orElseThrow(() -> new AppException(ResponseCode.NOT_FOUND));
         return super.success(new ProductDTOResponse(foundProduct));
     }

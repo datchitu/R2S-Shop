@@ -1,13 +1,10 @@
 package com.r2s.R2Sshop.service.impl;
 
-import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Category;
 import com.r2s.R2Sshop.repository.CategoryRepository;
-import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @since 1.0
      */
     @Override
-    public List<Category> getAllCategory() {
+    public List<Category> getAll() {
         return this.categoryRepository.findAll();
     }
 
@@ -39,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @since 1.0
      */
     @Override
-    public List<Category> getAllCategoryByDeleted(Boolean deleted) {
+    public List<Category> getAllByDeleted(Boolean deleted) {
         return this.categoryRepository.findAllByDeleted(deleted);
     }
 
@@ -53,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @since 1.1
      */
     @Override
-    public Optional<Category> findCategoryById(Long id){
+    public Optional<Category> findById(Long id){
         return this.categoryRepository.findById(id);
     }
 
