@@ -15,9 +15,10 @@ public enum ResponseCode {
     INTERNAL_SERVER_ERROR(5000, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_NOT_FOUND(6003, "User not found", HttpStatus.NOT_FOUND),
     SUBJECT_NOT_FOUND(6004, "Subject not found", HttpStatus.NOT_FOUND),
-    INVALID_VALUE(3000, "Invalid value", HttpStatus.BAD_REQUEST),
-    INVALID_PARAM(3001, "Invalid parameter", HttpStatus.BAD_REQUEST),
-    DATA_ALREADY_EXISTS(2023, "Data already exists", HttpStatus.BAD_REQUEST);
+    INVALID_VALUE(3001, "Invalid value", HttpStatus.BAD_REQUEST),
+    INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
+    DATA_ALREADY_EXISTS(2023, "Data already exists", HttpStatus.BAD_REQUEST),
+    INSERT_FAILURE(4001, "No param", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final int code;
     private final String message;

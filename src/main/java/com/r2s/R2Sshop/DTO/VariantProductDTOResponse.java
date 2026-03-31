@@ -16,7 +16,6 @@ public class VariantProductDTOResponse {
     private String model_year;
     private Integer quantity;
     private Boolean deleted;
-
     private Long productId;
     private String productName;
 

@@ -32,7 +32,9 @@ public class CategoryDTOResponse {
         this.products = new ArrayList<>();
         if(!ObjectUtils.isEmpty(category.getProducts())) {
             for (Product product : category.getProducts()) {
-                this.products.add(Map.of("productId", product.getId(), "productName", product.getName()));
+                this.products.add(Map.of(
+                        "productId", product.getId(),
+                        "productName", product.getName()));
             }
         }
     }
