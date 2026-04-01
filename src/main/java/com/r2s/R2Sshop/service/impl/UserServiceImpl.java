@@ -1,16 +1,22 @@
 package com.r2s.R2Sshop.service.impl;
 
+import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Cart;
 import com.r2s.R2Sshop.model.User;
 import com.r2s.R2Sshop.repository.RoleRepository;
 import com.r2s.R2Sshop.repository.UserRepository;
+import com.r2s.R2Sshop.rest.AppException;
+import com.r2s.R2Sshop.service.CartService;
 import com.r2s.R2Sshop.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,6 +30,8 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private CartService cartService;
 
     /**
      * Add new user.
@@ -59,5 +67,49 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByUserName(String userName) {
         return userRepository.findByUserName(userName);
+    }
+
+    /**
+     * Check exists user by userName.
+     * <p>
+     * This function check exists user by userName, with the userName as the input parameter.
+     * @param userName
+     * @return True if it exists and an error if it does not.
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public Boolean existsByUserName(String userName) {
+        return userRepository.existsByUserName(userName);
+    }
+
+    /**
+     * Register user with cart by userName.
+     * <p>
+     * This function is used to insert the user and cart into the database., with the newUser as the input parameter.
+     * @param newUser
+     * @return User and cart information if insertion is successful.
+     * @throws AppException(ResponseCode.INSERT_FAILURE) if insertUser and insertCart is empty
+     * @throws AppException(ResponseCode.NOT_FOUND) if newUser does not exist in the database
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Transactional
+    @Override
+    public Map<String, Object> registerUserWithCart(Map<String, Object> newUser) {
+        User insertUser = addUser(newUser);
+        if (ObjectUtils.isEmpty(insertUser)) {
+            throw new AppException(ResponseCode.INSERT_FAILURE);
+        }
+        User foundUser = this.findByUserName(newUser.get("userName").toString())
+                .orElseThrow(() -> new AppException(ResponseCode.NOT_FOUND));
+        Cart inserCart = cartService.addCart(foundUser);
+        if (ObjectUtils.isEmpty(inserCart)) {
+                throw new AppException(ResponseCode.INSERT_FAILURE);
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("user", insertUser);
+        result.put("cart", inserCart);
+        return result;
     }
 }

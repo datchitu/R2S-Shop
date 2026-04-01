@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.print.attribute.standard.JobKOctets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,22 +32,21 @@ public class UserController extends BaseRestController{
     private CartService cartService;
 
     /**
-     * Add new user and new cart.
+     * Add new user with new cart.
      * <p>
-     * This function is used to add a new user and new card for this user.
+     * This function is used to add a new user with new card for this user.
      * @param newUser
-     * @return user information if user is added successfully.
+     * @return user with cart information if user with cart is added successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if newUser is empty
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * last name, first name, phone number, email, password or userRole are missing
      * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if user be found by userName
-     * @throws AppException(ResponseCode.INSERT_FAILURE) if is added failure
-     * based on the passed-in ID parameter
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
+
     @PostMapping("")
-    public ResponseEntity<?> addUser(@RequestBody Map<String, Object> newUser) {
+    public ResponseEntity<?> addUserWithCart(@RequestBody Map<String, Object> newUser) {
         if  (ObjectUtils.isEmpty(newUser)) {
             throw new AppException(ResponseCode.NO_PARAM);
         }
@@ -62,21 +59,13 @@ public class UserController extends BaseRestController{
                 || ObjectUtils.isEmpty(newUser.get("userRole"))) {
             throw new AppException(ResponseCode.MISSING_PARAM);
         }
-        User foundUser = this.userService.findByUserName(newUser.get("userName").toString())
-                .orElseThrow(() -> new AppException(ResponseCode.DATA_ALREADY_EXISTS));
-        User insertUser = userService.addUser(newUser);
-        if (!ObjectUtils.isEmpty(insertUser)) {
-            Cart inserCart = cartService.addCart(foundUser);
-            if (!ObjectUtils.isEmpty(inserCart)) {
-                Map<String, Object> responseData = new HashMap<>();
-                responseData.put("user", new UserDTOResponse(insertUser));
-                responseData.put("cart", new CartDTOResponse(inserCart));
-                return super.success(responseData);
-            } else {
-                throw new AppException(ResponseCode.INSERT_FAILURE);
-            }
-        } else {
-            throw new AppException(ResponseCode.INSERT_FAILURE);
+        if (userService.existsByUserName(newUser.get("userName").toString())) {
+            throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
         }
+        Map<String, Object> data = userService.registerUserWithCart(newUser);
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("user", new UserDTOResponse((User) data.get("user")));
+        responseData.put("cart", new CartDTOResponse((Cart) data.get("cart")));
+        return super.success(responseData);
     }
 }

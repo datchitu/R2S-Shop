@@ -2,6 +2,7 @@ package com.r2s.R2Sshop.DTO;
 
 import com.r2s.R2Sshop.model.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.ObjectUtils;
@@ -22,12 +23,21 @@ public class UserDTOResponse {
     private String email;
     private String phone;
     private Boolean deleted;
-    private Double cartTotalPrice;
-    private String cartNote;
-    private Boolean cartPaymentType;
-    private Boolean cartPaymentStatus;
-    private Boolean cartStatus;
-    private Timestamp cartPaidAt;
+    private CartInfo cartInfo;
+
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CartInfo {
+        private Double cartTotalPrice;
+        private String cartNote;
+        private Boolean cartPaymentType;
+        private Boolean cartPaymentStatus;
+        private Boolean cartStatus;
+        private Timestamp cartPaidAt;
+    }
     private List<Map<String, Object>> roles;
     private List<Map<String, Object>> orders;
     private List<Map<String, Object>> addresses;
@@ -49,21 +59,29 @@ public class UserDTOResponse {
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.deleted = user.getDeleted();
-        if (ObjectUtils.isEmpty(user.getCart())) {
+        if (!ObjectUtils.isEmpty(user.getCart())) {
             Cart cart = user.getCart();
-            this.cartTotalPrice = cart.getTotalPrice();
-            this.cartNote = cart.getNote();
-            this.cartPaymentType = cart.getPaymentType();
-            this.cartPaymentStatus = cart.getPaymentStatus();
-            this.cartStatus = cart.getStatus();
-            this.cartPaidAt = cart.getPaidAt();
+            this.cartInfo = CartInfo.builder()
+                    .cartTotalPrice(cart.getTotalPrice())
+                    .cartNote(cart.getNote())
+                    .cartPaymentType(cart.getPaymentType())
+                    .cartPaymentStatus(cart.getPaymentStatus())
+                    .cartStatus(cart.getStatus())
+                    .cartPaidAt(cart.getPaidAt())
+                    .build();
+//            this.cartTotalPrice = cart.getTotalPrice();
+//            this.cartNote = cart.getNote();
+//            this.cartPaymentType = cart.getPaymentType();
+//            this.cartPaymentStatus = cart.getPaymentStatus();
+//            this.cartStatus = cart.getStatus();
+//            this.cartPaidAt = cart.getPaidAt();
         }
 
         this.roles = new ArrayList<>();
         if (!ObjectUtils.isEmpty(user.getRoles())) {
             for (Role role : user.getRoles()) {
                 this.roles.add(Map.of(
-                        "roleName", role.getId()
+                        "roleName", role.getRoleName()
                 ));
             }
         }

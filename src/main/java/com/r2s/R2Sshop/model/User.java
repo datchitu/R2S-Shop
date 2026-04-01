@@ -27,12 +27,13 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "user_name", unique = true)
+    @Column(name = "user_name", nullable = false, unique = true)
     private String userName;
 
     @Column(unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     private String phone;
@@ -52,7 +53,8 @@ public class User {
     private Cart cart;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     @JsonManagedReference
     private Set<Role> roles;
 

@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface UserService {
     User addUser(Map<String, Object> newUser);
     Optional<User> findByUserName(String userName);
+    Boolean existsByUserName(String userName);
+    Map<String, Object> registerUserWithCart(Map<String, Object> newUser);
 }

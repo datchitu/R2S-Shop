@@ -24,7 +24,7 @@ public class CartDTOResponse {
     private List<Map<String, Object>> cartLineItems;
 
     /**
-     * Customize the output cart information as a JSON file.
+     * Customize the output cart information as a JSON file
      * <p>
      * This function customizes the output cart information, including
      * ID, totalPrice, note, paymentType, paymentStatus, status, paidAt and cartLineItem list as a JSON file.
