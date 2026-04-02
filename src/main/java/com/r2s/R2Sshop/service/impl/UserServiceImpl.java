@@ -10,6 +10,8 @@ import com.r2s.R2Sshop.service.CartService;
 import com.r2s.R2Sshop.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -17,6 +19,7 @@ import org.springframework.util.ObjectUtils;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -82,7 +85,6 @@ public class UserServiceImpl implements UserService {
     public Boolean existsByUserName(String userName) {
         return userRepository.existsByUserName(userName);
     }
-
     /**
      * Register user with cart by userName.
      * <p>
@@ -111,5 +113,30 @@ public class UserServiceImpl implements UserService {
         result.put("user", insertUser);
         result.put("cart", inserCart);
         return result;
+    }
+    /**
+     * Return user list.
+     * <p>
+     * This function returns all user.
+     * @return User list
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public Page<User> getAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+    /**
+     * Return user list by deleted.
+     * <p>
+     * This function returns all user by deleted, with the deleted as the input parameter.
+     * @param deleted
+     * @return User list by deleted
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public Page<User> getAllByDeleted(Boolean deleted, Pageable pageable) {
+        return userRepository.findAllByDeleted(deleted, pageable);
     }
 }

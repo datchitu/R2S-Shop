@@ -39,14 +39,14 @@ public class VariantProductController extends BaseRestController {
      * This function returns all variant product by product id and
      * deleted(With the passed-in status -1, return all by productId works;
      * with 0, return all by productId and deleted == false works;
-     * and otherwise, it's return all by product id and deleted == false.),
+     * and otherwise, it's return all by product id and deleted == true),
      * with the productId, status as the input parameter
      * and pagination is applied.
      * @param productId
      * @param offset
      * @param limit
      * @param status (-1, 0, 1)
-     * @return products by productId
+     * @return the variant product list entity by productId and status if the data is retrieved successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
      * @throws AppException(ResponseCode.NOT_FOUND) if the Product cannot be found by productId
      * based on the passed-in ID parameter
@@ -56,25 +56,27 @@ public class VariantProductController extends BaseRestController {
     @RequestMapping("/get-all-by-product-id-and-deleted")
     public ResponseEntity<?> getAllByProductIdAndDeleted(@RequestParam(name = "productId",
                                                          required = false, defaultValue = "1") Long productId,
+                                                         @RequestParam(defaultValue = "-1") Integer status,
                                                          @RequestParam(defaultValue = "0") Integer offset,
-                                                         @RequestParam(defaultValue = "2") Integer limit,
-                                                         @RequestParam(defaultValue = "-1") Integer status) {
+                                                         @RequestParam(defaultValue = "2") Integer limit) {
         if (!Arrays.asList(-1, 0, 1).contains(status)) {
             throw new AppException(ResponseCode.INVALID_PARAM);
         }
         if (!productService.existsById(productId)) {
             throw new AppException(ResponseCode.NOT_FOUND);
         }
-        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").descending());
-        Page<VariantProduct> variantProducts;
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
+        Page<VariantProduct> variantProductPage;
         if (status == -1) {
-            variantProducts = this.variantProductService.findAllByProductId(productId, pageable);
+            variantProductPage = this.variantProductService.findAllByProductId(productId, pageable);
         } else if (status == 0) {
-            variantProducts = this.variantProductService.findAllByProductIdAndDeleted(productId, false, pageable);
+            variantProductPage = this.variantProductService.findAllByProductIdAndDeleted(productId,
+                    false, pageable);
         } else {
-            variantProducts = this.variantProductService.findAllByProductIdAndDeleted(productId, true, pageable);
+            variantProductPage = this.variantProductService.findAllByProductIdAndDeleted(productId,
+                    true, pageable);
         }
-        List<VariantProductDTOResponse> responses = variantProducts.stream()
+        List<VariantProductDTOResponse> responses = variantProductPage.stream()
                 .map(VariantProductDTOResponse :: new)
                 .collect(Collectors.toList());
         return super.success(responses);

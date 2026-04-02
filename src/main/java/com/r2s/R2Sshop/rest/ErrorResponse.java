@@ -4,6 +4,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+
+import java.sql.Timestamp;
+
 /**
  * Export the ErrorRespone information as a JSON file.
  * <p>
@@ -18,5 +21,5 @@ import lombok.experimental.FieldDefaults;
 public class ErrorResponse {
     int status;
     String message;
-    long timestamp;
+    Timestamp timestamp;
 }

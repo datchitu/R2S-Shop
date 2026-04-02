@@ -10,14 +10,20 @@ import com.r2s.R2Sshop.repository.UserRepository;
 import com.r2s.R2Sshop.service.CartService;
 import com.r2s.R2Sshop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -44,7 +50,6 @@ public class UserController extends BaseRestController{
      * @author HoangVu
      * @since 1.1
      */
-
     @PostMapping("")
     public ResponseEntity<?> addUserWithCart(@RequestBody Map<String, Object> newUser) {
         if  (ObjectUtils.isEmpty(newUser)) {
@@ -67,5 +72,40 @@ public class UserController extends BaseRestController{
         responseData.put("user", new UserDTOResponse((User) data.get("user")));
         responseData.put("cart", new CartDTOResponse((Cart) data.get("cart")));
         return super.success(responseData);
+    }
+    /**
+     * Return user list.
+     * <p>
+     * This function returns user list by status(With the passed-in status -1, return all works;
+     * with 0, return all by deleted == false works;
+     * and otherwise, it's return all by deleted == true),
+     * with the status as the input parameter.
+     * @param status
+     * @return the user list entity if the data is retrieved successfully.
+     * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
+     * @author HoangVu
+     * @since 1.2
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("")
+    public ResponseEntity<?> getAllByDeleted(@RequestParam(defaultValue = "-1") Integer status,
+                                             @RequestParam(defaultValue = "0") Integer offset,
+                                             @RequestParam(defaultValue = "2") Integer limit) {
+        if (!Arrays.asList(-1, 0, 1).contains(status)) {
+            throw new AppException(ResponseCode.INVALID_PARAM);
+        }
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
+        Page<User> userPage;
+        if (status == -1) {
+            userPage = userService.getAll(pageable);
+        } else if (status == 0) {
+            userPage = userService.getAllByDeleted(false, pageable);
+        } else {
+            userPage = userService.getAllByDeleted(true, pageable);
+        }
+        List<UserDTOResponse> responses = userPage.stream()
+                .map(UserDTOResponse :: new)
+                .collect(Collectors.toList());
+        return super.success(responses);
     }
 }

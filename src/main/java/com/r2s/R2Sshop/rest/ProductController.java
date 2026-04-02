@@ -51,7 +51,7 @@ public class ProductController extends BaseRestController{
         if (!categoryService.existsById(categoryId)) {
             throw new AppException(ResponseCode.NOT_FOUND);
         }
-        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
         Page<Product> productPage = this.productService.findAllByCategoryId(categoryId, pageable);
         List<ProductDTOResponse> responses = productPage.stream()
                 .map(ProductDTOResponse :: new)

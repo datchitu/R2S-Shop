@@ -3,14 +3,20 @@ package com.r2s.R2Sshop.rest;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class BaseRestController{
+    private Timestamp ts = Timestamp.from(ZonedDateTime.now().toInstant());
     /**
      * Return data and HttpStatus.OK.
      * <p>
@@ -19,14 +25,14 @@ public class BaseRestController{
      * @param data
      * @return ResponseEntity<Map<String, Object>>(response, HttpStatus.OK)
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     public ResponseEntity<Map<String, Object>> success(Object data) {
         Map<String, Object> response = new HashMap<>();
         response.put("code", 200);
         response.put("message", "OK");
         response.put("data", data);
-        response.put("timestamp",System.currentTimeMillis());
+        response.put("timestamp",ts);
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
@@ -38,13 +44,13 @@ public class BaseRestController{
      * @param responseCode
      * @return buildErrorResponse(responseCode)
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     private ResponseEntity<ErrorResponse> buildErrorResponse(ResponseCode responseCode) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(responseCode.getCode())
                 .message(responseCode.getMessage())
-                .timestamp(System.currentTimeMillis())
+                .timestamp(ts)
                 .build();
         return new ResponseEntity<>(errorResponse, responseCode.getHttpStatus());
     }
@@ -65,7 +71,6 @@ public class BaseRestController{
         ResponseCode responseCode = appException.getResponseCode();
         return buildErrorResponse(responseCode);
     }
-
     /**
      * Handle type mismatch.
      * <p>
@@ -84,6 +89,35 @@ public class BaseRestController{
 //        return new ResponseEntity<>("Invalid param '" + parameterName + "'!", responseCode.getHttpStatus());
         return buildErrorResponse(responseCode);
     }
-
+    /**
+     * Configure BadCredentialsException with Builder.
+     * <p>
+     * This function configures the BadCredentialsException with Builder and then reports the status HttpStatus error,
+     * returns the information including.
+     * code, message and timestamp if an exception occurs.
+     * @param badCredentialsEx
+     * @return buildErrorResponse(ResponseCode.FAILURE_LOGIN)
+     * @author HoangVu
+     * @since 1.0
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentials(BadCredentialsException badCredentialsEx) {
+        return buildErrorResponse(ResponseCode.FAILURE_LOGIN);
+    }
+    /**
+     * Configure AuthenticationException with Builder.
+     * <p>
+     * This function configures the AuthenticationException with Builder and then reports the status HttpStatus error,
+     * returns the information including.
+     * code, message and timestamp if an exception occurs.
+     * @param authenticationEx
+     * @return buildErrorResponse(ResponseCode.FAILURE_LOGIN)
+     * @author HoangVu
+     * @since 1.0
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> handelAuthenticationException(AuthenticationException authenticationEx) {
+        return buildErrorResponse(ResponseCode.AUTHENTICATION_ERROR);
+    }
 }
 

@@ -19,7 +19,8 @@ public enum ResponseCode {
     INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_EXISTS(2023, "Data already exists", HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "No param", HttpStatus.INTERNAL_SERVER_ERROR),
-    FAILURE_LOGIN(3000, "Failed login", HttpStatus.INTERNAL_SERVER_ERROR);
+    FAILURE_LOGIN(3000, "Failed login", HttpStatus.UNAUTHORIZED),
+    AUTHENTICATION_ERROR(3000, "Failed login", HttpStatus.UNAUTHORIZED);
 
     private final int code;
     private final String message;

@@ -29,25 +29,25 @@ public class CategoryController extends BaseRestController{
      * <p>
      * This function returns category list by status.
      * @param status
-     * @return super.success(responses)
+     * @return the category list entity if the data is retrieved successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
      * @author HoangVu
      * @since 1.2
      */
     @GetMapping("")
-    public ResponseEntity<?> getAllyByStatus(@RequestParam(defaultValue = "-1") Integer status) {
+    public ResponseEntity<?> getAllByStatus(@RequestParam(defaultValue = "-1") Integer status) {
         if (!Arrays.asList(-1, 0, 1).contains(status)) {
             throw new AppException(ResponseCode.INVALID_PARAM);
         }
-        List<Category> categories;
+        List<Category> categoryList;
         if (status == -1) {
-            categories = this.categoryService.getAll();
+            categoryList = this.categoryService.getAll();
         } else if (status == 0){
-            categories = this.categoryService.getAllByDeleted(false);
+            categoryList = this.categoryService.getAllByDeleted(false);
         } else {
-            categories = this.categoryService.getAllByDeleted(true);
+            categoryList = this.categoryService.getAllByDeleted(true);
         }
-        List<CategoryDTOResponse> responses = categories.stream()
+        List<CategoryDTOResponse> responses = categoryList.stream()
                 .map(CategoryDTOResponse :: new)
                 .collect(Collectors.toList());
         return super.success(responses);

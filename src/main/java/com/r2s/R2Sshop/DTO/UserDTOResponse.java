@@ -25,7 +25,6 @@ public class UserDTOResponse {
     private Boolean deleted;
     private CartInfo cartInfo;
 
-
     @Data
     @Builder
     @AllArgsConstructor
@@ -50,12 +49,13 @@ public class UserDTOResponse {
      * address list as a JSON file.
      * @param user
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     public UserDTOResponse(User user) {
         this.id = user.getId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.userName = user.getUserName();
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.deleted = user.getDeleted();
@@ -69,12 +69,6 @@ public class UserDTOResponse {
                     .cartStatus(cart.getStatus())
                     .cartPaidAt(cart.getPaidAt())
                     .build();
-//            this.cartTotalPrice = cart.getTotalPrice();
-//            this.cartNote = cart.getNote();
-//            this.cartPaymentType = cart.getPaymentType();
-//            this.cartPaymentStatus = cart.getPaymentStatus();
-//            this.cartStatus = cart.getStatus();
-//            this.cartPaidAt = cart.getPaidAt();
         }
 
         this.roles = new ArrayList<>();
