@@ -1,6 +1,8 @@
 package com.r2s.R2Sshop.rest;
 
 import com.r2s.R2Sshop.DTO.CartDTOResponse;
+import com.r2s.R2Sshop.DTO.PasswordDTORequest;
+import com.r2s.R2Sshop.DTO.UserDTORequest;
 import com.r2s.R2Sshop.DTO.UserDTOResponse;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Cart;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -107,5 +111,73 @@ public class UserController extends BaseRestController{
                 .map(UserDTOResponse :: new)
                 .collect(Collectors.toList());
         return super.success(responses);
+    }
+    /**
+     * Return user info from token(userName).
+     * <p>
+     * This function returns user info from token(userName).
+     * @return user info entity from token(userName)
+     * @throws AppException(ResponseCode.USER_NOT_FOUND) if the User cannot be found by userName
+     * @author HoangVu
+     * @since 1.0
+     */
+    @GetMapping("/get-my-profile")
+    public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        User foundUser = userService.findByUserName(userDetails.getUsername())
+                .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
+        return super.success(new UserDTOResponse(foundUser));
+    }
+
+    /**
+     * Update ỉnfo user.
+     * <p>
+     * This function returns user info from token(userName) after successful update.
+     * @return user info entity from token(userName)
+     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * firstName, lastName, email, phone
+     * @throws AppException(ResponseCode.FAILURE_USER_UPDATE) if update unsuccessful
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PutMapping("")
+    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
+                                    @RequestBody(required = false) Map<String, Object> user) {
+        UserDTORequest userDTORequest = new UserDTORequest(user);
+        if (ObjectUtils.isEmpty(userDTORequest.getFirstName())
+                || ObjectUtils.isEmpty(userDTORequest.getLastName())
+                || ObjectUtils.isEmpty(userDTORequest.getEmail())
+                || ObjectUtils.isEmpty(userDTORequest.getPhone())) {
+            throw new AppException(ResponseCode.MISSING_PARAM);
+        }
+        User updateUser = userService.updateUser(userDetails.getUsername(), user);
+        if (ObjectUtils.isEmpty(updateUser)) {
+            throw new AppException(ResponseCode.FAILURE_USER_UPDATE);
+        }
+        return super.success(new UserDTOResponse(updateUser));
+    }
+    /**
+     * Charge password user.
+     * <p>
+     * This function charges user password.
+     * @return success
+     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * oldPassword, newPassword
+     * @throws AppException(ResponseCode.FAILURE_PASSWORD_CHARGE) if charge failure
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PutMapping("/change-password")
+    public ResponseEntity<?> chargePassword(@AuthenticationPrincipal UserDetails userDetails,
+                                            @RequestBody(required = false) PasswordDTORequest password) {
+        if (ObjectUtils.isEmpty(password.getOldPassword())
+                || ObjectUtils.isEmpty(password.getNewPassword())) {
+            throw new AppException(ResponseCode.MISSING_PARAM);
+        }
+        User chargePasswordUser = userService.chargePassword(userDetails.getUsername(),
+                password.getOldPassword(), password.getNewPassword());
+        if (ObjectUtils.isEmpty(chargePasswordUser)) {
+            throw new AppException(ResponseCode.FAILURE_PASSWORD_CHARGE);
+        }
+        return super.success(null);
     }
 }

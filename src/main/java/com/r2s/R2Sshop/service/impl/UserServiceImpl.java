@@ -19,7 +19,6 @@ import org.springframework.util.ObjectUtils;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -138,5 +137,54 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> getAllByDeleted(Boolean deleted, Pageable pageable) {
         return userRepository.findAllByDeleted(deleted, pageable);
+    }
+    /**
+     * Update user by userName.
+     * <p>
+     * This function updates user by userName, with the userName as the input parameter.
+     * @param userName
+     * @return User by userName if the update process is successful
+     * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not exist in the database
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public User updateUser(String userName, Map<String, Object> user) {
+        User foundUser = findByUserName(userName)
+                .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
+        foundUser.setFirstName(user.get("firstName").toString());
+        foundUser.setLastName(user.get("lastName").toString());
+        foundUser.setEmail(user.get("email").toString());
+        foundUser.setPhone(user.get("phone").toString());
+        foundUser.setUpdatedAt(ts);
+        return this.userRepository.save(foundUser);
+    }
+    /**
+     * Charge user password by userName.
+     * <p>
+     * This function charges user password by userName, with the userName, newPassword as the input parameter.
+     * @param userName
+     * @param newPassword
+     * @return User by userName if the charge process is successful
+     * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not exist in the database
+     * @throws AppException(ResponseCode.NOT_MATCH_PASSWORD) if old password does not match in the database
+     * @throws AppException(ResponseCode.DUPLICATE_PASSWORD) if new password is the same as the current password
+     * in the database
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public User chargePassword(String userName, String oldPassword, String newPassword) {
+        User foundUser = findByUserName(userName)
+                .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
+        if (!this.passwordEncoder.matches(oldPassword, foundUser.getPassword())) {
+            throw new AppException(ResponseCode.NOT_MATCH_PASSWORD);
+        }
+        if (this.passwordEncoder.matches(newPassword, foundUser.getPassword())) {
+            throw new AppException(ResponseCode.DUPLICATE_PASSWORD);
+        }
+        foundUser.setPassword(newPassword);
+        foundUser.setUpdatedAt(ts);
+        return this.userRepository.save(foundUser);
     }
 }

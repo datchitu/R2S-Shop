@@ -18,9 +18,13 @@ public enum ResponseCode {
     INVALID_VALUE(3001, "Invalid value", HttpStatus.BAD_REQUEST),
     INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_EXISTS(2023, "Data already exists", HttpStatus.BAD_REQUEST),
-    INSERT_FAILURE(4001, "No param", HttpStatus.INTERNAL_SERVER_ERROR),
+    INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR),
     FAILURE_LOGIN(3000, "Failed login", HttpStatus.UNAUTHORIZED),
-    AUTHENTICATION_ERROR(3000, "Failed login", HttpStatus.UNAUTHORIZED);
+    FAILURE_USER_UPDATE(3001, "User update failed", HttpStatus.CONFLICT),
+    NOT_MATCH_PASSWORD(3002, "Password does not match", HttpStatus.BAD_REQUEST),
+    DUPLICATE_PASSWORD(3003, "Duplicate old password", HttpStatus.BAD_REQUEST),
+    FAILURE_PASSWORD_CHARGE(3004, "Password charge failed", HttpStatus.CONFLICT),
+    AUTHENTICATION_ERROR(3010, "Failed login", HttpStatus.UNAUTHORIZED);
 
     private final int code;
     private final String message;
