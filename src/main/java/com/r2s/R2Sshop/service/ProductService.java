@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface ProductService {
     Optional<Product> findById(Long id);
-    Page<Product> findAllByCategoryId(Long categoriesId, Pageable pageable);
+    Page<Product> findAllByCategoryIdAndDeleted(Long categoriesId, Boolean deleted, Pageable pageable);
     Boolean existsById(Long id);
 }

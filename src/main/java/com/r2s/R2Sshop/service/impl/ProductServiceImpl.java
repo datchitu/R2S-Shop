@@ -29,19 +29,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * Return all products by category id.
+     * Return all products by category id and deleted.
      * <p>
-     * This function returns all product by categoryId, with the categoryId as the input parameter
+     * This function returns all product by categoryId and deleted,
+     * with the categoryId, deleted, pageable as the input parameter
      * and pagination is applied.
      * @param categoryId
+     * @param deleted
      * @param pageable
      * @return All product by categoryId and pagination is applied
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
-    public Page<Product> findAllByCategoryId(Long categoryId, Pageable pageable) {
-        return this.productRepository.findAllByCategory_Id(categoryId, pageable);
+    public Page<Product> findAllByCategoryIdAndDeleted(Long categoryId, Boolean deleted, Pageable pageable) {
+        return this.productRepository.findAllByCategory_IdAndDeleted(categoryId, deleted, pageable);
     }
 
     /**

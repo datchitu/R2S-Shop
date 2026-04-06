@@ -50,5 +50,4 @@ public class VariantProduct {
     @OneToMany(mappedBy = "variantProduct", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<CartLineItem> cartLineItems;
-
 }

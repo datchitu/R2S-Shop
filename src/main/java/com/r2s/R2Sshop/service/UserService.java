@@ -12,7 +12,6 @@ public interface UserService {
     Optional<User> findByUserName(String userName);
     Boolean existsByUserName(String userName);
     Map<String, Object> registerUserWithCart(Map<String, Object> newUser);
-    Page<User> getAll(Pageable pageable);
     Page<User> getAllByDeleted(Boolean deleted, Pageable pageable);
     User updateUser(String userName, Map<String, Object> user);
     User chargePassword(String userName, String oldPassword, String newPassword);

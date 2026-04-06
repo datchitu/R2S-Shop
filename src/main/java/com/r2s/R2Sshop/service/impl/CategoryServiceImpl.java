@@ -14,19 +14,6 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
 
     /**
-     * Return category list.
-     * <p>
-     * This function returns all category.
-     * @return Category list
-     * @author HoangVu
-     * @since 1.0
-     */
-    @Override
-    public List<Category> getAll() {
-        return this.categoryRepository.findAll();
-    }
-
-    /**
      * Return category list by deleted.
      * <p>
      * This function returns all category by deleted, with the deleted as the input parameter.

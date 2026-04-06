@@ -88,7 +88,7 @@ public class UserController extends BaseRestController{
      * @return the user list entity if the data is retrieved successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
@@ -101,11 +101,11 @@ public class UserController extends BaseRestController{
         Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
         Page<User> userPage;
         if (status == -1) {
-            userPage = userService.getAll(pageable);
+            userPage = this.userService.getAllByDeleted(null, pageable);
         } else if (status == 0) {
-            userPage = userService.getAllByDeleted(false, pageable);
+            userPage = this.userService.getAllByDeleted(false, pageable);
         } else {
-            userPage = userService.getAllByDeleted(true, pageable);
+            userPage = this.userService.getAllByDeleted(true, pageable);
         }
         List<UserDTOResponse> responses = userPage.stream()
                 .map(UserDTOResponse :: new)

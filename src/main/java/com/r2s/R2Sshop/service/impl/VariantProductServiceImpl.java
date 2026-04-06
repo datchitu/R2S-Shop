@@ -16,21 +16,6 @@ public class VariantProductServiceImpl implements VariantProductService {
     private VariantProductRepository variantProductRepository;
 
     /**
-     * Return all variant products by product id.
-     * <p>
-     * This function returns all variant product by productId, with the productId as the input parameter
-     * and pagination is applied.
-     * @param productId
-     * @return All variant product by productId
-     * @author HoangVu
-     * @since 1.0
-     */
-    @Override
-    public Page<VariantProduct> findAllByProductId(Long productId, Pageable pageable) {
-        return this.variantProductRepository.findAllByProduct_Id(productId, pageable);
-    }
-
-    /**
      * Return all variant products by product id and deleted.
      * <p>
      * This function returns all variant product by productId and deleted,

@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,29 +32,42 @@ public class ProductController extends BaseRestController{
     private ProductService productService;
 
     /**
-     * Return all products by category id.
+     * Return all products by category id and status.
      * <p>
-     * This function returns all product by categoryId, with the categoryId as the input parameter
+     * This function returns all product by categoryId and status,
+     * with the categoryId, status as the input parameter
      * and pagination is applied.
      * @param categoryId
+     * @param status
      * @param offset
      * @param limit
      * @return products by categoryId
      * @throws AppException(ResponseCode.NOT_FOUND) if the Category cannot be found by categoryId
      * based on the passed-in ID parameter
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @RequestMapping("/get-by-category-id")
-    public ResponseEntity<?> getAllByCategory(@RequestParam(name = "categoriesId", required = false,
+    public ResponseEntity<?> getAllByCategoryIdAndDeleted(@RequestParam(name = "categoriesId", required = false,
                                                                   defaultValue = "1") Long categoryId,
-                                                      @RequestParam(defaultValue = "0") Integer offset,
-                                                      @RequestParam(defaultValue = "2") Integer limit) {
+                                              @RequestParam(defaultValue = "-1") Integer status,
+                                              @RequestParam(defaultValue = "0") Integer offset,
+                                              @RequestParam(defaultValue = "2") Integer limit) {
+        if (!Arrays.asList(-1, 0, 1).contains(status)) {
+            throw new AppException(ResponseCode.INVALID_PARAM);
+        }
         if (!categoryService.existsById(categoryId)) {
             throw new AppException(ResponseCode.NOT_FOUND);
         }
         Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
-        Page<Product> productPage = this.productService.findAllByCategoryId(categoryId, pageable);
+        Page<Product> productPage;
+        if (status == -1) {
+            productPage = this.productService.findAllByCategoryIdAndDeleted(categoryId, null, pageable);
+        } else if (status == 0) {
+            productPage = this.productService.findAllByCategoryIdAndDeleted(categoryId, false, pageable);
+        } else {
+            productPage = this.productService.findAllByCategoryIdAndDeleted(categoryId, true, pageable);
+        }
         List<ProductDTOResponse> responses = productPage.stream()
                 .map(ProductDTOResponse :: new)
                 .collect(Collectors.toList());

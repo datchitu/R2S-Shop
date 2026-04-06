@@ -114,18 +114,6 @@ public class UserServiceImpl implements UserService {
         return result;
     }
     /**
-     * Return user list.
-     * <p>
-     * This function returns all user.
-     * @return User list
-     * @author HoangVu
-     * @since 1.0
-     */
-    @Override
-    public Page<User> getAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
-    }
-    /**
      * Return user list by deleted.
      * <p>
      * This function returns all user by deleted, with the deleted as the input parameter.
@@ -171,7 +159,7 @@ public class UserServiceImpl implements UserService {
      * @throws AppException(ResponseCode.DUPLICATE_PASSWORD) if new password is the same as the current password
      * in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public User chargePassword(String userName, String oldPassword, String newPassword) {
@@ -183,8 +171,9 @@ public class UserServiceImpl implements UserService {
         if (this.passwordEncoder.matches(newPassword, foundUser.getPassword())) {
             throw new AppException(ResponseCode.DUPLICATE_PASSWORD);
         }
-        foundUser.setPassword(newPassword);
+        foundUser.setPassword(this.passwordEncoder.encode(newPassword));
         foundUser.setUpdatedAt(ts);
         return this.userRepository.save(foundUser);
     }
+
 }

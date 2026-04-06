@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryService {
-    List<Category> getAll();
     List<Category> getAllByDeleted(Boolean deleted);
     Optional<Category> findById(Long id);
     boolean existsById(Long id);
