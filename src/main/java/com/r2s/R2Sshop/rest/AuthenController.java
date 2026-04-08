@@ -30,7 +30,7 @@ public class AuthenController extends BaseRestController {
      * Then returns a token and a message.
      * @param authen
      * @return token and "Successful signin!".
-     * @throws AppException(ResponseCode.FAILURE_LOGIN) if response is empty(authentication failed)
+     * @throws AppException(ResponseCode.FAILURE_Signin) if response is empty(authentication failed)
      * @author HoangVu
      * @since 1.1
      */

@@ -35,7 +35,7 @@ public class AddressDTOResponse {
         this.city = address.getCity();
         this.country = address.getCountry();
         this.orders = new ArrayList<>();
-        if (ObjectUtils.isEmpty(address.getOrders())) {
+        if (!ObjectUtils.isEmpty(address.getOrders())) {
             for (Order order : address.getOrders()) {
                 this.orders.add(Map.of(
                         "orderId", order.getId(),

@@ -18,13 +18,18 @@ public enum ResponseCode {
     INVALID_VALUE(3001, "Invalid value", HttpStatus.BAD_REQUEST),
     INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_EXISTS(2023, "Data already exists", HttpStatus.BAD_REQUEST),
+    DATA_ALREADY_DELETED(2023, "Data already been deleted", HttpStatus.BAD_REQUEST),
+    DATA_ALREADY_REACTIVATED(2023, "Data already been reactivated", HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR),
-    FAILURE_LOGIN(3000, "Failed login", HttpStatus.UNAUTHORIZED),
+    FAILURE_SIGNIN(3000, "Failed sign in", HttpStatus.UNAUTHORIZED),
     FAILURE_USER_UPDATE(3001, "User update failed", HttpStatus.CONFLICT),
     NOT_MATCH_PASSWORD(3002, "Password does not match", HttpStatus.BAD_REQUEST),
     DUPLICATE_PASSWORD(3003, "Duplicate old password", HttpStatus.BAD_REQUEST),
-    FAILURE_PASSWORD_CHARGE(3004, "Password charge failed", HttpStatus.CONFLICT),
-    AUTHENTICATION_ERROR(3010, "Failed login", HttpStatus.UNAUTHORIZED);
+    FAILURE_PASSWORD_CHARGE(3004, "Password charging failed", HttpStatus.CONFLICT),
+    FAILURE_ADDRESS_UPDATE(3005, "Address update failed", HttpStatus.CONFLICT),
+    FAILURE_ADDRESS_DELETE(3005, "Address deletion failed", HttpStatus.CONFLICT),
+    FAILURE_ADDRESS_REACTIVATE(3005, "Address reactivation failed", HttpStatus.CONFLICT),
+    AUTHENTICATION_ERROR(3010, "Failed sign in", HttpStatus.UNAUTHORIZED);
 
     private final int code;
     private final String message;

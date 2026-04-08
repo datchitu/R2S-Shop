@@ -51,7 +51,7 @@ public class VariantProductController extends BaseRestController {
      * @throws AppException(ResponseCode.NOT_FOUND) if the Product cannot be found by productId
      * based on the passed-in ID parameter
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @RequestMapping("/get-all-by-product-id-and-deleted")
     public ResponseEntity<?> getAllByProductIdAndDeleted(@RequestParam(name = "productId",
@@ -68,13 +68,13 @@ public class VariantProductController extends BaseRestController {
         Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
         Page<VariantProduct> variantProductPage;
         if (status == -1) {
-            variantProductPage = this.variantProductService.findAllByProductIdAndDeleted(productId,
+            variantProductPage = variantProductService.findAllByProductIdAndDeleted(productId,
                     null, pageable);
         } else if (status == 0) {
-            variantProductPage = this.variantProductService.findAllByProductIdAndDeleted(productId,
+            variantProductPage = variantProductService.findAllByProductIdAndDeleted(productId,
                     false, pageable);
         } else {
-            variantProductPage = this.variantProductService.findAllByProductIdAndDeleted(productId,
+            variantProductPage = variantProductService.findAllByProductIdAndDeleted(productId,
                     true, pageable);
         }
         List<VariantProductDTOResponse> responses = variantProductPage.stream()

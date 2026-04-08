@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
@@ -14,4 +15,5 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
             "AND (:deleted IS NULL OR a.deleted = :deleted)")
     List<Address> findByUserNameAndDeleted(@Param("userName") String userName,
                                            @Param("deleted") Boolean deleted);
+    Optional<Address> findByIdAndUser_UserName(Long id, String userName);
 }

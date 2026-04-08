@@ -19,7 +19,7 @@ public class ProductServiceImpl implements ProductService {
      * <p>
      * This function returns product by id, with the id as the input parameter
      * @param id
-     * @return Product by id
+     * @return Information of Product by id
      * @author HoangVu
      * @since 1.0
      */
@@ -37,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
      * @param categoryId
      * @param deleted
      * @param pageable
-     * @return All product by categoryId and pagination is applied
+     * @return Product list by categoryId and pagination is applied
      * @author HoangVu
      * @since 1.1
      */
@@ -51,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
      * <p>
      * This function check exists product by id, with the id as the input parameter.
      * @param id
-     * @return True if it exists and an error if it does not.
+     * @return True if it exists and an false if it does not.
      * @author HoangVu
      * @since 1.0
      */

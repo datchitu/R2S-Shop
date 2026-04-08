@@ -54,7 +54,7 @@ public class UserController extends BaseRestController{
      * @author HoangVu
      * @since 1.1
      */
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<?> addUserWithCart(@RequestBody Map<String, Object> newUser) {
         if  (ObjectUtils.isEmpty(newUser)) {
             throw new AppException(ResponseCode.NO_PARAM);
@@ -88,10 +88,10 @@ public class UserController extends BaseRestController{
      * @return the user list entity if the data is retrieved successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<?> getAllByDeleted(@RequestParam(defaultValue = "-1") Integer status,
                                              @RequestParam(defaultValue = "0") Integer offset,
                                              @RequestParam(defaultValue = "2") Integer limit) {
@@ -101,11 +101,11 @@ public class UserController extends BaseRestController{
         Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
         Page<User> userPage;
         if (status == -1) {
-            userPage = this.userService.getAllByDeleted(null, pageable);
+            userPage = userService.getAllByDeleted(null, pageable);
         } else if (status == 0) {
-            userPage = this.userService.getAllByDeleted(false, pageable);
+            userPage = userService.getAllByDeleted(false, pageable);
         } else {
-            userPage = this.userService.getAllByDeleted(true, pageable);
+            userPage = userService.getAllByDeleted(true, pageable);
         }
         List<UserDTOResponse> responses = userPage.stream()
                 .map(UserDTOResponse :: new)
@@ -139,9 +139,9 @@ public class UserController extends BaseRestController{
      * @author HoangVu
      * @since 1.0
      */
-    @PutMapping("")
+    @PutMapping
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
-                                    @RequestBody(required = false) Map<String, Object> user) {
+                                    @RequestBody Map<String, Object> user) {
         UserDTORequest userDTORequest = new UserDTORequest(user);
         if (ObjectUtils.isEmpty(userDTORequest.getFirstName())
                 || ObjectUtils.isEmpty(userDTORequest.getLastName())
@@ -168,7 +168,7 @@ public class UserController extends BaseRestController{
      */
     @PutMapping("/change-password")
     public ResponseEntity<?> chargePassword(@AuthenticationPrincipal UserDetails userDetails,
-                                            @RequestBody(required = false) PasswordDTORequest password) {
+                                            @RequestBody PasswordDTORequest password) {
         if (ObjectUtils.isEmpty(password.getOldPassword())
                 || ObjectUtils.isEmpty(password.getNewPassword())) {
             throw new AppException(ResponseCode.MISSING_PARAM);

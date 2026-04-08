@@ -62,11 +62,11 @@ public class ProductController extends BaseRestController{
         Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
         Page<Product> productPage;
         if (status == -1) {
-            productPage = this.productService.findAllByCategoryIdAndDeleted(categoryId, null, pageable);
+            productPage = productService.findAllByCategoryIdAndDeleted(categoryId, null, pageable);
         } else if (status == 0) {
-            productPage = this.productService.findAllByCategoryIdAndDeleted(categoryId, false, pageable);
+            productPage = productService.findAllByCategoryIdAndDeleted(categoryId, false, pageable);
         } else {
-            productPage = this.productService.findAllByCategoryIdAndDeleted(categoryId, true, pageable);
+            productPage = productService.findAllByCategoryIdAndDeleted(categoryId, true, pageable);
         }
         List<ProductDTOResponse> responses = productPage.stream()
                 .map(ProductDTOResponse :: new)
@@ -82,12 +82,12 @@ public class ProductController extends BaseRestController{
      * @return product by id
      * @throws AppException(ResponseCode.NOT_FOUND) if the Product cannot be found by id
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @GetMapping("/get-by-id")
     public ResponseEntity<?> getById(@RequestParam(name = "id", required = false
             , defaultValue = "1") long id) {
-        Product foundProduct = this.productService.findById(id)
+        Product foundProduct = productService.findById(id)
                 .orElseThrow(() -> new AppException(ResponseCode.NOT_FOUND));
         return super.success(new ProductDTOResponse(foundProduct));
     }

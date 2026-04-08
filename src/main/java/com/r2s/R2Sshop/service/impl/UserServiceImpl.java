@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
      * <p>
      * This function is used to add a new user.
      * @param newUser
-     * @return userRepository.save(user)
+     * @return information of user if the add process is successful
      * @author HoangVu
      * @since 1.0
      */
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
      * <p>
      * This function is used find user by userName.
      * @param userName
-     * @return findByUserName(userName)
+     * @return information of user if user is found
      * @author HoangVu
      * @since 1.0
      */
@@ -131,6 +131,7 @@ public class UserServiceImpl implements UserService {
      * <p>
      * This function updates user by userName, with the userName as the input parameter.
      * @param userName
+     * @param user
      * @return User by userName if the update process is successful
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not exist in the database
      * @author HoangVu

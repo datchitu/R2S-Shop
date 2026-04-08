@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -102,7 +103,7 @@ public class BaseRestController{
      */
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentials(BadCredentialsException badCredentialsEx) {
-        return buildErrorResponse(ResponseCode.FAILURE_LOGIN);
+        return buildErrorResponse(ResponseCode.FAILURE_SIGNIN);
     }
     /**
      * Configure AuthenticationException with Builder.
@@ -118,6 +119,22 @@ public class BaseRestController{
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handelAuthenticationException(AuthenticationException authenticationEx) {
         return buildErrorResponse(ResponseCode.AUTHENTICATION_ERROR);
+    }
+    /**
+     * Configure MissingServletRequestParameterException with Builder.
+     * <p>
+     * This function configures the MissingServletRequestParameterException with Builder
+     * and then reports the status HttpStatus error,
+     * returns the information including.
+     * code, message and timestamp if an exception occurs.
+     * @param missingParamEx
+     * @return buildErrorResponse(ResponseCode.MISSING_PARAM)
+     * @author HoangVu
+     * @since 1.0
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingParams(MissingServletRequestParameterException missingParamEx) {
+        return buildErrorResponse(ResponseCode.MISSING_PARAM);
     }
 }
 
