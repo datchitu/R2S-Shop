@@ -63,29 +63,28 @@ public class AddressController extends BaseRestController{
      * Add new address with userName.
      * <p>
      * This function is used to add a new address with userName.
-     * @param newAddress
+     * @param dtoRequest
      * @return address information with userName if it is added successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if newAddress is empty
+     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * street, city or country are missing
      * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PostMapping
-    public ResponseEntity<?> addWithUserName(@RequestBody Map<String, Object> newAddress,
+    public ResponseEntity<?> addWithUserName(@RequestBody AddressDTORequest dtoRequest,
                                              @AuthenticationPrincipal UserDetails userDetails) {
-        if (ObjectUtils.isEmpty(newAddress)) {
+        if (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
         }
-        AddressDTORequest addressDTORequest = new AddressDTORequest(newAddress);
-        if (ObjectUtils.isEmpty(addressDTORequest.getStreet())
-                || ObjectUtils.isEmpty(addressDTORequest.getCity())
-                || ObjectUtils.isEmpty(addressDTORequest.getCountry())) {
+        if (ObjectUtils.isEmpty(dtoRequest.getStreet())
+                || ObjectUtils.isEmpty(dtoRequest.getCity())
+                || ObjectUtils.isEmpty(dtoRequest.getCountry())) {
             throw new AppException(ResponseCode.MISSING_PARAM);
         }
         String userName = userDetails.getUsername();
-        Address insertedAddress = addressService.addWithUser(userName, newAddress);
+        Address insertedAddress = addressService.addWithUser(userName, dtoRequest);
         if (ObjectUtils.isEmpty(insertedAddress)) {
             throw new AppException(ResponseCode.INSERT_FAILURE);
         }
@@ -96,30 +95,29 @@ public class AddressController extends BaseRestController{
      * <p>
      * This function is used to update address with userName.
      * @param id
-     * @param address
+     * @param dtoRequest
      * @return address information with userName if it is updated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if address is empty
+     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest or id is empty
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * street, city or country are missing
      * @throws AppException(ResponseCode.FAILURE_ADDRESS_UPDATE) if it is updated fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PutMapping
     public ResponseEntity<?> updateByIdAndUserName(@RequestParam Long id,
-                                 @RequestBody Map<String, Object> address,
+                                 @RequestBody AddressDTORequest dtoRequest,
                                  @AuthenticationPrincipal UserDetails userDetails) {
-        if (ObjectUtils.isEmpty(address)) {
+        if (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
         }
-        AddressDTORequest addressDTORequest = new AddressDTORequest(address);
-        if (ObjectUtils.isEmpty(addressDTORequest.getStreet())
-                || ObjectUtils.isEmpty(addressDTORequest.getCity())
-                || ObjectUtils.isEmpty(addressDTORequest.getCountry())) {
+        if (ObjectUtils.isEmpty(dtoRequest.getStreet())
+                || ObjectUtils.isEmpty(dtoRequest.getCity())
+                || ObjectUtils.isEmpty(dtoRequest.getCountry())) {
             throw new AppException(ResponseCode.MISSING_PARAM);
         }
         String userName = userDetails.getUsername();
-        Address updatedAddress = addressService.updateByIdAndUserName(userName, id, address);
+        Address updatedAddress = addressService.updateByIdAndUserName(userName, id, dtoRequest);
         if (ObjectUtils.isEmpty(updatedAddress)) {
             throw new AppException(ResponseCode.FAILURE_ADDRESS_UPDATE);
         }
@@ -130,11 +128,11 @@ public class AddressController extends BaseRestController{
      * <p>
      * This function is used to delete address by id and userName.
      * @param id
-     * @return address information with userName if it is deleted successfully.
+     * @return address information with id and userName if it is deleted successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_ADDRESS_DELETE) if it is deleted fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PutMapping("/delete-by-id-and-user-name")
     public ResponseEntity<?> deleteByIdAndUserName(@RequestParam Long id,
@@ -144,26 +142,26 @@ public class AddressController extends BaseRestController{
         if (ObjectUtils.isEmpty(deletedAddress)) {
             throw new AppException(ResponseCode.FAILURE_ADDRESS_DELETE);
         }
-        return super.success("");
+        return super.success("Deleted successfully");
     }
     /**
      * Reactivated address.
      * <p>
      * This function is used to reactivated address by id.
      * @param id
-     * @return address information with userName if it is reactivated successfully.
+     * @return address information with id and userName if it is reactivated successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if id is empty
-     * @throws AppException(ResponseCode.FAILURE_ADDRESS_REACTIVATE) if it is deleted fails
+     * @throws AppException(ResponseCode.FAILURE_ADDRESS_REACTIVATE) if it is reactivated fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/reactivate-by-id")
     public ResponseEntity<?> reactivateByIdAndUserName(@RequestParam Long id) {
         Address reactivateAddress = addressService.reactivateById(id);
         if (ObjectUtils.isEmpty(reactivateAddress)) {
             throw new AppException(ResponseCode.FAILURE_ADDRESS_REACTIVATE);
         }
-        return super.success("");
+        return super.success("Reactivated successfully");
     }
 }

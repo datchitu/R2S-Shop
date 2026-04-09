@@ -1,5 +1,7 @@
 package com.r2s.R2Sshop.service.impl;
 
+import com.r2s.R2Sshop.DTO.UserRegistrationDTORequest;
+import com.r2s.R2Sshop.DTO.UserUpdateDTORequest;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Cart;
 import com.r2s.R2Sshop.model.User;
@@ -7,6 +9,7 @@ import com.r2s.R2Sshop.repository.RoleRepository;
 import com.r2s.R2Sshop.repository.UserRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.CartService;
+import com.r2s.R2Sshop.service.RoleService;
 import com.r2s.R2Sshop.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +27,14 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private Timestamp ts = Timestamp.from(ZonedDateTime.now().toInstant());
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private RoleService roleService;
     @Autowired
     private CartService cartService;
 
@@ -41,20 +44,29 @@ public class UserServiceImpl implements UserService {
      * This function is used to add a new user.
      * @param newUser
      * @return information of user if the add process is successful
+     * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if user be found by userName
+     * @throws AppException(ResponseCode.ROLE_NOT_FOUND) if role does not found by userRole
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
-    public User addUser(Map<String, Object> newUser) {
+    public User addUser(UserRegistrationDTORequest newUser) {
+        if (existsByUserName(newUser.getUserName())) {
+            throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
+        }
+        if (!roleService.existsByRoleName(newUser.getUserRole())) {
+            throw new AppException(ResponseCode.ROLE_NOT_FOUND);
+        }
         User user = new User();
-        user.setFirstName(newUser.get("firstName").toString());
-        user.setLastName(newUser.get("lastName").toString());
-        user.setUserName(newUser.get("userName").toString());
-        user.setEmail(newUser.get("email").toString());
-        user.setPassword(this.passwordEncoder.encode(newUser.get("password").toString()));
-        user.setPhone(newUser.get("phone").toString());
+        user.setFirstName(newUser.getFirstName());
+        user.setLastName(newUser.getLastName());
+        user.setUserName(newUser.getUserName());
+        user.setEmail(newUser.getEmail());
+        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        user.setPhone(newUser.getPhone());
+        user.setStatus(false);
         user.setDeleted(false);
-        user.setRoles(this.roleRepository.findByRoleName(newUser.get("userRole").toString()));
+        user.setRoles(this.roleRepository.findByRoleName(newUser.getUserRole()));
         return this.userRepository.save(user);
     }
     /**
@@ -97,12 +109,12 @@ public class UserServiceImpl implements UserService {
      */
     @Transactional
     @Override
-    public Map<String, Object> registerUserWithCart(Map<String, Object> newUser) {
+    public Map<String, Object> registerUserWithCart(UserRegistrationDTORequest newUser) {
         User insertUser = addUser(newUser);
         if (ObjectUtils.isEmpty(insertUser)) {
             throw new AppException(ResponseCode.INSERT_FAILURE);
         }
-        User foundUser = this.findByUserName(newUser.get("userName").toString())
+        User foundUser = this.findByUserName(newUser.getUserName())
                 .orElseThrow(() -> new AppException(ResponseCode.NOT_FOUND));
         Cart inserCart = cartService.addCart(foundUser);
         if (ObjectUtils.isEmpty(inserCart)) {
@@ -131,21 +143,20 @@ public class UserServiceImpl implements UserService {
      * <p>
      * This function updates user by userName, with the userName as the input parameter.
      * @param userName
-     * @param user
+     * @param userDTORequest
      * @return User by userName if the update process is successful
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not exist in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
-    public User updateUser(String userName, Map<String, Object> user) {
+    public User updateUser(String userName, UserUpdateDTORequest userDTORequest) {
         User foundUser = findByUserName(userName)
                 .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
-        foundUser.setFirstName(user.get("firstName").toString());
-        foundUser.setLastName(user.get("lastName").toString());
-        foundUser.setEmail(user.get("email").toString());
-        foundUser.setPhone(user.get("phone").toString());
-        foundUser.setUpdatedAt(ts);
+        foundUser.setFirstName(userDTORequest.getFirstName());
+        foundUser.setLastName(userDTORequest.getLastName());
+        foundUser.setEmail(userDTORequest.getEmail());
+        foundUser.setPhone(userDTORequest.getPhone());
         return this.userRepository.save(foundUser);
     }
     /**
@@ -173,7 +184,6 @@ public class UserServiceImpl implements UserService {
             throw new AppException(ResponseCode.DUPLICATE_PASSWORD);
         }
         foundUser.setPassword(this.passwordEncoder.encode(newPassword));
-        foundUser.setUpdatedAt(ts);
         return this.userRepository.save(foundUser);
     }
 

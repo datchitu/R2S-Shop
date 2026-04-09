@@ -8,13 +8,16 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ResponseCode {
     SUCCESS(200, "OK", HttpStatus.OK),
+    ACCESS_DENIED(403, "Access denied", HttpStatus.UNAUTHORIZED),
     NOT_FOUND(404, "Not found", HttpStatus.NOT_FOUND),
+    ADDRESS_NOT_FOUND(405, "Address Not found", HttpStatus.NOT_FOUND),
     NO_PARAM(6001, "No param", HttpStatus.BAD_REQUEST),
     MISSING_PARAM(6002, "Missing param", HttpStatus.BAD_REQUEST),
     NO_CONTENT(6002, "No content", HttpStatus.NOT_FOUND),
     INTERNAL_SERVER_ERROR(5000, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_NOT_FOUND(6003, "User not found", HttpStatus.NOT_FOUND),
-    SUBJECT_NOT_FOUND(6004, "Subject not found", HttpStatus.NOT_FOUND),
+    ROLE_NOT_FOUND(6004, "Role not found", HttpStatus.NOT_FOUND),
+    CATEGORY_NOT_FOUND(6004, "Category not found", HttpStatus.NOT_FOUND),
     INVALID_VALUE(3001, "Invalid value", HttpStatus.BAD_REQUEST),
     INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_EXISTS(2023, "Data already exists", HttpStatus.BAD_REQUEST),
@@ -29,6 +32,9 @@ public enum ResponseCode {
     FAILURE_ADDRESS_UPDATE(3005, "Address update failed", HttpStatus.CONFLICT),
     FAILURE_ADDRESS_DELETE(3005, "Address deletion failed", HttpStatus.CONFLICT),
     FAILURE_ADDRESS_REACTIVATE(3005, "Address reactivation failed", HttpStatus.CONFLICT),
+    FAILURE_CATEGORY_UPDATE(3005, "Category update failed", HttpStatus.CONFLICT),
+    FAILURE_CATEGORY_DELETE(3005, "Category deletion failed", HttpStatus.CONFLICT),
+    FAILURE_CATEGORY_REACTIVATE(3005, "Category reactivation failed", HttpStatus.CONFLICT),
     AUTHENTICATION_ERROR(3010, "Failed sign in", HttpStatus.UNAUTHORIZED);
 
     private final int code;

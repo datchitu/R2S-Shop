@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -30,11 +32,12 @@ public class Product {
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id", nullable = false  )
+    @JoinColumn(name = "category_id", nullable = false )
     @JsonBackReference
     private Category category;
 

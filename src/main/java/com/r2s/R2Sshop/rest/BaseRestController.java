@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class BaseRestController{
-    private Timestamp ts = Timestamp.from(ZonedDateTime.now().toInstant());
+    private final Timestamp ts = Timestamp.from(ZonedDateTime.now().toInstant());
     /**
      * Return data and HttpStatus.OK.
      * <p>

@@ -1,9 +1,6 @@
 package com.r2s.R2Sshop.rest;
 
-import com.r2s.R2Sshop.DTO.CartDTOResponse;
-import com.r2s.R2Sshop.DTO.PasswordDTORequest;
-import com.r2s.R2Sshop.DTO.UserDTORequest;
-import com.r2s.R2Sshop.DTO.UserDTOResponse;
+import com.r2s.R2Sshop.DTO.*;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Cart;
 import com.r2s.R2Sshop.model.User;
@@ -45,33 +42,29 @@ public class UserController extends BaseRestController{
      * Add new user with new cart.
      * <p>
      * This function is used to add a new user with new card for this user.
-     * @param newUser
+     * @param dtoRequest
      * @return user with cart information if user with cart is added successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if newUser is empty
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * last name, first name, phone number, email, password or userRole are missing
-     * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if user be found by userName
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PostMapping
-    public ResponseEntity<?> addUserWithCart(@RequestBody Map<String, Object> newUser) {
-        if  (ObjectUtils.isEmpty(newUser)) {
+    public ResponseEntity<?> addUserWithCart(@RequestBody UserRegistrationDTORequest dtoRequest) {
+        if  (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
         }
-        if (ObjectUtils.isEmpty(newUser.get("firstName"))
-                || ObjectUtils.isEmpty(newUser.get("lastName"))
-                || ObjectUtils.isEmpty(newUser.get("userName"))
-                || ObjectUtils.isEmpty(newUser.get("email"))
-                || ObjectUtils.isEmpty(newUser.get("password"))
-                || ObjectUtils.isEmpty(newUser.get("phone"))
-                || ObjectUtils.isEmpty(newUser.get("userRole"))) {
+        if (ObjectUtils.isEmpty(dtoRequest.getFirstName())
+                || ObjectUtils.isEmpty(dtoRequest.getLastName())
+                || ObjectUtils.isEmpty(dtoRequest.getUserName())
+                || ObjectUtils.isEmpty(dtoRequest.getEmail())
+                || ObjectUtils.isEmpty(dtoRequest.getPassword())
+                || ObjectUtils.isEmpty(dtoRequest.getPhone())
+                || ObjectUtils.isEmpty(dtoRequest.getUserRole())) {
             throw new AppException(ResponseCode.MISSING_PARAM);
         }
-        if (userService.existsByUserName(newUser.get("userName").toString())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
-        }
-        Map<String, Object> data = userService.registerUserWithCart(newUser);
+        Map<String, Object> data = userService.registerUserWithCart(dtoRequest);
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("user", new UserDTOResponse((User) data.get("user")));
         responseData.put("cart", new CartDTOResponse((Cart) data.get("cart")));
@@ -132,24 +125,28 @@ public class UserController extends BaseRestController{
      * Update ỉnfo user.
      * <p>
      * This function returns user info from token(userName) after successful update.
+     * @param userDTORequest
      * @return user info entity from token(userName)
+     * @throws AppException(ResponseCode.NO_PARAM) if userDTORequest is empty
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * firstName, lastName, email, phone
      * @throws AppException(ResponseCode.FAILURE_USER_UPDATE) if update unsuccessful
      * @author HoangVu
-     * @since 1.0
+     * @since 1.2
      */
     @PutMapping
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
-                                    @RequestBody Map<String, Object> user) {
-        UserDTORequest userDTORequest = new UserDTORequest(user);
+                                    @RequestBody UserUpdateDTORequest userDTORequest) {
+        if (ObjectUtils.isEmpty(userDTORequest)) {
+            throw new AppException(ResponseCode.NO_PARAM);
+        }
         if (ObjectUtils.isEmpty(userDTORequest.getFirstName())
                 || ObjectUtils.isEmpty(userDTORequest.getLastName())
                 || ObjectUtils.isEmpty(userDTORequest.getEmail())
                 || ObjectUtils.isEmpty(userDTORequest.getPhone())) {
             throw new AppException(ResponseCode.MISSING_PARAM);
         }
-        User updateUser = userService.updateUser(userDetails.getUsername(), user);
+        User updateUser = userService.updateUser(userDetails.getUsername(), userDTORequest);
         if (ObjectUtils.isEmpty(updateUser)) {
             throw new AppException(ResponseCode.FAILURE_USER_UPDATE);
         }
@@ -160,15 +157,19 @@ public class UserController extends BaseRestController{
      * <p>
      * This function charges user password.
      * @return success
+     * @throws AppException(ResponseCode.NO_PARAM) if userDTORequest is empty
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * oldPassword, newPassword
      * @throws AppException(ResponseCode.FAILURE_PASSWORD_CHARGE) if charge failure
      * @author HoangVu
-     * @since 1.0
+     * @since 1.2
      */
     @PutMapping("/change-password")
     public ResponseEntity<?> chargePassword(@AuthenticationPrincipal UserDetails userDetails,
                                             @RequestBody PasswordDTORequest password) {
+        if (ObjectUtils.isEmpty(password)) {
+            throw new AppException(ResponseCode.NO_PARAM);
+        }
         if (ObjectUtils.isEmpty(password.getOldPassword())
                 || ObjectUtils.isEmpty(password.getNewPassword())) {
             throw new AppException(ResponseCode.MISSING_PARAM);
@@ -178,6 +179,6 @@ public class UserController extends BaseRestController{
         if (ObjectUtils.isEmpty(chargePasswordUser)) {
             throw new AppException(ResponseCode.FAILURE_PASSWORD_CHARGE);
         }
-        return super.success(null);
+        return super.success("Charged successfully");
     }
 }

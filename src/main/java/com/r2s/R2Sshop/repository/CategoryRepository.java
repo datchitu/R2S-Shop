@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("SELECT c FROM Category c WHERE (:deleted IS NULL OR c.deleted = :deleted)")
     List<Category> findAllByDeleted(@Param("deleted") Boolean deleted);
+    Boolean existsByName(String name);
 }

@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class Address {
     @Column(name = "created_at",nullable = false)
     private Timestamp createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
