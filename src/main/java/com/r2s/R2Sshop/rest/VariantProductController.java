@@ -3,9 +3,6 @@ package com.r2s.R2Sshop.rest;
 import com.r2s.R2Sshop.DTO.VariantProductDTOResponse;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.VariantProduct;
-import com.r2s.R2Sshop.repository.ProductRepository;
-import com.r2s.R2Sshop.repository.VariantProductRepository;
-import com.r2s.R2Sshop.service.ProductService;
 import com.r2s.R2Sshop.service.VariantProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,19 +22,13 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/variant_products")
 public class VariantProductController extends BaseRestController {
     @Autowired
-    private VariantProductRepository variantProductRepository;
-    @Autowired
     private VariantProductService variantProductService;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private ProductService productService;
 
     /**
-     * Return variant product list by productId and deleted(status).
+     * Return variant product list by productId and status.
      * <p>
      * This function returns variant product list by product id and
-     * deleted(With the passed-in status -1, return all by productId works;
+     * deleted (With the passed-in status -1, return all by productId works;
      * with 0, return all by productId and deleted == false works;
      * and otherwise, it's return all by product id and deleted == true),
      * with the productId, status as the input parameter
@@ -46,12 +37,10 @@ public class VariantProductController extends BaseRestController {
      * @param offset
      * @param limit
      * @param status (-1, 0, 1)
-     * @return the variant product list entity by productId and status if the data is retrieved successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
-     * @throws AppException(ResponseCode.NOT_FOUND) if the Product cannot be found by productId
-     * based on the passed-in ID parameter
+     * @return the variant product list by productId and status if the data is retrieved successfully.
+     * @throws AppException(ResponseCode.INVALID_PARAM) if status is outside the value (-1, 0, 1)
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @RequestMapping("/get-all-by-product-id-and-deleted")
     public ResponseEntity<?> getAllByProductIdAndDeleted(@RequestParam(name = "productId",
@@ -62,21 +51,9 @@ public class VariantProductController extends BaseRestController {
         if (!Arrays.asList(-1, 0, 1).contains(status)) {
             throw new AppException(ResponseCode.INVALID_PARAM);
         }
-        if (!productService.existsById(productId)) {
-            throw new AppException(ResponseCode.NOT_FOUND);
-        }
         Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
-        Page<VariantProduct> variantProductPage;
-        if (status == -1) {
-            variantProductPage = variantProductService.findAllByProductIdAndDeleted(productId,
-                    null, pageable);
-        } else if (status == 0) {
-            variantProductPage = variantProductService.findAllByProductIdAndDeleted(productId,
-                    false, pageable);
-        } else {
-            variantProductPage = variantProductService.findAllByProductIdAndDeleted(productId,
-                    true, pageable);
-        }
+        Page<VariantProduct> variantProductPage = variantProductService.findAllByProductIdAndDeleted(productId,
+                status, pageable);
         List<VariantProductDTOResponse> responses = variantProductPage.stream()
                 .map(VariantProductDTOResponse :: new)
                 .collect(Collectors.toList());

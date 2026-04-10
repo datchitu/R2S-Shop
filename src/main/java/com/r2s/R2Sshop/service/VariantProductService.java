@@ -5,5 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface VariantProductService {
-    Page<VariantProduct> findAllByProductIdAndDeleted(Long productId, Boolean deleted, Pageable pageable);
+    Page<VariantProduct> findAllByProductIdAndDeleted(Long productId, Integer status,
+                                                      Pageable pageable);
 }

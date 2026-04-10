@@ -4,9 +4,6 @@ import com.r2s.R2Sshop.DTO.*;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Cart;
 import com.r2s.R2Sshop.model.User;
-import com.r2s.R2Sshop.repository.CartRepository;
-import com.r2s.R2Sshop.repository.UserRepository;
-import com.r2s.R2Sshop.service.CartService;
 import com.r2s.R2Sshop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,13 +27,7 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/users")
 public class UserController extends BaseRestController{
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private UserService userService;
-    @Autowired
-    private CartRepository cartRepository;
-    @Autowired
-    private CartService cartService;
 
     /**
      * Add new user with new cart.
@@ -79,9 +70,9 @@ public class UserController extends BaseRestController{
      * with the status as the input parameter.
      * @param status
      * @return the user list entity if the data is retrieved successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
+     * @throws AppException(ResponseCode.INVALID_PARAM) if status is outside the value (-1, 0, 1)
      * @author HoangVu
-     * @since 1.4
+     * @since 1.5
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
@@ -92,14 +83,7 @@ public class UserController extends BaseRestController{
             throw new AppException(ResponseCode.INVALID_PARAM);
         }
         Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
-        Page<User> userPage;
-        if (status == -1) {
-            userPage = userService.getAllByDeleted(null, pageable);
-        } else if (status == 0) {
-            userPage = userService.getAllByDeleted(false, pageable);
-        } else {
-            userPage = userService.getAllByDeleted(true, pageable);
-        }
+        Page<User> userPage = userService.getAllByDeleted(status, pageable);
         List<UserDTOResponse> responses = userPage.stream()
                 .map(UserDTOResponse :: new)
                 .collect(Collectors.toList());
@@ -110,14 +94,12 @@ public class UserController extends BaseRestController{
      * <p>
      * This function returns user info from token(userName).
      * @return user info entity from token(userName)
-     * @throws AppException(ResponseCode.USER_NOT_FOUND) if the User cannot be found by userName
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @GetMapping("/get-my-profile")
     public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
-        User foundUser = userService.findByUserName(userDetails.getUsername())
-                .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
+        User foundUser = userService.findByUserName(userDetails.getUsername());
         return super.success(new UserDTOResponse(foundUser));
     }
 

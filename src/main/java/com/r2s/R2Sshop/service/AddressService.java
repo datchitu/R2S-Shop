@@ -6,7 +6,8 @@ import com.r2s.R2Sshop.model.Address;
 import java.util.List;
 
 public interface AddressService {
-    List<Address> findByUserIdAndDeleted(String userName, Boolean deleted);
+    List<Address> findByUserIdAndDeleted(Integer status, String userName);
+    Address findById(Long id);
     Address addWithUser(String userName, AddressDTORequest DTORequest);
     Address updateByIdAndUserName(String userName, Long id, AddressDTORequest DTORequest);
     Address deleteByIdAndUserName(String userName, Long id);

@@ -7,14 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Map;
-import java.util.Optional;
 
 public interface UserService {
     User addUser(UserRegistrationDTORequest newUser);
-    Optional<User> findByUserName(String userName);
-    Boolean existsByUserName(String userName);
+    User findByUserName(String userName);
     Map<String, Object> registerUserWithCart(UserRegistrationDTORequest newUser);
-    Page<User> getAllByDeleted(Boolean deleted, Pageable pageable);
+    Page<User> getAllByDeleted(Integer status, Pageable pageable);
     User updateUser(String userName, UserUpdateDTORequest user);
     User chargePassword(String userName, String oldPassword, String newPassword);
 }

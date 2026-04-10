@@ -4,8 +4,6 @@ import com.r2s.R2Sshop.DTO.CategoryDTORequest;
 import com.r2s.R2Sshop.DTO.CategoryDTOResponse;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Category;
-import com.r2s.R2Sshop.repository.CategoryRepository;
-import com.r2s.R2Sshop.repository.ProductRepository;
 import com.r2s.R2Sshop.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +19,7 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/categories")
 public class CategoryController extends BaseRestController{
     @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
     private CategoryService categoryService;
-    @Autowired
-    private ProductRepository productRepository;
 
     /**
      * Return category list.
@@ -35,21 +29,14 @@ public class CategoryController extends BaseRestController{
      * @return the category list entity if the data is retrieved successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
      * @author HoangVu
-     * @since 1.4
+     * @since 1.5
      */
     @GetMapping
     public ResponseEntity<?> getAllByDeleted(@RequestParam(defaultValue = "-1") Integer status) {
         if (!Arrays.asList(-1, 0, 1).contains(status)) {
             throw new AppException(ResponseCode.INVALID_PARAM);
         }
-        List<Category> categoryList;
-        if (status == -1) {
-            categoryList = categoryService.getAllByDeleted(null);
-        } else if (status == 0){
-            categoryList = categoryService.getAllByDeleted(false);
-        } else {
-            categoryList = categoryService.getAllByDeleted(true);
-        }
+        List<Category> categoryList = categoryService.getAllByDeleted(status);
         List<CategoryDTOResponse> responses = categoryList.stream()
                 .map(CategoryDTOResponse :: new)
                 .collect(Collectors.toList());
@@ -62,18 +49,27 @@ public class CategoryController extends BaseRestController{
      * This function returns category by id, with the id as the input parameter.
      * @param id
      * @return category by id
-     * @throws AppException(ResponseCode.NOT_FOUND) if the Category cannot be found by categoriesId
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @GetMapping("/get-by-id")
     public ResponseEntity<?> getById(@RequestParam(name = "id", required = false
             , defaultValue = "1") Long id) {
-        Category foundCategory = categoryService.findById(id)
-                .orElseThrow(() -> new AppException(ResponseCode.NOT_FOUND));
-        return super.success(new CategoryDTOResponse(foundCategory));
+        return super.success(new CategoryDTOResponse(categoryService.findById(id)));
     }
-
+    /**
+     * Add new category.
+     * <p>
+     * This function is used to add a new category.
+     * @param dtoRequest
+     * @return category information if it is added successfully.
+     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
+     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * name are missing
+     * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
+     * @author HoangVu
+     * @since 1.0
+     */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> add(@RequestBody CategoryDTORequest dtoRequest) {
@@ -125,14 +121,14 @@ public class CategoryController extends BaseRestController{
      * <p>
      * This function is used to delete category by id.
      * @param id
-     * @return category information by id if it is deleted successfully.
+     * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_CATEGORY_DELETE) if it is deleted fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/delete-by-id")
+    @DeleteMapping("/delete-by-id")
     public ResponseEntity<?> deleteById(@RequestParam Long id) {
         Category deletedCategory = categoryService.deleteById(id);
         if (ObjectUtils.isEmpty(deletedCategory)) {
@@ -146,7 +142,7 @@ public class CategoryController extends BaseRestController{
      * <p>
      * This function is used to reactivated address by id.
      * @param id
-     * @return category information by id if it is reactivated successfully.
+     * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_CATEGORY_REACTIVATE) if it is deleted fails
      * @author HoangVu

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,19 +24,19 @@ public class AddressController extends BaseRestController{
     AddressService addressService;
 
     /**
-     * Return address list by userName and deleted(status).
+     * Return address list by userName and status.
      * <p>
      * This function returns address list by userName and
-     * deleted(With the passed-in status -1, return all by productId works;
-     * with 0, return all by productId and deleted == false works;
-     * and otherwise, it's return all by product id and deleted == true),
+     * status(With the passed-in status -1, return all by userName works;
+     * with 0, return all by userName and deleted == false works;
+     * and otherwise, it's return all by userName and deleted == true),
      * with the status as the input parameter.
      * @param status (-1, 0, 1)
      * @return the address list entity by userName and status if the data is retrieved successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
      * based on the passed-in ID parameter
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @RequestMapping("/get-by-user-name")
     public ResponseEntity<?> getAllByUserIdAndDeleted(@AuthenticationPrincipal UserDetails userDetails,
@@ -46,14 +45,7 @@ public class AddressController extends BaseRestController{
             throw new AppException(ResponseCode.INVALID_PARAM);
         }
         String userName = userDetails.getUsername();
-        List<Address> addresses;
-        if (status == -1) {
-            addresses = addressService.findByUserIdAndDeleted(userName, null);
-        } else if (status == 0) {
-            addresses = addressService.findByUserIdAndDeleted(userName, false);
-        } else {
-            addresses = addressService.findByUserIdAndDeleted(userName, true);
-        }
+        List<Address> addresses = addressService.findByUserIdAndDeleted(status, userName);
         List<AddressDTOResponse> responses = addresses.stream()
                 .map(AddressDTOResponse :: new)
                 .collect(Collectors.toList());
@@ -132,9 +124,9 @@ public class AddressController extends BaseRestController{
      * @throws AppException(ResponseCode.NO_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_ADDRESS_DELETE) if it is deleted fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
-    @PutMapping("/delete-by-id-and-user-name")
+    @DeleteMapping("/delete-by-id-and-user-name")
     public ResponseEntity<?> deleteByIdAndUserName(@RequestParam Long id,
                                                    @AuthenticationPrincipal UserDetails userDetails) {
         String userName = userDetails.getUsername();

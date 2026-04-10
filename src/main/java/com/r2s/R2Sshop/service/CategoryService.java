@@ -7,10 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface CategoryService {
-    List<Category> getAllByDeleted(Boolean deleted);
-    Optional<Category> findById(Long id);
-    Boolean existsById(Long id);
-    Boolean existsByName(String name);
+    List<Category> getAllByDeleted(Integer status);
+    Category findById(Long id);
     Category add(CategoryDTORequest newCategory);
     Category updateById(Long id, CategoryDTORequest DTORequest);
     Category deleteById(Long id);
