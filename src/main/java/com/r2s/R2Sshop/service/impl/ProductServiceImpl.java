@@ -28,8 +28,8 @@ public class ProductServiceImpl implements ProductService {
      * <p>
      * This function returns product by id, with the id as the input parameter
      * @param id
-     * @return Information of Product by id
-     * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if the Product cannot be found by id
+     * @return Information of product by id
+     * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if the product cannot be found by id
      * @author HoangVu
      * @since 1.1
      */
@@ -75,7 +75,7 @@ public class ProductServiceImpl implements ProductService {
      * @param dtoRequest
      * @param categoryId
      * @return information of product if the add process is successful
-     * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if product does not exist in the database
+     * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
      * @throws AppException(ResponseCode.PRODUCT_ALREADY_EXISTS) if product already been deleted in the database
      * @author HoangVu
      * @since 1.0
@@ -99,9 +99,8 @@ public class ProductServiceImpl implements ProductService {
      * @param id
      * @param categoryId
      * @param dtoRequest
-     * @return product by id and userName if the update process is successful
-     * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if product does not exist in the database
-     * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
+     * @return product by id if the update process is successful
+     * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
      * @throws AppException(ResponseCode.PRODUCT_ALREADY_EXISTS) if product already been deleted in the database
      * @author HoangVu
      * @since 1.0
@@ -148,13 +147,13 @@ public class ProductServiceImpl implements ProductService {
      * @throws AppException(ResponseCode.DATA_ALREADY_REACTIVATED)
      * if product already been reactivated in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public Product reactivateById(Long id) {
         Product foundProduct = findById(id);
         if (Boolean.FALSE.equals(foundProduct.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.DATA_ALREADY_REACTIVATED);
         }
         foundProduct.setDeleted(false);
         return productRepository.save(foundProduct);

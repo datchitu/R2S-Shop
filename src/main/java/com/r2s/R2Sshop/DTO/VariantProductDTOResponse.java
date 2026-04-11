@@ -23,7 +23,7 @@ public class VariantProductDTOResponse {
      * Customize the output variant product information as a JSON file.
      * <p>
      * This function customizes the output variant product information, including
-     * ID, name, price, color, model_year, quantity, deleted, productId, productName as a JSON file.
+     * ID, name, price, color, modelYear, quantity, deleted, productId, productName as a JSON file.
      * @param variantProduct
      * @author HoangVu
      * @since 1.1
@@ -33,7 +33,7 @@ public class VariantProductDTOResponse {
         this.name = variantProduct.getName();
         this.price = variantProduct.getPrice();
         this.color = variantProduct.getColor();;
-        this.model_year = variantProduct.getModel_year();;
+        this.model_year = variantProduct.getModelYear();;
         this.quantity = variantProduct.getQuantity();
         this.deleted = variantProduct.getDeleted();
     }

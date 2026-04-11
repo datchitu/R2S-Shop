@@ -1,18 +1,20 @@
 package com.r2s.R2Sshop.rest;
 
 import com.r2s.R2Sshop.DTO.VariantProductDTOResponse;
+import com.r2s.R2Sshop.DTO.VariantServiceDTORequest;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.VariantProduct;
 import com.r2s.R2Sshop.service.VariantProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -58,5 +60,114 @@ public class VariantProductController extends BaseRestController {
                 .map(VariantProductDTOResponse :: new)
                 .collect(Collectors.toList());
         return super.success(responses);
+    }
+    /**
+     * Return product by id.
+     * <p>
+     * This function returns product by id, with the id as the input parameter.
+     * @param id
+     * @return product by id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @GetMapping("/get-by-id")
+    public ResponseEntity<?> getById(@RequestParam(name = "id", required = false
+            , defaultValue = "1") long id) {
+        VariantProduct foundVariantProduct = variantProductService.findById(id);
+        return super.success(new VariantProductDTOResponse(foundVariantProduct));
+    }
+    /**
+     * Add new variant product with category.
+     * <p>
+     * This function is used to add a new variant product with product.
+     * @param productId
+     * @param dtoRequest
+     * @return information of variant product if the add process is successful
+     * @throws AppException(ResponseCode.NO_PARAM) if the passed-in parameter values such as
+     * productId and dtoRequest are missing
+     * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public ResponseEntity<?> addByProductId(@RequestParam Long productId,
+                                            @Valid @RequestBody VariantServiceDTORequest dtoRequest) {
+        if (ObjectUtils.isEmpty(dtoRequest)) {
+            throw new AppException(ResponseCode.NO_PARAM);
+        }
+        VariantProduct insertedVariantProduct = variantProductService.addByProductId(
+                productId, dtoRequest);
+        if (ObjectUtils.isEmpty(insertedVariantProduct)) {
+            throw new AppException(ResponseCode.INSERT_FAILURE);
+        }
+        return super.success(new VariantProductDTOResponse(insertedVariantProduct));
+    }
+    /**
+     * Update variant product.
+     * <p>
+     * This function is used to update variant product by id.
+     * @param id
+     * @param productId
+     * @param dtoRequest
+     * @return variant product information by id if it is updated successfully.
+     * @throws AppException(ResponseCode.NO_PARAM) if id, productId, dtoRequest or id is empty
+     * @throws AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_UPDATE) if it is updated fails
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping
+    public ResponseEntity<?> updateById(@RequestParam Long id,
+                                        @RequestParam Long productId,
+                                        @Valid @RequestBody VariantServiceDTORequest dtoRequest) {
+        if (ObjectUtils.isEmpty(dtoRequest)) {
+            throw new AppException(ResponseCode.NO_PARAM);
+        }
+        VariantProduct updatedVariantProduct = variantProductService.updateById(id, productId, dtoRequest);
+        if (ObjectUtils.isEmpty(updatedVariantProduct)) {
+            throw new AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_UPDATE);
+        }
+        return super.success(new VariantProductDTOResponse(updatedVariantProduct));
+    }
+    /**
+     * Delete variant product.
+     * <p>
+     * This function is used to delete variant product by id.
+     * @param id
+     * @return "Deleted successfully" if it is deleted successfully.
+     * @throws AppException(ResponseCode.NO_PARAM) if id is empty
+     * @throws AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_DELETE) if it is deleted fails
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete-by-id")
+    public ResponseEntity<?> deleteById(@RequestParam Long id) {
+        VariantProduct deletedVariantProduct = variantProductService.deleteById(id);
+        if (ObjectUtils.isEmpty(deletedVariantProduct)) {
+            throw new AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_DELETE);
+        }
+        return super.success("Deleted successfully");
+    }
+    /**
+     * Reactivated variant product.
+     * <p>
+     * This function is used to reactivated variant product by id.
+     * @param id
+     * @return "Reactivated successfully" if it is reactivated successfully.
+     * @throws AppException(ResponseCode.NO_PARAM) if id is empty
+     * @throws AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_REACTIVATE) if it is deleted fails
+     * @author HoangVu
+     * @since 1.1
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/reactivate-by-id")
+    public ResponseEntity<?> reactivateById(@RequestParam Long id) {
+        VariantProduct reactivateVariantProduct = variantProductService.reactivateById(id);
+        if (ObjectUtils.isEmpty(reactivateVariantProduct)) {
+            throw new AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_REACTIVATE);
+        }
+        return super.success("Reactivated successfully");
     }
 }

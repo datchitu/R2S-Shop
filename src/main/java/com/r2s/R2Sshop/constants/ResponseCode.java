@@ -19,12 +19,14 @@ public enum ResponseCode {
     ROLE_NOT_FOUND(6005, "Role not found", HttpStatus.NOT_FOUND),
     CATEGORY_NOT_FOUND(6006, "Category not found", HttpStatus.NOT_FOUND),
     PRODUCT_NOT_FOUND(6007, "Product not found", HttpStatus.NOT_FOUND),
+    VARIANT_PRODUCT_NOT_FOUND(6008, "Variant product not found", HttpStatus.NOT_FOUND),
     INVALID_VALUE(3001, "Invalid value", HttpStatus.BAD_REQUEST),
     INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_EXISTS(2023, "Data already exists", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_DELETED(2024, "Data already been deleted", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_REACTIVATED(2025, "Data already been reactivated", HttpStatus.BAD_REQUEST),
     PRODUCT_ALREADY_EXISTS(2026, "Product already exists", HttpStatus.BAD_REQUEST),
+    VARIANT_PRODUCT_ALREADY_EXISTS(2027, "Variant product already exists", HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR),
     FAILURE_SIGNIN(3000, "Failed sign in", HttpStatus.UNAUTHORIZED),
     FAILURE_USER_UPDATE(3001, "User update failed", HttpStatus.CONFLICT),
@@ -40,6 +42,9 @@ public enum ResponseCode {
     FAILURE_PRODUCT_UPDATE(3011, "Product update failed", HttpStatus.CONFLICT),
     FAILURE_PRODUCT_DELETE(3012, "Product deletion failed", HttpStatus.CONFLICT),
     FAILURE_PRODUCT_REACTIVATE(3013, "Product reactivation failed", HttpStatus.CONFLICT),
+    FAILURE_VARIANT_PRODUCT_UPDATE(3014, "Variant product update failed", HttpStatus.CONFLICT),
+    FAILURE_VARIANT_PRODUCT_DELETE(3015, "Variant product deletion failed", HttpStatus.CONFLICT),
+    FAILURE_VARIANT_PRODUCT_REACTIVATE(3016, "Variant product reactivation failed", HttpStatus.CONFLICT),
     AUTHENTICATION_ERROR(3033, "Failed sign in", HttpStatus.UNAUTHORIZED);
 
     private final int code;

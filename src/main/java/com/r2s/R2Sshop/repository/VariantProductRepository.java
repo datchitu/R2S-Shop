@@ -15,4 +15,5 @@ public interface VariantProductRepository extends JpaRepository<VariantProduct, 
     Page<VariantProduct> findAllByProduct_IdAndDeleted(@Param("productId") Long productId,
                                                        @Param("deleted") Boolean deleted,
                                                        Pageable pageable);
+    boolean existsByName(String name);
 }

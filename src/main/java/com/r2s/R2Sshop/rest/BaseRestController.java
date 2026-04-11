@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -135,6 +136,24 @@ public class BaseRestController{
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingParams(MissingServletRequestParameterException missingParamEx) {
         return buildErrorResponse(ResponseCode.MISSING_PARAM);
+    }
+    /**
+     * Configure MethodArgumentNotValidException with Builder.
+     * <p>
+     * This function configures the MethodArgumentNotValidException with Builder
+     * and then reports the status HttpStatus error,
+     * returns the message.
+     * @param mthdAgmtNtVldEx
+     * @return message if any information is missing
+     * @author HoangVu
+     * @since 1.0
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException mthdAgmtNtVldEx) {
+        Map<String, Object> errors = new HashMap<>();
+        mthdAgmtNtVldEx.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage()));
+        return ResponseEntity.badRequest().body(errors);
     }
 }
 

@@ -76,12 +76,13 @@ public class ProductController extends BaseRestController{
     /**
      * Add new product with category.
      * <p>
-     * This function is  used to add a new product with category.
+     * This function is used to add a new product with category.
+     * @param categoryId
      * @param dtoRequest
      * @return information of product if the add process is successful
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * name, categoryId are missing
-     * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if product be found by name and categoryName
+     * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
      * @author HoangVu
      * @since 1.0
      */
@@ -106,6 +107,7 @@ public class ProductController extends BaseRestController{
      * <p>
      * This function is used to update product by id.
      * @param id
+     * @param categoryId
      * @param dtoRequest
      * @return product information by id if it is updated successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest or id is empty
@@ -161,12 +163,12 @@ public class ProductController extends BaseRestController{
      * @throws AppException(ResponseCode.NO_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_PRODUCT_REACTIVATE) if it is deleted fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/reactivate-by-id")
     public ResponseEntity<?> reactivateById(@RequestParam Long id) {
-        Product reactivateProduct = productService.deleteById(id);
+        Product reactivateProduct = productService.reactivateById(id);
         if (ObjectUtils.isEmpty(reactivateProduct)) {
             throw new AppException(ResponseCode.FAILURE_PRODUCT_REACTIVATE);
         }

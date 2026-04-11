@@ -29,7 +29,7 @@ public class VariantProduct {
 
     private String color;
 
-    private String model_year;
+    private String modelYear;
 
     @Column(columnDefinition = "boolean default 0")
     private Integer quantity;
