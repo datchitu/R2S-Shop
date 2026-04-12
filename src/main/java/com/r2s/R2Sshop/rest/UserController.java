@@ -5,6 +5,7 @@ import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Cart;
 import com.r2s.R2Sshop.model.User;
 import com.r2s.R2Sshop.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,24 +37,15 @@ public class UserController extends BaseRestController{
      * @param dtoRequest
      * @return user with cart information if user with cart is added successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if newUser is empty
-     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * @throws AppException(ResponseCode.INVALID_VALUE) if the passed-in parameter values such as
      * last name, first name, phone number, email, password or userRole are missing
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PostMapping
-    public ResponseEntity<?> addUserWithCart(@RequestBody UserRegistrationDTORequest dtoRequest) {
+    public ResponseEntity<?> addUserWithCart(@Valid @RequestBody UserRegistrationDTORequest dtoRequest) {
         if  (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
-        }
-        if (ObjectUtils.isEmpty(dtoRequest.getFirstName())
-                || ObjectUtils.isEmpty(dtoRequest.getLastName())
-                || ObjectUtils.isEmpty(dtoRequest.getUserName())
-                || ObjectUtils.isEmpty(dtoRequest.getEmail())
-                || ObjectUtils.isEmpty(dtoRequest.getPassword())
-                || ObjectUtils.isEmpty(dtoRequest.getPhone())
-                || ObjectUtils.isEmpty(dtoRequest.getUserRole())) {
-            throw new AppException(ResponseCode.MISSING_PARAM);
         }
         Map<String, Object> data = userService.registerUserWithCart(dtoRequest);
         Map<String, Object> responseData = new HashMap<>();
@@ -110,23 +102,17 @@ public class UserController extends BaseRestController{
      * @param userDTORequest
      * @return user info entity from token(userName)
      * @throws AppException(ResponseCode.NO_PARAM) if userDTORequest is empty
-     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * @throws AppException(ResponseCode.INVALID_VALUE) if the passed-in parameter values such as
      * firstName, lastName, email, phone
      * @throws AppException(ResponseCode.FAILURE_USER_UPDATE) if update unsuccessful
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PutMapping
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
-                                    @RequestBody UserUpdateDTORequest userDTORequest) {
+                                    @Valid @RequestBody UserUpdateDTORequest userDTORequest) {
         if (ObjectUtils.isEmpty(userDTORequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
-        }
-        if (ObjectUtils.isEmpty(userDTORequest.getFirstName())
-                || ObjectUtils.isEmpty(userDTORequest.getLastName())
-                || ObjectUtils.isEmpty(userDTORequest.getEmail())
-                || ObjectUtils.isEmpty(userDTORequest.getPhone())) {
-            throw new AppException(ResponseCode.MISSING_PARAM);
         }
         User updateUser = userService.updateUser(userDetails.getUsername(), userDTORequest);
         if (ObjectUtils.isEmpty(updateUser)) {
@@ -144,17 +130,13 @@ public class UserController extends BaseRestController{
      * oldPassword, newPassword
      * @throws AppException(ResponseCode.FAILURE_PASSWORD_CHARGE) if charge failure
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PutMapping("/change-password")
     public ResponseEntity<?> chargePassword(@AuthenticationPrincipal UserDetails userDetails,
-                                            @RequestBody PasswordDTORequest password) {
+                                            @Valid @RequestBody PasswordDTORequest password) {
         if (ObjectUtils.isEmpty(password)) {
             throw new AppException(ResponseCode.NO_PARAM);
-        }
-        if (ObjectUtils.isEmpty(password.getOldPassword())
-                || ObjectUtils.isEmpty(password.getNewPassword())) {
-            throw new AppException(ResponseCode.MISSING_PARAM);
         }
         User chargePasswordUser = userService.chargePassword(userDetails.getUsername(),
                 password.getOldPassword(), password.getNewPassword());

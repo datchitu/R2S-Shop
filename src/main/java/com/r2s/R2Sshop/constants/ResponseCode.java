@@ -22,6 +22,7 @@ public enum ResponseCode {
     VARIANT_PRODUCT_NOT_FOUND(6008, "Variant product not found", HttpStatus.NOT_FOUND),
     INVALID_VALUE(3001, "Invalid value", HttpStatus.BAD_REQUEST),
     INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
+    IMMUTABLE(3003, "The value remains unchanged", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_EXISTS(2023, "Data already exists", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_DELETED(2024, "Data already been deleted", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_REACTIVATED(2025, "Data already been reactivated", HttpStatus.BAD_REQUEST),

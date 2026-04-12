@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class AddressServiceImpl implements AddressService {
@@ -65,22 +67,33 @@ public class AddressServiceImpl implements AddressService {
      * Add new address with user.
      * <p>
      * This function is used to add a new address with user.
-     * @param DTORequest
+     * @param dtoRequest
      * @param userName
      * @return information of address if the add process is successful
+     * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS)
+     * if street, city, userName and deleted exist in the database
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if address does not exist in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
-    public Address addWithUser(String userName, AddressDTORequest DTORequest) {
+    public Address addWithUser(String userName, AddressDTORequest dtoRequest) {
+        if (addressRepository.existsByStreetAndCityAndUser_UserNameAndDeleted(
+                dtoRequest.getStreet(), dtoRequest.getCity(), userName, false)) {
+            throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
+        }
         User foundUser = userService.findByUserName(userName);
-        Address address = new Address();
-        address.setStreet(DTORequest.getStreet());
-        address.setCity(DTORequest.getCity());
-        address.setCountry(DTORequest.getCountry());
+        Address address = addressRepository.findByStreetAndCityAndUser_UserNameAndDeleted(
+                dtoRequest.getStreet(), dtoRequest.getCity(), userName, true)
+                .orElseGet(() -> {
+                    Address newAddress = new Address();
+                    newAddress.setStreet(dtoRequest.getStreet());
+                    newAddress.setCity(dtoRequest.getCity());
+                    newAddress.setCountry(dtoRequest.getCountry());
+                    newAddress.setUser(foundUser);
+                    return newAddress;
+                });
         address.setDeleted(false);
-        address.setUser(foundUser);
         return addressRepository.save(address);
     }
     /**
@@ -89,17 +102,21 @@ public class AddressServiceImpl implements AddressService {
      * This function updates address by id and userName, with the userName, id as the input parameter.
      * @param userName
      * @param id
-     * @param DTORequest
+     * @param dtoRequest
      * @return address by id and userName if the update process is successful
      * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if address does not exist in the database
      * @throws AppException(ResponseCode.ACCESS_DENIED) if the username does not match
      * the username retrieved from the address's user
-     * @throws AppException(ResponseCode.DATA_ALREADY_DELETED) if address already been deleted in the database
+     * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
+     * if address already been deleted in the database
+     * @throws AppException(ResponseCode.IMMUTABLE) if street, city and country remains unchanged
+     * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS)
+     * if street, city, userName and deleted exist in the database
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @Override
-    public Address updateByIdAndUserName(String userName, Long id, AddressDTORequest DTORequest) {
+    public Address updateByIdAndUserName(String userName, Long id, AddressDTORequest dtoRequest) {
         Address foundAddress = findById(id);
         if (!foundAddress.getUser().getUserName().equals(userName)) {
             throw new AppException(ResponseCode.ACCESS_DENIED);
@@ -107,9 +124,21 @@ public class AddressServiceImpl implements AddressService {
         if (Boolean.TRUE.equals(foundAddress.getDeleted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
         }
-        foundAddress.setStreet(DTORequest.getStreet());
-        foundAddress.setCity(DTORequest.getCity());
-        foundAddress.setCountry(DTORequest.getCountry());
+        if (Objects.equals(foundAddress.getStreet(), dtoRequest.getStreet()) &&
+                Objects.equals(foundAddress.getCity(), dtoRequest.getCity()) &&
+                Objects.equals(foundAddress.getCountry(), dtoRequest.getCountry())) {
+            throw new AppException(ResponseCode.IMMUTABLE);
+        }
+        if (!Objects.equals(foundAddress.getStreet(), dtoRequest.getStreet()) ||
+                !Objects.equals(foundAddress.getCity(), dtoRequest.getCity())) {
+            if (addressRepository.existsByStreetAndCityAndUser_UserNameAndDeleted(
+                    dtoRequest.getStreet(), dtoRequest.getCity(), userName, false)) {
+                throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
+            }
+        }
+        foundAddress.setStreet(dtoRequest.getStreet());
+        foundAddress.setCity(dtoRequest.getCity());
+        foundAddress.setCountry(dtoRequest.getCountry());
         return addressRepository.save(foundAddress);
     }
 

@@ -6,6 +6,7 @@ import com.r2s.R2Sshop.DTO.AuthenDTOResponse;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.repository.UserRepository;
 import com.r2s.R2Sshop.utils.JwtUtils;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,12 +31,13 @@ public class AuthenController extends BaseRestController {
      * Then returns a token and a message.
      * @param authen
      * @return token and "Successful signin!".
-     * @throws AppException(ResponseCode.FAILURE_Signin) if response is empty(authentication failed)
+     * @throws AppException(ResponseCode.FAILURE_SIGNIN) if response is empty(authentication failed)
+     * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as userName and password are missing
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PostMapping
-    public ResponseEntity<?> signin(@RequestBody AuthenDTORequest authen) {
+    public ResponseEntity<?> signin(@Valid @RequestBody AuthenDTORequest authen) {
         this.authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(authen.getUserName(), authen.getPassword()));
         String token = JwtUtils.generateToken(authen.getUserName());

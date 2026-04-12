@@ -5,6 +5,7 @@ import com.r2s.R2Sshop.DTO.ProductDTOResponse;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Product;
 import com.r2s.R2Sshop.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -80,21 +81,19 @@ public class ProductController extends BaseRestController{
      * @param categoryId
      * @param dtoRequest
      * @return information of product if the add process is successful
-     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
-     * name, categoryId are missing
+     * @throws AppException(ResponseCode.MISSING_PARAM) if categoryId is empty
+     * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
+     * name is missing
      * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> addByCategoryId(@RequestParam Long categoryId,
-                                             @RequestBody ProductDTORequest dtoRequest) {
+                                             @Valid @RequestBody ProductDTORequest dtoRequest) {
         if (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
-        }
-        if (ObjectUtils.isEmpty(dtoRequest.getName())) {
-            throw new AppException(ResponseCode.MISSING_PARAM);
         }
         Product insertedProduct = productService.addByCategoryId(categoryId, dtoRequest);
         if (ObjectUtils.isEmpty(insertedProduct)) {
@@ -110,23 +109,21 @@ public class ProductController extends BaseRestController{
      * @param categoryId
      * @param dtoRequest
      * @return product information by id if it is updated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest or id is empty
-     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
-     * name are missing
+     * @throws AppException(ResponseCode.MISSING_PARAM) if categoryId or id are empty
+     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
+     * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
+     * name is missing
      * @throws AppException(ResponseCode.FAILURE_PRODUCT_UPDATE) if it is updated fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     public ResponseEntity<?> updateById(@RequestParam Long id,
                                         @RequestParam Long categoryId,
-                                        @RequestBody ProductDTORequest dtoRequest) {
+                                        @Valid @RequestBody ProductDTORequest dtoRequest) {
         if (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
-        }
-        if (ObjectUtils.isEmpty(dtoRequest.getName())) {
-            throw new AppException(ResponseCode.MISSING_PARAM);
         }
         Product updatedProduct = productService.updateById(id, categoryId, dtoRequest);
         if (ObjectUtils.isEmpty(updatedProduct)) {
@@ -140,7 +137,7 @@ public class ProductController extends BaseRestController{
      * This function is used to delete product by id.
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if id is empty
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_PRODUCT_DELETE) if it is deleted fails
      * @author HoangVu
      * @since 1.0
@@ -160,7 +157,7 @@ public class ProductController extends BaseRestController{
      * This function is used to reactivated product by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if id is empty
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_PRODUCT_REACTIVATE) if it is deleted fails
      * @author HoangVu
      * @since 1.1

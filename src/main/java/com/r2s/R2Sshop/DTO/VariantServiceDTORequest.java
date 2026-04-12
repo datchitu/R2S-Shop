@@ -20,7 +20,7 @@ public class VariantServiceDTORequest {
     private String color;
     @NotBlank(message = "ModelYear cannot be empty !!!")
     private String modelYear;
-    @Min(value = 1, message = "Quantity must be at least 1 !!!")
     @NotNull(message = "Quantity cannot be empty !!!")
+    @Min(value = 1, message = "Quantity must be at least 1 !!!")
     private Integer quantity;
 }

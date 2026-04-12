@@ -5,6 +5,7 @@ import com.r2s.R2Sshop.DTO.AddressDTOResponse;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Address;
 import com.r2s.R2Sshop.service.AddressService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,22 +59,17 @@ public class AddressController extends BaseRestController{
      * @param dtoRequest
      * @return address information with userName if it is added successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
-     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * street, city or country are missing
      * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PostMapping
-    public ResponseEntity<?> addWithUserName(@RequestBody AddressDTORequest dtoRequest,
+    public ResponseEntity<?> addWithUserName(@Valid @RequestBody AddressDTORequest dtoRequest,
                                              @AuthenticationPrincipal UserDetails userDetails) {
         if (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
-        }
-        if (ObjectUtils.isEmpty(dtoRequest.getStreet())
-                || ObjectUtils.isEmpty(dtoRequest.getCity())
-                || ObjectUtils.isEmpty(dtoRequest.getCountry())) {
-            throw new AppException(ResponseCode.MISSING_PARAM);
         }
         String userName = userDetails.getUsername();
         Address insertedAddress = addressService.addWithUser(userName, dtoRequest);
@@ -89,24 +85,20 @@ public class AddressController extends BaseRestController{
      * @param id
      * @param dtoRequest
      * @return address information with userName if it is updated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest or id is empty
-     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
+     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
+     * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * street, city or country are missing
      * @throws AppException(ResponseCode.FAILURE_ADDRESS_UPDATE) if it is updated fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PutMapping
     public ResponseEntity<?> updateByIdAndUserName(@RequestParam Long id,
-                                 @RequestBody AddressDTORequest dtoRequest,
+                                 @Valid @RequestBody AddressDTORequest dtoRequest,
                                  @AuthenticationPrincipal UserDetails userDetails) {
         if (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
-        }
-        if (ObjectUtils.isEmpty(dtoRequest.getStreet())
-                || ObjectUtils.isEmpty(dtoRequest.getCity())
-                || ObjectUtils.isEmpty(dtoRequest.getCountry())) {
-            throw new AppException(ResponseCode.MISSING_PARAM);
         }
         String userName = userDetails.getUsername();
         Address updatedAddress = addressService.updateByIdAndUserName(userName, id, dtoRequest);
@@ -121,7 +113,7 @@ public class AddressController extends BaseRestController{
      * This function is used to delete address by id and userName.
      * @param id
      * @return address information with id and userName if it is deleted successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if id is empty
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_ADDRESS_DELETE) if it is deleted fails
      * @author HoangVu
      * @since 1.2
@@ -142,7 +134,7 @@ public class AddressController extends BaseRestController{
      * This function is used to reactivated address by id.
      * @param id
      * @return address information with id and userName if it is reactivated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if id is empty
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_ADDRESS_REACTIVATE) if it is reactivated fails
      * @author HoangVu
      * @since 1.1

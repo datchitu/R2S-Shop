@@ -15,4 +15,8 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
             "AND (:deleted IS NULL OR a.deleted = :deleted)")
     List<Address> findByUserNameAndDeleted(@Param("userName") String userName,
                                            @Param("deleted") Boolean deleted);
+    boolean existsByStreetAndCityAndUser_UserNameAndDeleted(String street, String city,
+                                                            String userName, Boolean deleted);
+    Optional<Address> findByStreetAndCityAndUser_UserNameAndDeleted(String street, String city,
+                                                                    String userName, Boolean deleted);
 }

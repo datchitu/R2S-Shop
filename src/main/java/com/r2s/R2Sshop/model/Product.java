@@ -17,8 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "products", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"name", "category_id"})
-})
+        @UniqueConstraint(columnNames = {"name", "category_id", "deleted"})})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

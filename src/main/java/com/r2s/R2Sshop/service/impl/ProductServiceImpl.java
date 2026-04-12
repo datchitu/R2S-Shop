@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
@@ -101,20 +103,31 @@ public class ProductServiceImpl implements ProductService {
      * @param dtoRequest
      * @return product by id if the update process is successful
      * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
+     * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
+     * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
+     * if product already been deleted in the database
+     * @throws AppException(ResponseCode.IMMUTABLE) if the name remains unchanged
      * @throws AppException(ResponseCode.PRODUCT_ALREADY_EXISTS) if product already been deleted in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public Product updateById(Long id, Long categoryId, ProductDTORequest dtoRequest) {
         Category foundCategory = categoryService.findById(categoryId);
+        Product foundProduct = findById(id);
+        if (Boolean.TRUE.equals(foundProduct.getDeleted())) {
+            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+        }
+        if (Objects.equals(foundProduct.getName(), dtoRequest.getName()) &&
+            Objects.equals(foundProduct.getCategory(), foundCategory)){
+            throw new AppException(ResponseCode.IMMUTABLE);
+        }
         if (productRepository.existsByNameAndCategoryId(dtoRequest.getName(), categoryId)) {
             throw new AppException(ResponseCode.PRODUCT_ALREADY_EXISTS);
         }
-        Product product = findById(id);
-        product.setName(dtoRequest.getName());
-        product.setCategory(foundCategory);
-        return productRepository.save(product);
+        foundProduct.setName(dtoRequest.getName());
+        foundProduct.setCategory(foundCategory);
+        return productRepository.save(foundProduct);
     }
     /**
      * Delete product by id.

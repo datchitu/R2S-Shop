@@ -1,5 +1,6 @@
 package com.r2s.R2Sshop.DTO;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,22 +11,10 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressDTORequest {
+    @NotBlank(message = "Street cannot be empty !!!")
     private String street;
+    @NotBlank(message = "City cannot be empty !!!")
     private String city;
+    @NotBlank(message = "Country cannot be empty !!!")
     private String country;
-
-    /**
-     * Customize the input address information as a JSON file.
-     * <p>
-     * This function customizes the input address information, including
-     * Street, city and country as a JSON file.
-     * @param address
-     * @author HoangVu
-     * @since 1.0
-     */
-    public AddressDTORequest(Map<String, Object> address) {
-        this.street = address.get("street").toString();
-        this.city = address.get("city").toString();
-        this.country = address.get("country").toString();
-    }
 }

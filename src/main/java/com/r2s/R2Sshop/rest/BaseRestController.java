@@ -46,12 +46,13 @@ public class BaseRestController{
      * @param responseCode
      * @return buildErrorResponse(responseCode)
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
-    private ResponseEntity<ErrorResponse> buildErrorResponse(ResponseCode responseCode) {
+    private ResponseEntity<ErrorResponse> buildErrorResponse(ResponseCode responseCode, Object error) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(responseCode.getCode())
                 .message(responseCode.getMessage())
+                .error(error)
                 .timestamp(ts)
                 .build();
         return new ResponseEntity<>(errorResponse, responseCode.getHttpStatus());
@@ -66,12 +67,12 @@ public class BaseRestController{
      * @param appException
      * @return buildErrorResponse(responseCode)
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ErrorResponse> exceptionHandler(AppException appException) {
         ResponseCode responseCode = appException.getResponseCode();
-        return buildErrorResponse(responseCode);
+        return buildErrorResponse(responseCode, null);
     }
     /**
      * Handle type mismatch.
@@ -79,17 +80,16 @@ public class BaseRestController{
      * This function handles type mismatch.
      * Specifically, it handles situations where the parameters passed in do not match the required data types.
      * code, message and timestamp if an exception occurs.
-     * @param methodArTypeMismkEx
+     * @param methodArTypeMismchEx
      * @return buildErrorResponse(responseCode)
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<?> handleTypeMismatch(MethodArgumentTypeMismatchException methodArTypeMismkEx) {
-        String parameterName = methodArTypeMismkEx.getName();
+    public ResponseEntity<?> handleTypeMismatch(MethodArgumentTypeMismatchException methodArTypeMismchEx) {
+        String parameterName = methodArTypeMismchEx.getName();
         ResponseCode responseCode = (ResponseCode.INVALID_PARAM);
-//        return new ResponseEntity<>("Invalid param '" + parameterName + "'!", responseCode.getHttpStatus());
-        return buildErrorResponse(responseCode);
+        return buildErrorResponse(responseCode, null);
     }
     /**
      * Configure BadCredentialsException with Builder.
@@ -100,11 +100,11 @@ public class BaseRestController{
      * @param badCredentialsEx
      * @return buildErrorResponse(ResponseCode.FAILURE_LOGIN)
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentials(BadCredentialsException badCredentialsEx) {
-        return buildErrorResponse(ResponseCode.FAILURE_SIGNIN);
+        return buildErrorResponse(ResponseCode.FAILURE_SIGNIN, null);
     }
     /**
      * Configure AuthenticationException with Builder.
@@ -115,11 +115,11 @@ public class BaseRestController{
      * @param authenticationEx
      * @return buildErrorResponse(ResponseCode.FAILURE_LOGIN)
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handelAuthenticationException(AuthenticationException authenticationEx) {
-        return buildErrorResponse(ResponseCode.AUTHENTICATION_ERROR);
+        return buildErrorResponse(ResponseCode.AUTHENTICATION_ERROR, null);
     }
     /**
      * Configure MissingServletRequestParameterException with Builder.
@@ -131,11 +131,11 @@ public class BaseRestController{
      * @param missingParamEx
      * @return buildErrorResponse(ResponseCode.MISSING_PARAM)
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingParams(MissingServletRequestParameterException missingParamEx) {
-        return buildErrorResponse(ResponseCode.MISSING_PARAM);
+        return buildErrorResponse(ResponseCode.MISSING_PARAM, null);
     }
     /**
      * Configure MethodArgumentNotValidException with Builder.
@@ -146,14 +146,14 @@ public class BaseRestController{
      * @param mthdAgmtNtVldEx
      * @return message if any information is missing
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException mthdAgmtNtVldEx) {
-        Map<String, Object> errors = new HashMap<>();
+        Map<String, Object> fieldErrors = new HashMap<>();
         mthdAgmtNtVldEx.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage()));
-        return ResponseEntity.badRequest().body(errors);
+                fieldErrors.put(error.getField(), error.getDefaultMessage()));
+        return buildErrorResponse(ResponseCode.INVALID_VALUE, fieldErrors);
     }
 }
 

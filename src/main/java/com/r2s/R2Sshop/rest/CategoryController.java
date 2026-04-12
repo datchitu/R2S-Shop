@@ -5,6 +5,7 @@ import com.r2s.R2Sshop.DTO.CategoryDTOResponse;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Category;
 import com.r2s.R2Sshop.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,20 +65,17 @@ public class CategoryController extends BaseRestController{
      * @param dtoRequest
      * @return category information if it is added successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
-     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * name are missing
      * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody CategoryDTORequest dtoRequest) {
+    public ResponseEntity<?> add(@Valid @RequestBody CategoryDTORequest dtoRequest) {
         if  (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
-        }
-        if (ObjectUtils.isEmpty(dtoRequest.getName())) {
-            throw new AppException(ResponseCode.MISSING_PARAM);
         }
         Category insertedCategory = categoryService.add(dtoRequest);
         if (ObjectUtils.isEmpty(insertedCategory)) {
@@ -93,22 +91,20 @@ public class CategoryController extends BaseRestController{
      * @param id
      * @param dtoRequest
      * @return category information by id if it is updated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest or id is empty
-     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
+     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
+     * @throws AppException(ResponseCode.INVALID_VALUE) if the passed-in parameter values such as
      * name are missing
      * @throws AppException(ResponseCode.FAILURE_CATEGORY_UPDATE) if it is updated fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     public ResponseEntity<?> updateById(@RequestParam Long id,
-                                        @RequestBody CategoryDTORequest dtoRequest) {
+                                        @Valid @RequestBody CategoryDTORequest dtoRequest) {
         if (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
-        }
-        if (ObjectUtils.isEmpty(dtoRequest.getName())) {
-            throw new AppException(ResponseCode.MISSING_PARAM);
         }
         Category updatedCategory = categoryService.updateById(id, dtoRequest);
         if (ObjectUtils.isEmpty(updatedCategory)) {
@@ -122,7 +118,7 @@ public class CategoryController extends BaseRestController{
      * This function is used to delete category by id.
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if id is empty
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_CATEGORY_DELETE) if it is deleted fails
      * @author HoangVu
      * @since 1.1
@@ -143,7 +139,7 @@ public class CategoryController extends BaseRestController{
      * This function is used to reactivated address by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if id is empty
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_CATEGORY_REACTIVATE) if it is deleted fails
      * @author HoangVu
      * @since 1.0

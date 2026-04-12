@@ -83,8 +83,12 @@ public class VariantProductController extends BaseRestController {
      * @param productId
      * @param dtoRequest
      * @return information of variant product if the add process is successful
+     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * productId is missing
      * @throws AppException(ResponseCode.NO_PARAM) if the passed-in parameter values such as
-     * productId and dtoRequest are missing
+     * dtoRequest is missing
+     * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
+     * name, price, color, modelYear and quantity are missing
      * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
      * @author HoangVu
      * @since 1.0
@@ -110,8 +114,10 @@ public class VariantProductController extends BaseRestController {
      * @param id
      * @param productId
      * @param dtoRequest
+     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * id and productId are missing
      * @return variant product information by id if it is updated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if id, productId, dtoRequest or id is empty
+     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequestis empty
      * @throws AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_UPDATE) if it is updated fails
      * @author HoangVu
      * @since 1.0
@@ -136,7 +142,7 @@ public class VariantProductController extends BaseRestController {
      * This function is used to delete variant product by id.
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if id is empty
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_DELETE) if it is deleted fails
      * @author HoangVu
      * @since 1.0
@@ -156,7 +162,7 @@ public class VariantProductController extends BaseRestController {
      * This function is used to reactivated variant product by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if id is empty
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_REACTIVATE) if it is deleted fails
      * @author HoangVu
      * @since 1.1

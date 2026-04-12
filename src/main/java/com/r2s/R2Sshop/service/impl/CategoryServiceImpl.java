@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -86,14 +87,21 @@ public class CategoryServiceImpl implements CategoryService {
      * @return Category by id if the update process is successful
      * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED) if category already been deleted in the database
+     * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if category be found by categoryName
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public Category updateById(Long id, CategoryDTORequest dtoRequest) {
         Category foundCategory = findById(id);
         if (Boolean.TRUE.equals(foundCategory.getDeleted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+        }
+        if (Objects.equals(foundCategory.getName(), dtoRequest.getName())) {
+            throw new AppException(ResponseCode.IMMUTABLE);
+        }
+        if (categoryRepository.existsByName(dtoRequest.getName())) {
+            throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
         }
         foundCategory.setName(dtoRequest.getName());
         return this.categoryRepository.save(foundCategory);

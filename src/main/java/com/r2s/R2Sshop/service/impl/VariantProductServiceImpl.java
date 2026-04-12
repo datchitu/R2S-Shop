@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class VariantProductServiceImpl implements VariantProductService {
     @Autowired
@@ -112,15 +114,37 @@ public class VariantProductServiceImpl implements VariantProductService {
      * @param dtoRequest
      * @return variant product by id if the update process is successful
      * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
+     * @throws AppException(ResponseCode.VARIANT_PRODUCT_NOT_FOUND)
+     * if variant product does not exist in the database
+     * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
+     * if variant product already been deleted in the database
+     * @throws AppException(ResponseCode.IMMUTABLE)
+     * if the name, price, color, modelYear, quantity and product remains unchanged
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_EXISTS)
      * if variant product already been deleted in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public VariantProduct updateById(Long id, Long productId, VariantServiceDTORequest dtoRequest) {
         Product foundProduct = productService.findById(productId);
         VariantProduct foundVariantProduct = findById(id);
+        if (Boolean.TRUE.equals(foundVariantProduct.getDeleted())) {
+            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+        }
+        if (Objects.equals(foundVariantProduct.getName(), dtoRequest.getName()) &&
+            Objects.equals(foundVariantProduct.getPrice(), dtoRequest.getPrice()) &&
+            Objects.equals(foundVariantProduct.getColor(), dtoRequest.getColor()) &&
+            Objects.equals(foundVariantProduct.getModelYear(), dtoRequest.getModelYear()) &&
+            Objects.equals(foundVariantProduct.getQuantity(), dtoRequest.getQuantity()) &&
+            Objects.equals(foundVariantProduct.getProduct(), foundProduct)) {
+            throw new AppException(ResponseCode.IMMUTABLE);
+        }
+        if (!Objects.equals(foundVariantProduct.getName(), dtoRequest.getName())) {
+            if (variantProductRepository.existsByName(dtoRequest.getName())) {
+                throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_EXISTS);
+            }
+        }
         Double price = dtoRequest.getPrice();
         Integer quantity = dtoRequest.getQuantity();
         foundVariantProduct.setName(dtoRequest.getName());
