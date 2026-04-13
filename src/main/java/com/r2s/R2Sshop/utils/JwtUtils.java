@@ -36,7 +36,7 @@ public class JwtUtils {
 
     private static String createToken(Map<String, Object> claims, String email) {
         long currentTime = System.currentTimeMillis();
-        long expiredTimeInMillis = 60 * 60 * 1_000L; // 60m * 60s * 1000ms
+        long expiredTimeInMillis = 10 * 60 * 1_000L; // 10m * 60s * 1000ms
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)

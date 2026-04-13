@@ -5,6 +5,7 @@ import com.r2s.R2Sshop.DTO.UserUpdateDTORequest;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Cart;
 import com.r2s.R2Sshop.model.User;
+import com.r2s.R2Sshop.model.VariantProduct;
 import com.r2s.R2Sshop.repository.RoleRepository;
 import com.r2s.R2Sshop.repository.UserRepository;
 import com.r2s.R2Sshop.rest.AppException;
@@ -76,6 +77,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUserName(String userName) {
         return userRepository.findByUserName(userName)
+                .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
+    }
+    /**
+     * Find by id.
+     * <p>
+     * This function is used find user by id.
+     * @param id
+     * @return information of user if user is found
+     * @throws AppException(ResponseCode.USER_NOT_FOUND) if the User cannot be found by id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
     }
 
@@ -155,16 +171,15 @@ public class UserServiceImpl implements UserService {
      * This function charges user password by userName, with the userName, newPassword as the input parameter.
      * @param userName
      * @param newPassword
-     * @return User by userName if the charge process is successful
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not exist in the database
      * @throws AppException(ResponseCode.NOT_MATCH_PASSWORD) if old password does not match in the database
      * @throws AppException(ResponseCode.DUPLICATE_PASSWORD) if new password is the same as the current password
      * in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
-    public User chargePassword(String userName, String oldPassword, String newPassword) {
+    public void chargePassword(String userName, String oldPassword, String newPassword) {
         User foundUser = findByUserName(userName);
         if (!passwordEncoder.matches(oldPassword, foundUser.getPassword())) {
             throw new AppException(ResponseCode.NOT_MATCH_PASSWORD);
@@ -173,6 +188,90 @@ public class UserServiceImpl implements UserService {
             throw new AppException(ResponseCode.DUPLICATE_PASSWORD);
         }
         foundUser.setPassword(passwordEncoder.encode(newPassword));
-        return userRepository.save(foundUser);
+        userRepository.save(foundUser);
+    }
+    /**
+     * Delete user by id.
+     * <p>
+     * This function delete user by id, with the id as the input parameter.
+     * @param id
+     * @throws AppException(ResponseCode.USER_NOT_FOUND)
+     * if user does not exist in the database
+     * @throws AppException(ResponseCode.USER_ALREADY_DELETED)
+     * if user already been deleted in the database
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public void deleteById(Long id) {
+        User foundUser = findById(id);
+        if (Boolean.TRUE.equals(foundUser.getDeleted())) {
+            throw new AppException(ResponseCode.USER_ALREADY_DELETED);
+        }
+        foundUser.setDeleted(true);
+        userRepository.save(foundUser);
+    }
+    /**
+     * Reactivate user by id.
+     * <p>
+     * This function reactivate user by id, with the id as the input parameter.
+     * @param id
+     * @throws AppException(ResponseCode.USER_NOT_FOUND)
+     * if user does not exist in the database
+     * @throws AppException(ResponseCode.USER_ALREADY_REACTIVATED)
+     * if user already been reactivated in the database
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public void reactivateById(Long id) {
+        User foundUser = findById(id);
+        if (Boolean.FALSE.equals(foundUser.getDeleted())) {
+            throw new AppException(ResponseCode.USER_ALREADY_REACTIVATED);
+        }
+        foundUser.setDeleted(false);
+        userRepository.save(foundUser);
+    }
+    /**
+     * Block user by id.
+     * <p>
+     * This function block user by id, with the id as the input parameter.
+     * @param id
+     * @throws AppException(ResponseCode.USER_NOT_FOUND)
+     * if user does not exist in the database
+     * @throws AppException(ResponseCode.USER_ALREADY_BLOCKED)
+     * if user already been blocked in the database
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public void blockById(Long id) {
+        User foundUser = findById(id);
+        if (Boolean.TRUE.equals(foundUser.getDeleted())) {
+            throw new AppException(ResponseCode.USER_ALREADY_BLOCKED);
+        }
+        foundUser.setStatus(true);
+        userRepository.save(foundUser);
+    }
+    /**
+     * Unblock user by id.
+     * <p>
+     * This function unblock user by id, with the id as the input parameter.
+     * @param id
+     * @throws AppException(ResponseCode.USER_NOT_FOUND)
+     * if user does not exist in the database
+     * @throws AppException(ResponseCode.USER_ALREADY_UNBLOCKED)
+     * if user already been unblocked in the database
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public void unblockById(Long id) {
+        User foundUser = findById(id);
+        if (Boolean.FALSE.equals(foundUser.getStatus())) {
+            throw new AppException(ResponseCode.USER_ALREADY_UNBLOCKED);
+        }
+        foundUser.setStatus(false);
+        userRepository.save(foundUser);
     }
 }

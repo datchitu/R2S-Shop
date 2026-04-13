@@ -140,15 +140,12 @@ public class ProductController extends BaseRestController{
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_PRODUCT_DELETE) if it is deleted fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete-by-id")
     public ResponseEntity<?> deleteById(@RequestParam Long id) {
-        Product deletedProduct = productService.deleteById(id);
-        if (ObjectUtils.isEmpty(deletedProduct)) {
-            throw new AppException(ResponseCode.FAILURE_PRODUCT_DELETE);
-        }
+        productService.deleteById(id);
         return super.success("Deleted successfully");
     }
     /**
@@ -160,15 +157,12 @@ public class ProductController extends BaseRestController{
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_PRODUCT_REACTIVATE) if it is deleted fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/reactivate-by-id")
     public ResponseEntity<?> reactivateById(@RequestParam Long id) {
-        Product reactivateProduct = productService.reactivateById(id);
-        if (ObjectUtils.isEmpty(reactivateProduct)) {
-            throw new AppException(ResponseCode.FAILURE_PRODUCT_REACTIVATE);
-        }
+        productService.reactivateById(id);
         return super.success("Reactivated successfully");
     }
 }

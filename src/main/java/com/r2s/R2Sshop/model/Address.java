@@ -22,11 +22,21 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String street;
 
+    @Column(nullable = false)
     private String city;
 
+    @Column(nullable = false)
     private String country;
+
+    private String receiverName;
+
+    private String phoneNumber;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean defaulted;
 
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted;

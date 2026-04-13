@@ -17,4 +17,8 @@ public class AddressDTORequest {
     private String city;
     @NotBlank(message = "Country cannot be empty !!!")
     private String country;
+    @NotBlank(message = "Receiver name cannot be empty !!!")
+    private String receiverName;
+    @NotBlank(message = "phone number cannot be empty !!!")
+    private String phoneNumber;
 }

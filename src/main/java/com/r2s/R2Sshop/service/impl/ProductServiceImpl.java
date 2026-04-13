@@ -134,41 +134,39 @@ public class ProductServiceImpl implements ProductService {
      * <p>
      * This function delete product by id, with the id as the input parameter.
      * @param id
-     * @return product by id if the delete process is successful
      * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
      * if product already been deleted in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
-    public Product deleteById(Long id) {
+    public void deleteById(Long id) {
         Product foundProduct = findById(id);
         if (Boolean.TRUE.equals(foundProduct.getDeleted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
         }
         foundProduct.setDeleted(true);
-        return productRepository.save(foundProduct);
+        productRepository.save(foundProduct);
     }
     /**
      * Reactivate product by id.
      * <p>
      * This function reactivate product by id, with the id as the input parameter.
      * @param id
-     * @return product by id if the reactivate process is successful
      * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_REACTIVATED)
      * if product already been reactivated in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
-    public Product reactivateById(Long id) {
+    public void reactivateById(Long id) {
         Product foundProduct = findById(id);
         if (Boolean.FALSE.equals(foundProduct.getDeleted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_REACTIVATED);
         }
         foundProduct.setDeleted(false);
-        return productRepository.save(foundProduct);
+        productRepository.save(foundProduct);
     }
 }

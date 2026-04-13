@@ -160,43 +160,41 @@ public class VariantProductServiceImpl implements VariantProductService {
      * <p>
      * This function delete variant product by id, with the id as the input parameter.
      * @param id
-     * @return variant product by id if the delete process is successful
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_NOT_FOUND)
      * if variant product does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
      * if variant product already been deleted in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
-    public VariantProduct deleteById(Long id) {
+    public void deleteById(Long id) {
         VariantProduct foundVariantProduct = findById(id);
         if (Boolean.TRUE.equals(foundVariantProduct.getDeleted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
         }
         foundVariantProduct.setDeleted(true);
-        return variantProductRepository.save(foundVariantProduct);
+        variantProductRepository.save(foundVariantProduct);
     }
     /**
      * Reactivate variant product by id.
      * <p>
      * This function reactivate variant product by id, with the id as the input parameter.
      * @param id
-     * @return variant product by id if the reactivate process is successful
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_NOT_FOUND)
      * if variant product does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_REACTIVATED)
      * if variant product already been reactivated in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
-    public VariantProduct reactivateById(Long id) {
+    public void reactivateById(Long id) {
         VariantProduct foundVariantProduct = findById(id);
         if (Boolean.FALSE.equals(foundVariantProduct.getDeleted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_REACTIVATED);
         }
         foundVariantProduct.setDeleted(false);
-        return variantProductRepository.save(foundVariantProduct);
+        variantProductRepository.save(foundVariantProduct);
     }
 }

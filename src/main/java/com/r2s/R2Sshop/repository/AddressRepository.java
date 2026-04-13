@@ -19,4 +19,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
                                                             String userName, Boolean deleted);
     Optional<Address> findByStreetAndCityAndUser_UserNameAndDeleted(String street, String city,
                                                                     String userName, Boolean deleted);
+    boolean existsByDefaultedAndUser_UserName(Boolean defaulted, String userName);
+    Optional<Address> findByDefaultedAndUser_UserName(Boolean defaulted, String userName);
+    Optional<Address> findFirstByUser_UserNameAndDeletedFalseOrderByCreatedAtDesc(String userName);
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -60,10 +61,9 @@ public class AddressController extends BaseRestController{
      * @return address information with userName if it is added successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
-     * street, city or country are missing
-     * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
+     * street, city, country, receiverName or phoneNumber are missing
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PostMapping
     public ResponseEntity<?> addWithUserName(@Valid @RequestBody AddressDTORequest dtoRequest,
@@ -73,9 +73,6 @@ public class AddressController extends BaseRestController{
         }
         String userName = userDetails.getUsername();
         Address insertedAddress = addressService.addWithUser(userName, dtoRequest);
-        if (ObjectUtils.isEmpty(insertedAddress)) {
-            throw new AppException(ResponseCode.INSERT_FAILURE);
-        }
         return super.success(new AddressDTOResponse(insertedAddress));
     }
     /**
@@ -88,11 +85,11 @@ public class AddressController extends BaseRestController{
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
-     * street, city or country are missing
-     * @throws AppException(ResponseCode.FAILURE_ADDRESS_UPDATE) if it is updated fails
+     * street, city, country, receiverName or phoneNumber are missing
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
+    @PreAuthorize("hasRole('USER')")
     @PutMapping
     public ResponseEntity<?> updateByIdAndUserName(@RequestParam Long id,
                                  @Valid @RequestBody AddressDTORequest dtoRequest,
@@ -102,9 +99,6 @@ public class AddressController extends BaseRestController{
         }
         String userName = userDetails.getUsername();
         Address updatedAddress = addressService.updateByIdAndUserName(userName, id, dtoRequest);
-        if (ObjectUtils.isEmpty(updatedAddress)) {
-            throw new AppException(ResponseCode.FAILURE_ADDRESS_UPDATE);
-        }
         return super.success(new AddressDTOResponse(updatedAddress));
     }
     /**
@@ -112,20 +106,18 @@ public class AddressController extends BaseRestController{
      * <p>
      * This function is used to delete address by id and userName.
      * @param id
-     * @return address information with id and userName if it is deleted successfully.
+     * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_ADDRESS_DELETE) if it is deleted fails
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/delete-by-id-and-user-name")
     public ResponseEntity<?> deleteByIdAndUserName(@RequestParam Long id,
                                                    @AuthenticationPrincipal UserDetails userDetails) {
         String userName = userDetails.getUsername();
-        Address deletedAddress = addressService.deleteByIdAndUserName(userName, id);
-        if (ObjectUtils.isEmpty(deletedAddress)) {
-            throw new AppException(ResponseCode.FAILURE_ADDRESS_DELETE);
-        }
+        addressService.deleteByIdAndUserName(userName, id);
         return super.success("Deleted successfully");
     }
     /**
@@ -133,19 +125,35 @@ public class AddressController extends BaseRestController{
      * <p>
      * This function is used to reactivated address by id.
      * @param id
-     * @return address information with id and userName if it is reactivated successfully.
+     * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_ADDRESS_REACTIVATE) if it is reactivated fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/reactivate-by-id")
     public ResponseEntity<?> reactivateByIdAndUserName(@RequestParam Long id) {
-        Address reactivateAddress = addressService.reactivateById(id);
-        if (ObjectUtils.isEmpty(reactivateAddress)) {
-            throw new AppException(ResponseCode.FAILURE_ADDRESS_REACTIVATE);
-        }
+        addressService.reactivateById(id);
         return super.success("Reactivated successfully");
+    }
+    /**
+     * Set default address by id and userName.
+     * <p>
+     * This function Sets default address by id and userName, with the userName, id as the input parameter.
+     * @param id
+     * @return "Set default successfully" if it is deleted successfully.
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
+     * @throws AppException(ResponseCode.FAILURE_ADDRESS_DELETE) if it is deleted fails
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/set-default-by-id")
+    public ResponseEntity<?> setDefaultByIdAndUserName(@RequestParam Long id,
+                                                   @AuthenticationPrincipal UserDetails userDetails) {
+        String userName = userDetails.getUsername();
+        addressService.setDefault(userName, id);
+        return super.success("Set default successfully");
     }
 }

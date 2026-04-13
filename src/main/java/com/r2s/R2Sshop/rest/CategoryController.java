@@ -121,15 +121,12 @@ public class CategoryController extends BaseRestController{
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_CATEGORY_DELETE) if it is deleted fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete-by-id")
     public ResponseEntity<?> deleteById(@RequestParam Long id) {
-        Category deletedCategory = categoryService.deleteById(id);
-        if (ObjectUtils.isEmpty(deletedCategory)) {
-            throw new AppException(ResponseCode.FAILURE_CATEGORY_DELETE);
-        }
+        categoryService.deleteById(id);
         return super.success("Deleted successfully");
     }
 
@@ -142,15 +139,12 @@ public class CategoryController extends BaseRestController{
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @throws AppException(ResponseCode.FAILURE_CATEGORY_REACTIVATE) if it is deleted fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/reactivate-by-id")
     public ResponseEntity<?> reactivateById(@RequestParam Long id) {
-        Category reactivatedCategory = categoryService.reactivateById(id);
-        if (ObjectUtils.isEmpty(reactivatedCategory)) {
-            throw new AppException(ResponseCode.FAILURE_CATEGORY_REACTIVATE);
-        }
+        categoryService.reactivateById(id);
         return super.success("Reactivated successfully");
     }
 }

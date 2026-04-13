@@ -106,7 +106,7 @@ public class UserController extends BaseRestController{
      * firstName, lastName, email, phone
      * @throws AppException(ResponseCode.FAILURE_USER_UPDATE) if update unsuccessful
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @PutMapping
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
@@ -115,9 +115,6 @@ public class UserController extends BaseRestController{
             throw new AppException(ResponseCode.NO_PARAM);
         }
         User updateUser = userService.updateUser(userDetails.getUsername(), userDTORequest);
-        if (ObjectUtils.isEmpty(updateUser)) {
-            throw new AppException(ResponseCode.FAILURE_USER_UPDATE);
-        }
         return super.success(new UserDTOResponse(updateUser));
     }
     /**
@@ -130,7 +127,7 @@ public class UserController extends BaseRestController{
      * oldPassword, newPassword
      * @throws AppException(ResponseCode.FAILURE_PASSWORD_CHARGE) if charge failure
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @PutMapping("/change-password")
     public ResponseEntity<?> chargePassword(@AuthenticationPrincipal UserDetails userDetails,
@@ -138,11 +135,64 @@ public class UserController extends BaseRestController{
         if (ObjectUtils.isEmpty(password)) {
             throw new AppException(ResponseCode.NO_PARAM);
         }
-        User chargePasswordUser = userService.chargePassword(userDetails.getUsername(),
+        userService.chargePassword(userDetails.getUsername(),
                 password.getOldPassword(), password.getNewPassword());
-        if (ObjectUtils.isEmpty(chargePasswordUser)) {
-            throw new AppException(ResponseCode.FAILURE_PASSWORD_CHARGE);
-        }
         return super.success("Charged successfully");
+    }
+    /**
+     * Delete user by id.
+     * <p>
+     * This function delete user by id, with the id as the input parameter.
+     * @param id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @DeleteMapping("/delete-by-id")
+    public ResponseEntity<?> deleteById(@RequestParam Long id) {
+        userService.deleteById(id);
+        return super.success("Deleted successfully");
+    }
+    /**
+     * Reactivate user by id.
+     * <p>
+     * This function reactivate user by id, with the id as the input parameter.
+     * @param id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/reactivate-by-id")
+    public ResponseEntity<?> reactivateById(@RequestParam Long id) {
+        userService.reactivateById(id);
+        return super.success("Reactivated successfully");
+    }
+    /**
+     * Block user by id.
+     * <p>
+     * This function block user by id, with the id as the input parameter.
+     * @param id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/block-by-id")
+    public ResponseEntity<?> blockById(@RequestParam Long id) {
+        userService.deleteById(id);
+        return super.success("Blocked successfully");
+    }
+    /**
+     * Unblock user by id.
+     * <p>
+     * This function unblock user by id, with the id as the input parameter.
+     * @param id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/unblock-by-id")
+    public ResponseEntity<?> unblockById(@RequestParam Long id) {
+        userService.reactivateById(id);
+        return super.success("Unblocked successfully");
     }
 }

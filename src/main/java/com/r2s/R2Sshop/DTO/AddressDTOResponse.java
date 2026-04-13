@@ -19,13 +19,16 @@ public class AddressDTOResponse {
     private String street;
     private String city;
     private String country;
+    private String receiverName;
+    private String phoneNumber;
+    private Boolean defaulted;
     private List<Map<String, Object>> orders;
 
     /**
      * Customize the output address information as a JSON file.
      * <p>
      * This function customizes the output address information, including
-     * street, city, country, and order list as a JSON file.
+     * street, city, country, order, receiverName, phoneNumber and defaulted list as a JSON file.
      * @param address
      * @author HoangVu
      * @since 1.0
@@ -34,6 +37,9 @@ public class AddressDTOResponse {
         this.street = address.getStreet();
         this.city = address.getCity();
         this.country = address.getCountry();
+        this.receiverName = address.getReceiverName();
+        this.phoneNumber = address.getPhoneNumber();
+        this.defaulted = address.getDefaulted();
         this.orders = new ArrayList<>();
         if (!ObjectUtils.isEmpty(address.getOrders())) {
             for (Order order : address.getOrders()) {

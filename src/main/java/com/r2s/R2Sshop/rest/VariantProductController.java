@@ -89,9 +89,8 @@ public class VariantProductController extends BaseRestController {
      * dtoRequest is missing
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * name, price, color, modelYear and quantity are missing
-     * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
@@ -102,9 +101,6 @@ public class VariantProductController extends BaseRestController {
         }
         VariantProduct insertedVariantProduct = variantProductService.addByProductId(
                 productId, dtoRequest);
-        if (ObjectUtils.isEmpty(insertedVariantProduct)) {
-            throw new AppException(ResponseCode.INSERT_FAILURE);
-        }
         return super.success(new VariantProductDTOResponse(insertedVariantProduct));
     }
     /**
@@ -118,9 +114,8 @@ public class VariantProductController extends BaseRestController {
      * id and productId are missing
      * @return variant product information by id if it is updated successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequestis empty
-     * @throws AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_UPDATE) if it is updated fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
@@ -131,9 +126,6 @@ public class VariantProductController extends BaseRestController {
             throw new AppException(ResponseCode.NO_PARAM);
         }
         VariantProduct updatedVariantProduct = variantProductService.updateById(id, productId, dtoRequest);
-        if (ObjectUtils.isEmpty(updatedVariantProduct)) {
-            throw new AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_UPDATE);
-        }
         return super.success(new VariantProductDTOResponse(updatedVariantProduct));
     }
     /**
@@ -143,17 +135,13 @@ public class VariantProductController extends BaseRestController {
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
-     * @throws AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_DELETE) if it is deleted fails
      * @author HoangVu
-     * @since 1.0
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete-by-id")
     public ResponseEntity<?> deleteById(@RequestParam Long id) {
-        VariantProduct deletedVariantProduct = variantProductService.deleteById(id);
-        if (ObjectUtils.isEmpty(deletedVariantProduct)) {
-            throw new AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_DELETE);
-        }
+        variantProductService.deleteById(id);
         return super.success("Deleted successfully");
     }
     /**
@@ -163,17 +151,13 @@ public class VariantProductController extends BaseRestController {
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
-     * @throws AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_REACTIVATE) if it is deleted fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/reactivate-by-id")
     public ResponseEntity<?> reactivateById(@RequestParam Long id) {
-        VariantProduct reactivateVariantProduct = variantProductService.reactivateById(id);
-        if (ObjectUtils.isEmpty(reactivateVariantProduct)) {
-            throw new AppException(ResponseCode.FAILURE_VARIANT_PRODUCT_REACTIVATE);
-        }
+        variantProductService.reactivateById(id);
         return super.success("Reactivated successfully");
     }
 }

@@ -10,6 +10,7 @@ public interface AddressService {
     Address findById(Long id);
     Address addWithUser(String userName, AddressDTORequest DTORequest);
     Address updateByIdAndUserName(String userName, Long id, AddressDTORequest DTORequest);
-    Address deleteByIdAndUserName(String userName, Long id);
-    Address reactivateById(Long id);
+    void setDefault(String userName, Long id);
+    void deleteByIdAndUserName(String userName, Long id);
+    void reactivateById(Long id);
 }

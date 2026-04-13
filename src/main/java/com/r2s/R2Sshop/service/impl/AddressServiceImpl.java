@@ -8,12 +8,12 @@ import com.r2s.R2Sshop.repository.AddressRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.AddressService;
 import com.r2s.R2Sshop.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class AddressServiceImpl implements AddressService {
@@ -74,7 +74,7 @@ public class AddressServiceImpl implements AddressService {
      * if street, city, userName and deleted exist in the database
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if address does not exist in the database
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @Override
     public Address addWithUser(String userName, AddressDTORequest dtoRequest) {
@@ -90,9 +90,15 @@ public class AddressServiceImpl implements AddressService {
                     newAddress.setStreet(dtoRequest.getStreet());
                     newAddress.setCity(dtoRequest.getCity());
                     newAddress.setCountry(dtoRequest.getCountry());
+                    newAddress.setReceiverName(dtoRequest.getReceiverName());
+                    newAddress.setPhoneNumber(dtoRequest.getPhoneNumber());
+                    newAddress.setDefaulted(
+                            !addressRepository.existsByDefaultedAndUser_UserName(true, userName));
                     newAddress.setUser(foundUser);
                     return newAddress;
                 });
+        address.setReceiverName(dtoRequest.getReceiverName());
+        address.setPhoneNumber(dtoRequest.getPhoneNumber());
         address.setDeleted(false);
         return addressRepository.save(address);
     }
@@ -113,7 +119,7 @@ public class AddressServiceImpl implements AddressService {
      * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS)
      * if street, city, userName and deleted exist in the database
      * @author HoangVu
-     * @since 1.4
+     * @since 1.5
      */
     @Override
     public Address updateByIdAndUserName(String userName, Long id, AddressDTORequest dtoRequest) {
@@ -126,7 +132,9 @@ public class AddressServiceImpl implements AddressService {
         }
         if (Objects.equals(foundAddress.getStreet(), dtoRequest.getStreet()) &&
                 Objects.equals(foundAddress.getCity(), dtoRequest.getCity()) &&
-                Objects.equals(foundAddress.getCountry(), dtoRequest.getCountry())) {
+                Objects.equals(foundAddress.getCountry(), dtoRequest.getCountry()) &&
+                Objects.equals(foundAddress.getReceiverName(), dtoRequest.getReceiverName()) &&
+                Objects.equals(foundAddress.getPhoneNumber(), dtoRequest.getPhoneNumber())) {
             throw new AppException(ResponseCode.IMMUTABLE);
         }
         if (!Objects.equals(foundAddress.getStreet(), dtoRequest.getStreet()) ||
@@ -139,7 +147,45 @@ public class AddressServiceImpl implements AddressService {
         foundAddress.setStreet(dtoRequest.getStreet());
         foundAddress.setCity(dtoRequest.getCity());
         foundAddress.setCountry(dtoRequest.getCountry());
+        foundAddress.setReceiverName(dtoRequest.getReceiverName());
+        foundAddress.setPhoneNumber(dtoRequest.getPhoneNumber());
         return addressRepository.save(foundAddress);
+    }
+    /**
+     * Set default address by id and userName.
+     * <p>
+     * This function Sets default address by id and userName, with the userName, id as the input parameter.
+     * @param userName
+     * @param id
+     * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if address does not exist in the database
+     * @throws AppException(ResponseCode.ACCESS_DENIED) if the username does not match
+     * the username retrieved from the address's user
+     * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
+     * if address already been deleted in the database
+     * @throws AppException(ResponseCode.DATA_ALREADY_DEFAULTED) if address has been set to default
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Transactional
+    @Override
+    public void setDefault(String userName, Long id) {
+        Address foundAddress = findById(id);
+        if (!foundAddress.getUser().getUserName().equals(userName)) {
+            throw new AppException(ResponseCode.ACCESS_DENIED);
+        }
+        if (Boolean.TRUE.equals(foundAddress.getDeleted())) {
+            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+        }
+        if (Boolean.TRUE.equals(foundAddress.getDefaulted())) {
+            throw new AppException(ResponseCode.DATA_ALREADY_DEFAULTED);
+        }
+        addressRepository.findByDefaultedAndUser_UserName(true, userName)
+                .ifPresent(oldDefault -> {
+                    oldDefault.setDefaulted(false);
+                addressRepository.save(oldDefault);
+        });
+        foundAddress.setDefaulted(true);
+        addressRepository.save(foundAddress);
     }
 
     /**
@@ -148,16 +194,15 @@ public class AddressServiceImpl implements AddressService {
      * This function delete address by id and userName, with the userName, id as the input parameter.
      * @param userName
      * @param id
-     * @return address by id and userName if the delete process is successful
      * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if address does not exist in the database
      * @throws AppException(ResponseCode.ACCESS_DENIED) if the username does not match
      * the username retrieved from the address's user
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED) if address already been deleted in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.4
      */
     @Override
-    public Address deleteByIdAndUserName(String userName, Long id) {
+    public void deleteByIdAndUserName(String userName, Long id) {
         Address foundAddress = findById(id);
         if (!foundAddress.getUser().getUserName().equals(userName)) {
             throw new AppException(ResponseCode.ACCESS_DENIED);
@@ -165,8 +210,17 @@ public class AddressServiceImpl implements AddressService {
         if (Boolean.TRUE.equals(foundAddress.getDeleted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
         }
+        Boolean wasDefault = foundAddress.getDefaulted();
         foundAddress.setDeleted(true);
-        return addressRepository.save(foundAddress);
+        foundAddress.setDefaulted(false);
+        addressRepository.save(foundAddress);
+        if (wasDefault) {
+            addressRepository.findFirstByUser_UserNameAndDeletedFalseOrderByCreatedAtDesc(userName)
+                    .ifPresent(newDefault -> {
+                        newDefault.setDefaulted(true);
+                        addressRepository.save(newDefault);
+                    });
+        }
     }
 
     /**
@@ -174,21 +228,20 @@ public class AddressServiceImpl implements AddressService {
      * <p>
      * This function reactivate address by id, with the userName, id as the input parameter.
      * @param id
-     * @return address by id if the reactivate process is successful
      * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if address does not exist in the database
      * @throws AppException(ResponseCode.ACCESS_DENIED) if the username does not match
      * the username retrieved from the address's user
      * @throws AppException(ResponseCode.DATA_ALREADY_REACTIVATED) if address already been reactivated in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
-    public Address reactivateById(Long id) {
+    public void reactivateById(Long id) {
         Address foundAddress = findById(id);
         if (Boolean.FALSE.equals(foundAddress.getDeleted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_REACTIVATED);
         }
         foundAddress.setDeleted(false);
-        return addressRepository.save(foundAddress);
+        addressRepository.save(foundAddress);
     }
 }

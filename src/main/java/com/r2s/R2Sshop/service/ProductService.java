@@ -11,6 +11,6 @@ public interface ProductService {
     Page<Product> findAllByCategoryIdAndDeleted(Long categoriesId, Integer status, Pageable pageable);
     Product addByCategoryId(Long categoryId, ProductDTORequest dtoRequest);
     Product updateById(Long id, Long categoryId, ProductDTORequest dtoRequest);
-    Product deleteById(Long id);
-    Product reactivateById(Long id);
+    void deleteById(Long id);
+    void reactivateById(Long id);
 }

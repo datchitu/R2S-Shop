@@ -112,39 +112,37 @@ public class CategoryServiceImpl implements CategoryService {
      * <p>
      * This function delete category by id, with the id as the input parameter.
      * @param id
-     * @return category by id if the delete process is successful
      * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED) if category already been deleted in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
-    public Category deleteById(Long id) {
+    public void deleteById(Long id) {
         Category foundCategory = findById(id);
         if (Boolean.TRUE.equals(foundCategory.getDeleted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
         }
         foundCategory.setDeleted(true);
-        return categoryRepository.save(foundCategory);
+        categoryRepository.save(foundCategory);
     }
     /**
      * Reactivate category by id.
      * <p>
      * This function reactive category by id, with the id as the input parameter.
      * @param id
-     * @return category by id if the reactivate process is successful
      * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED) if category already been deleted in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
-    public Category reactivateById(Long id) {
+    public void reactivateById(Long id) {
         Category foundCategory = findById(id);
         if (Boolean.FALSE.equals(foundCategory.getDeleted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
         }
         foundCategory.setDeleted(false);
-        return categoryRepository.save(foundCategory);
+        categoryRepository.save(foundCategory);
     }
 }

@@ -11,6 +11,6 @@ public interface CategoryService {
     Category findById(Long id);
     Category add(CategoryDTORequest newCategory);
     Category updateById(Long id, CategoryDTORequest DTORequest);
-    Category deleteById(Long id);
-    Category reactivateById(Long id);
+    void deleteById(Long id);
+    void reactivateById(Long id);
 }

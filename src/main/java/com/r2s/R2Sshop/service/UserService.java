@@ -11,8 +11,13 @@ import java.util.Map;
 public interface UserService {
     User addUser(UserRegistrationDTORequest newUser);
     User findByUserName(String userName);
+    User findById(Long id);
     Map<String, Object> registerUserWithCart(UserRegistrationDTORequest newUser);
     Page<User> getAllByDeleted(Integer status, Pageable pageable);
     User updateUser(String userName, UserUpdateDTORequest user);
-    User chargePassword(String userName, String oldPassword, String newPassword);
+    void chargePassword(String userName, String oldPassword, String newPassword);
+    void deleteById(Long id);
+    void reactivateById(Long id);
+    void blockById(Long id);
+    void unblockById(Long id);
 }
