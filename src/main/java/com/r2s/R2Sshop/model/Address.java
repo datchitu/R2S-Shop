@@ -1,5 +1,6 @@
 package com.r2s.R2Sshop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -50,10 +51,11 @@ public class Address {
     private Timestamp updatedAt;
 
     @OneToMany(mappedBy = "address")
-    @JsonManagedReference
+    @JsonIgnoreProperties({"addresses", "user"})
     private List<Order> orders;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"addresses", "orders", "password", "roles", "carts", "userVouchers"})
     private User user;
 }

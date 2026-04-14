@@ -1,6 +1,6 @@
 package com.r2s.R2Sshop.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,11 +35,11 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    @JsonIgnoreProperties({"orders", "password",  "roles", "addresses", "carts", "userVouchers"})
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "address_id")
-    @JsonBackReference
+    @JsonIgnoreProperties({"orders", "user"})
     private Address address;
 }

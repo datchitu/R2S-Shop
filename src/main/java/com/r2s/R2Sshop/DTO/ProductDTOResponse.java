@@ -1,13 +1,11 @@
 package com.r2s.R2Sshop.DTO;
 
 import com.r2s.R2Sshop.model.Product;
-import com.r2s.R2Sshop.model.VariantProduct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.util.ObjectUtils;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +13,7 @@ public class ProductDTOResponse {
     private Long id;
     private String name;
     private Boolean deleted;
-    private List<Map<String, Object>> variantProducts;
+    private List<VariantServiceSimpleDTOResponse> variantProducts;
 
     /**
      * Customize the output product information as a JSON file.
@@ -24,20 +22,16 @@ public class ProductDTOResponse {
      * ID, name, deleted and list variantProducts as a JSON file.
      * @param product
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     public ProductDTOResponse(Product product) {
         this.id = product.getId();
         this.name = product.getName();
         this.deleted = product.getDeleted();
-        this.variantProducts = new ArrayList<>();
         if (!ObjectUtils.isEmpty(product.getVariantProducts())) {
-            for (VariantProduct variantProduct : product.getVariantProducts()) {
-                this.variantProducts.add(Map.of(
-                    "variantProductId", variantProduct.getId(),
-                        "variantProductName", variantProduct.getName()
-                ));
-            }
+            this.variantProducts = product.getVariantProducts().stream()
+                    .map(VariantServiceSimpleDTOResponse::new)
+                    .collect(Collectors.toList());
         }
     }
 }

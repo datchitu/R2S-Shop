@@ -1,6 +1,6 @@
 package com.r2s.R2Sshop.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,11 +50,16 @@ public class Cart {
     private Timestamp paidAt;
 
     @OneToMany(mappedBy = "cart")
-    @JsonManagedReference
+    @JsonIgnoreProperties({"variantProduct", "cart"})
     private List<CartLineItem> cartLineItems;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    @JsonManagedReference
+    @JsonIgnoreProperties({"carts", "password", "userVouchers", "addresses", "orders", "roles"})
     private User user;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_voucher_id")
+    @JsonIgnoreProperties({"carts", "user"})
+    private UserVoucher userVoucher;
 }

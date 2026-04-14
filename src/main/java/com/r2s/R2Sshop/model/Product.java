@@ -1,6 +1,7 @@
 package com.r2s.R2Sshop.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,10 +40,10 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false )
-    @JsonBackReference
+    @JsonIgnoreProperties("products")
     private Category category;
 
-    @OneToMany(mappedBy = "product")
-    @JsonManagedReference
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"product", "cartLineItems"})
     private List<VariantProduct> variantProducts;
 }

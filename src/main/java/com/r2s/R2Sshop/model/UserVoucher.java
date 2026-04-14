@@ -1,7 +1,6 @@
 package com.r2s.R2Sshop.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,33 +9,50 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "categories")
-public class Category {
+@Table(name = "user_vouchers")
+public class UserVoucher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @Column(name = "expire_date")
+    private Date expireDate;
+
+    @Column(name = "status", columnDefinition = "integer default 0")
+    private Integer status;
 
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted;
+
+    @Column(name = "used_at")
+    private Timestamp usedAt;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
 
     @UpdateTimestamp
-    @Column(name = "update_at")
+    @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties({"category", "variantProducts"})
-    private List<Product> products;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"userVouchers", "password",  "roles", "addresses", "carts", "orders"})
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    @JsonIgnoreProperties("userVouchers")
+    private Voucher voucher;
+
+    @OneToMany(mappedBy = "userVoucher")
+    @JsonIgnoreProperties({"userVoucher", "user", "cartLineItems"})
+    private List<Cart> carts;
 }

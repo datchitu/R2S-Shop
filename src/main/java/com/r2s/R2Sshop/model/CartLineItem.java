@@ -2,6 +2,7 @@ package com.r2s.R2Sshop.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,12 +30,11 @@ public class CartLineItem {
 
     @ManyToOne
     @JoinColumn(name = "variant_product_id", nullable = false)
-    @JsonBackReference
+    @JsonIgnoreProperties({"cartLineItems", "product"})
     private VariantProduct variantProduct;
 
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
-    @JsonManagedReference
+    @JsonIgnoreProperties({"cartLineItems", "user", "userVoucher"})
     private Cart cart;
-
 }

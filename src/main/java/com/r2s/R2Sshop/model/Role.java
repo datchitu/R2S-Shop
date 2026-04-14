@@ -1,6 +1,7 @@
 package com.r2s.R2Sshop.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,6 @@ public class Role {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonIgnoreProperties({"roles", "password", "userVouchers", "addresses", "carts", "orders"})
     private Set<User> users;
 }

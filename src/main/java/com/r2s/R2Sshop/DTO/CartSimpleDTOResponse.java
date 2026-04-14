@@ -4,46 +4,37 @@ import com.r2s.R2Sshop.model.Cart;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.util.ObjectUtils;
 
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartDTOResponse {
-    private Long id;
+public class CartSimpleDTOResponse {
     private Double totalPrice;
     private String note;
     private Boolean paymentType;
     private Boolean paymentStatus;
     private Boolean status;
+    private Timestamp createdAt;
     private Timestamp paidAt;
-    private List<CartLineItemSimpleDTOResponse> cartLineItems;
 
     /**
      * Customize the output cart information as a JSON file
      * <p>
      * This function customizes the output cart information, including
-     * ID, totalPrice, note, paymentType, paymentStatus, status, paidAt and cartLineItem list as a JSON file.
+     * totalPrice, note, paymentType, paymentStatus, status, createdAt and paidAt as a JSON file.
      * @param cart
      * @author HoangVu
-     * @since 1.1
+     * @since 1.0
      */
-    public CartDTOResponse(Cart cart) {
-        this.id = cart.getId();
+    public CartSimpleDTOResponse(Cart cart) {
         this.totalPrice = cart.getTotalPrice();
         this.note = cart.getNote();
         this.paymentType = cart.getPaymentType();
         this.paymentStatus = cart.getPaymentStatus();
         this.status = cart.getStatus();
+        this.createdAt = cart.getCreatedAt();
         this.paidAt = cart.getPaidAt();
-        if (!ObjectUtils.isEmpty(cart.getCartLineItems())) {
-            this.cartLineItems = cart.getCartLineItems().stream()
-                    .map(CartLineItemSimpleDTOResponse::new)
-                    .collect(Collectors.toList());
-        }
     }
 }
