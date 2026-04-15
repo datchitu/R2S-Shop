@@ -27,6 +27,13 @@ public class Order {
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted;
 
+    @PrePersist
+    protected void onCreate() {
+        if (this.deleted == null) {
+            this.deleted = false;
+        }
+    }
+
     @Column(name = "order_datetime")
     private Date orderDatetime;
 

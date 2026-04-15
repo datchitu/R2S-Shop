@@ -22,6 +22,13 @@ public class CartLineItem {
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted;
 
+    @PrePersist
+    protected void onCreate() {
+        if (this.deleted == null) {
+            this.deleted = false;
+        }
+    }
+
     @Column(columnDefinition = "integer default 0")
     private Integer quantity;
 

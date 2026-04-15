@@ -18,9 +18,9 @@ import java.util.Objects;
 @Service
 public class AddressServiceImpl implements AddressService {
     @Autowired
-    AddressRepository addressRepository;
+    private AddressRepository addressRepository;
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     /**
      * Find list by userId and deleted.
@@ -191,7 +191,7 @@ public class AddressServiceImpl implements AddressService {
     /**
      * Delete address by id and userName.
      * <p>
-     * This function delete address by id and userName, with the userName, id as the input parameter.
+     * This function deletes address by id and userName, with the userName, id as the input parameter.
      * @param userName
      * @param id
      * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if address does not exist in the database
@@ -226,7 +226,7 @@ public class AddressServiceImpl implements AddressService {
     /**
      * Reactivate address by id.
      * <p>
-     * This function reactivate address by id, with the userName, id as the input parameter.
+     * This function reactivates address by id, with the userName, id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if address does not exist in the database
      * @throws AppException(ResponseCode.ACCESS_DENIED) if the username does not match

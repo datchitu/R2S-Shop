@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/addresses")
 public class AddressController extends BaseRestController{
     @Autowired
-    AddressService addressService;
+    private AddressService addressService;
 
     /**
      * Return address list by userName and status.

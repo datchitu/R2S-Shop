@@ -37,31 +37,31 @@ public class UserServiceImpl implements UserService {
      * Add new user.
      * <p>
      * This function is used to add a new user.
-     * @param newUser
+     * @param dtoRequest
      * @return information of user if the add process is successful
      * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if user be found by userName
      * @throws AppException(ResponseCode.ROLE_NOT_FOUND) if role does not found by userRole
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
-    public User addUser(UserRegistrationDTORequest newUser) {
-        if (userRepository.existsByUserName(newUser.getUserName())) {
+    public User addUser(UserRegistrationDTORequest dtoRequest) {
+        if (userRepository.existsByUserName(dtoRequest.getUserName())) {
             throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
         }
-        if (!roleRepository.existsByRoleName(newUser.getUserRole())) {
+        if (!roleRepository.existsByRoleName(dtoRequest.getUserRole())) {
             throw new AppException(ResponseCode.ROLE_NOT_FOUND);
         }
         User user = new User();
-        user.setFirstName(newUser.getFirstName());
-        user.setLastName(newUser.getLastName());
-        user.setUserName(newUser.getUserName());
-        user.setEmail(newUser.getEmail());
-        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        user.setPhone(newUser.getPhone());
+        user.setFirstName(dtoRequest.getFirstName());
+        user.setLastName(dtoRequest.getLastName());
+        user.setUserName(dtoRequest.getUserName());
+        user.setEmail(dtoRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(dtoRequest.getPassword()));
+        user.setPhone(dtoRequest.getPhone());
         user.setStatus(false);
         user.setDeleted(false);
-        user.setRoles(this.roleRepository.findByRoleName(newUser.getUserRole()));
+        user.setRoles(this.roleRepository.findByRoleName(dtoRequest.getUserRole()));
         return userRepository.save(user);
     }
     /**
@@ -99,20 +99,20 @@ public class UserServiceImpl implements UserService {
      * Register user with cart by userName.
      * <p>
      * This function is used to insert the user and cart into the database., with the newUser as the input parameter.
-     * @param newUser
+     * @param dtoRequest
      * @return User and cart information if insertion is successful.
      * @throws AppException(ResponseCode.INSERT_FAILURE) if insertUser and insertCart is empty
      * @author HoangVu
-     * @since 1.1
+     * @since 1.3
      */
     @Transactional
     @Override
-    public Map<String, Object> registerUserWithCart(UserRegistrationDTORequest newUser) {
-        User insertUser = addUser(newUser);
+    public Map<String, Object> registerUserWithCart(UserRegistrationDTORequest dtoRequest) {
+        User insertUser = addUser(dtoRequest);
         if (ObjectUtils.isEmpty(insertUser)) {
             throw new AppException(ResponseCode.INSERT_FAILURE);
         }
-        User foundUser = findByUserName(newUser.getUserName());
+        User foundUser = findByUserName(dtoRequest.getUserName());
         Cart inserCart = cartService.addCart(foundUser);
         if (ObjectUtils.isEmpty(inserCart)) {
                 throw new AppException(ResponseCode.INSERT_FAILURE);
@@ -150,19 +150,19 @@ public class UserServiceImpl implements UserService {
      * <p>
      * This function updates user by userName, with the userName as the input parameter.
      * @param userName
-     * @param userDTORequest
+     * @param dtoRequest
      * @return User by userName if the update process is successful
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not exist in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
-    public User updateUser(String userName, UserUpdateDTORequest userDTORequest) {
+    public User updateUser(String userName, UserUpdateDTORequest dtoRequest) {
         User foundUser = findByUserName(userName);
-        foundUser.setFirstName(userDTORequest.getFirstName());
-        foundUser.setLastName(userDTORequest.getLastName());
-        foundUser.setEmail(userDTORequest.getEmail());
-        foundUser.setPhone(userDTORequest.getPhone());
+        foundUser.setFirstName(dtoRequest.getFirstName());
+        foundUser.setLastName(dtoRequest.getLastName());
+        foundUser.setEmail(dtoRequest.getEmail());
+        foundUser.setPhone(dtoRequest.getPhone());
         return userRepository.save(foundUser);
     }
     /**
@@ -193,7 +193,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Delete user by id.
      * <p>
-     * This function delete user by id, with the id as the input parameter.
+     * This function deletes user by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USER_NOT_FOUND)
      * if user does not exist in the database
@@ -214,7 +214,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Reactivate user by id.
      * <p>
-     * This function reactivate user by id, with the id as the input parameter.
+     * This function reactivates user by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USER_NOT_FOUND)
      * if user does not exist in the database
@@ -235,7 +235,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Block user by id.
      * <p>
-     * This function block user by id, with the id as the input parameter.
+     * This function blocks user by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USER_NOT_FOUND)
      * if user does not exist in the database
@@ -256,7 +256,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Unblock user by id.
      * <p>
-     * This function unblock user by id, with the id as the input parameter.
+     * This function unblocks user by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USER_NOT_FOUND)
      * if user does not exist in the database

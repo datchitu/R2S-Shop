@@ -132,7 +132,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Delete product by id.
      * <p>
-     * This function delete product by id, with the id as the input parameter.
+     * This function deletes product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
@@ -152,7 +152,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Reactivate product by id.
      * <p>
-     * This function reactivate product by id, with the id as the input parameter.
+     * This function reactivates product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_REACTIVATED)

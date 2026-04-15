@@ -121,7 +121,7 @@ public class VariantProductServiceImpl implements VariantProductService {
      * @throws AppException(ResponseCode.IMMUTABLE)
      * if the name, price, color, modelYear, quantity and product remains unchanged
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_EXISTS)
-     * if variant product already been deleted in the database
+     * if variant product already been existed in the database
      * @author HoangVu
      * @since 1.1
      */
@@ -158,7 +158,7 @@ public class VariantProductServiceImpl implements VariantProductService {
     /**
      * Delete variant product by id.
      * <p>
-     * This function delete variant product by id, with the id as the input parameter.
+     * This function deletes variant product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_NOT_FOUND)
      * if variant product does not exist in the database
@@ -179,7 +179,7 @@ public class VariantProductServiceImpl implements VariantProductService {
     /**
      * Reactivate variant product by id.
      * <p>
-     * This function reactivate variant product by id, with the id as the input parameter.
+     * This function reactivates variant product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_NOT_FOUND)
      * if variant product does not exist in the database

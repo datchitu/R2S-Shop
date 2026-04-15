@@ -31,6 +31,13 @@ public class UserVoucher {
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted;
 
+    @PrePersist
+    protected void onCreate() {
+        if (this.deleted == null) {
+            this.deleted = false;
+        }
+    }
+
     @Column(name = "used_at")
     private Timestamp usedAt;
 

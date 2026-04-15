@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
  * */
 @Getter
 public enum ResponseCode {
-    SUCCESS(200, "OK", HttpStatus.OK),
     ACCESS_DENIED(403, "Access denied", HttpStatus.UNAUTHORIZED),
     NOT_FOUND(404, "Not found", HttpStatus.NOT_FOUND),
     ADDRESS_NOT_FOUND(405, "Address Not found", HttpStatus.NOT_FOUND),
@@ -20,6 +19,7 @@ public enum ResponseCode {
     CATEGORY_NOT_FOUND(6006, "Category not found", HttpStatus.NOT_FOUND),
     PRODUCT_NOT_FOUND(6007, "Product not found", HttpStatus.NOT_FOUND),
     VARIANT_PRODUCT_NOT_FOUND(6008, "Variant product not found", HttpStatus.NOT_FOUND),
+    VOUCHER_NOT_FOUND(6009, "Voucher not found", HttpStatus.NOT_FOUND),
     INVALID_VALUE(3001, "Invalid value", HttpStatus.BAD_REQUEST),
     INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
     IMMUTABLE(3003, "The value remains unchanged", HttpStatus.BAD_REQUEST),
@@ -31,27 +31,18 @@ public enum ResponseCode {
     USER_ALREADY_REACTIVATED(2028, "User already been reactivated", HttpStatus.BAD_REQUEST),
     USER_ALREADY_BLOCKED(2029, "User already been blocked", HttpStatus.BAD_REQUEST),
     USER_ALREADY_UNBLOCKED(2030, "User already been unblocked", HttpStatus.BAD_REQUEST),
-    PRODUCT_ALREADY_EXISTS(2021, "Product already exists", HttpStatus.BAD_REQUEST),
+    PRODUCT_ALREADY_EXISTS(2031, "Product already exists", HttpStatus.BAD_REQUEST),
     VARIANT_PRODUCT_ALREADY_EXISTS(2032, "Variant product already exists", HttpStatus.BAD_REQUEST),
+    VOUCHER_ALREADY_EXISTS(2021, "Voucher already exists", HttpStatus.BAD_REQUEST),
+    VOUCHER_ALREADY_DELETED(2033, "Voucher already been deleted", HttpStatus.BAD_REQUEST),
+    VOUCHER_ALREADY_REACTIVATED(2034, "Voucher already been reactivated", HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR),
     FAILURE_SIGNIN(3000, "Failed sign in", HttpStatus.UNAUTHORIZED),
-    FAILURE_USER_UPDATE(3001, "User update failed", HttpStatus.CONFLICT),
     NOT_MATCH_PASSWORD(3002, "Password does not match", HttpStatus.BAD_REQUEST),
     DUPLICATE_PASSWORD(3003, "Duplicate old password", HttpStatus.BAD_REQUEST),
-    FAILURE_PASSWORD_CHARGE(3004, "Password charging failed", HttpStatus.CONFLICT),
-    FAILURE_ADDRESS_UPDATE(3005, "Address update failed", HttpStatus.CONFLICT),
-    FAILURE_ADDRESS_DELETE(3006, "Address deletion failed", HttpStatus.CONFLICT),
-    FAILURE_ADDRESS_REACTIVATE(3007, "Address reactivation failed", HttpStatus.CONFLICT),
-    FAILURE_CATEGORY_UPDATE(3008, "Category update failed", HttpStatus.CONFLICT),
-    FAILURE_CATEGORY_DELETE(3009, "Category deletion failed", HttpStatus.CONFLICT),
-    FAILURE_CATEGORY_REACTIVATE(3010, "Category reactivation failed", HttpStatus.CONFLICT),
-    FAILURE_PRODUCT_UPDATE(3011, "Product update failed", HttpStatus.CONFLICT),
-    FAILURE_PRODUCT_DELETE(3012, "Product deletion failed", HttpStatus.CONFLICT),
-    FAILURE_PRODUCT_REACTIVATE(3013, "Product reactivation failed", HttpStatus.CONFLICT),
-    FAILURE_VARIANT_PRODUCT_UPDATE(3014, "Variant product update failed", HttpStatus.CONFLICT),
-    FAILURE_VARIANT_PRODUCT_DELETE(3015, "Variant product deletion failed", HttpStatus.CONFLICT),
-    FAILURE_VARIANT_PRODUCT_REACTIVATE(3016, "Variant product reactivation failed", HttpStatus.CONFLICT),
-    AUTHENTICATION_ERROR(3033, "Failed sign in", HttpStatus.UNAUTHORIZED);
+    FAILURE_CATEGORY_UPDATE(3004, "Category update failed", HttpStatus.CONFLICT),
+    FAILURE_PRODUCT_UPDATE(3005, "Product update failed", HttpStatus.CONFLICT),
+    AUTHENTICATION_ERROR(3010, "Failed sign in", HttpStatus.UNAUTHORIZED);
 
     private final int code;
     private final String message;

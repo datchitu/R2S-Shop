@@ -42,9 +42,9 @@ public class VariantProductController extends BaseRestController {
      * @return the variant product list by productId and status if the data is retrieved successfully.
      * @throws AppException(ResponseCode.INVALID_PARAM) if status is outside the value (-1, 0, 1)
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
-    @RequestMapping("/get-all-by-product-id-and-deleted")
+    @GetMapping("/get-all-by-product-id-and-deleted")
     public ResponseEntity<?> getAllByProductIdAndDeleted(@RequestParam(name = "productId",
                                                          required = false, defaultValue = "1") Long productId,
                                                          @RequestParam(defaultValue = "-1") Integer status,
@@ -72,7 +72,7 @@ public class VariantProductController extends BaseRestController {
      */
     @GetMapping("/get-by-id")
     public ResponseEntity<?> getById(@RequestParam(name = "id", required = false
-            , defaultValue = "1") long id) {
+            , defaultValue = "1") Long id) {
         VariantProduct foundVariantProduct = variantProductService.findById(id);
         return super.success(new VariantProductDTOResponse(foundVariantProduct));
     }
@@ -113,7 +113,7 @@ public class VariantProductController extends BaseRestController {
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * id and productId are missing
      * @return variant product information by id if it is updated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequestis empty
+     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @author HoangVu
      * @since 1.1
      */

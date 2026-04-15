@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AppException extends RuntimeException{
-    ResponseCode responseCode;
+    private ResponseCode responseCode;
 
     /**
      * Return message of enum ResponseCode.

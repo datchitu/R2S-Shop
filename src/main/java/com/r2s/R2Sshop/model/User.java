@@ -49,6 +49,16 @@ public class User {
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted;
 
+    @PrePersist
+    protected void onCreate() {
+        if (this.deleted == null) {
+            this.deleted = false;
+        }
+        if (this.status == null) {
+            this.status = false;
+        }
+    }
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;

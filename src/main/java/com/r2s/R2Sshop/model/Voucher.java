@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -35,10 +36,17 @@ public class Voucher {
     private Integer quantity;
 
     @Column(name = "expire_date")
-    private Date expireDate;
+    private LocalDateTime expireDate;
 
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.deleted == null) {
+            this.deleted = false;
+        }
+    }
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
