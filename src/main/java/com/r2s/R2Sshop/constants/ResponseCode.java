@@ -22,7 +22,13 @@ public enum ResponseCode {
     VOUCHER_NOT_FOUND(6009, "Voucher not found", HttpStatus.NOT_FOUND),
     INVALID_VALUE(3001, "Invalid value", HttpStatus.BAD_REQUEST),
     INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
-    IMMUTABLE(3003, "The value remains unchanged", HttpStatus.BAD_REQUEST),
+    FAILURE_SIGNIN(3000, "Failed sign in", HttpStatus.UNAUTHORIZED),
+    NOT_MATCH_PASSWORD(3003, "Password does not match", HttpStatus.BAD_REQUEST),
+    DUPLICATE_PASSWORD(3004, "Duplicate old password", HttpStatus.BAD_REQUEST),
+    FAILURE_CATEGORY_UPDATE(3005, "Category update failed", HttpStatus.CONFLICT),
+    FAILURE_PRODUCT_UPDATE(3006, "Product update failed", HttpStatus.CONFLICT),
+    AUTHENTICATION_ERROR(3010, "Failed sign in", HttpStatus.UNAUTHORIZED),
+    IMMUTABLE(3007, "The value remains unchanged", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_EXISTS(2023, "Data already exists", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_DELETED(2024, "Data already been deleted", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_REACTIVATED(2025, "Data already been reactivated", HttpStatus.BAD_REQUEST),
@@ -36,13 +42,8 @@ public enum ResponseCode {
     VOUCHER_ALREADY_EXISTS(2021, "Voucher already exists", HttpStatus.BAD_REQUEST),
     VOUCHER_ALREADY_DELETED(2033, "Voucher already been deleted", HttpStatus.BAD_REQUEST),
     VOUCHER_ALREADY_REACTIVATED(2034, "Voucher already been reactivated", HttpStatus.BAD_REQUEST),
-    INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR),
-    FAILURE_SIGNIN(3000, "Failed sign in", HttpStatus.UNAUTHORIZED),
-    NOT_MATCH_PASSWORD(3002, "Password does not match", HttpStatus.BAD_REQUEST),
-    DUPLICATE_PASSWORD(3003, "Duplicate old password", HttpStatus.BAD_REQUEST),
-    FAILURE_CATEGORY_UPDATE(3004, "Category update failed", HttpStatus.CONFLICT),
-    FAILURE_PRODUCT_UPDATE(3005, "Product update failed", HttpStatus.CONFLICT),
-    AUTHENTICATION_ERROR(3010, "Failed sign in", HttpStatus.UNAUTHORIZED);
+    INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR);
+
 
     private final int code;
     private final String message;

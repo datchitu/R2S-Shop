@@ -5,13 +5,14 @@ import com.r2s.R2Sshop.DTO.UserUpdateDTORequest;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Cart;
 import com.r2s.R2Sshop.model.User;
-import com.r2s.R2Sshop.model.VariantProduct;
 import com.r2s.R2Sshop.repository.RoleRepository;
 import com.r2s.R2Sshop.repository.UserRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.CartService;
 import com.r2s.R2Sshop.service.UserService;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,8 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
     @Autowired
     private CartService cartService;
+    @Autowired
+    private ModelMapper modelMapper;
 
     /**
      * Add new user.
@@ -42,25 +45,18 @@ public class UserServiceImpl implements UserService {
      * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if user be found by userName
      * @throws AppException(ResponseCode.ROLE_NOT_FOUND) if role does not found by userRole
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @Override
-    public User addUser(UserRegistrationDTORequest dtoRequest) {
+    public User add(UserRegistrationDTORequest dtoRequest) {
         if (userRepository.existsByUserName(dtoRequest.getUserName())) {
             throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
         }
         if (!roleRepository.existsByRoleName(dtoRequest.getUserRole())) {
             throw new AppException(ResponseCode.ROLE_NOT_FOUND);
         }
-        User user = new User();
-        user.setFirstName(dtoRequest.getFirstName());
-        user.setLastName(dtoRequest.getLastName());
-        user.setUserName(dtoRequest.getUserName());
-        user.setEmail(dtoRequest.getEmail());
+        User user = modelMapper.map(dtoRequest, User.class);
         user.setPassword(passwordEncoder.encode(dtoRequest.getPassword()));
-        user.setPhone(dtoRequest.getPhone());
-        user.setStatus(false);
-        user.setDeleted(false);
         user.setRoles(this.roleRepository.findByRoleName(dtoRequest.getUserRole()));
         return userRepository.save(user);
     }
@@ -103,12 +99,12 @@ public class UserServiceImpl implements UserService {
      * @return User and cart information if insertion is successful.
      * @throws AppException(ResponseCode.INSERT_FAILURE) if insertUser and insertCart is empty
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @Transactional
     @Override
-    public Map<String, Object> registerUserWithCart(UserRegistrationDTORequest dtoRequest) {
-        User insertUser = addUser(dtoRequest);
+    public Map<String, Object> registerWithCart(UserRegistrationDTORequest dtoRequest) {
+        User insertUser = add(dtoRequest);
         if (ObjectUtils.isEmpty(insertUser)) {
             throw new AppException(ResponseCode.INSERT_FAILURE);
         }
@@ -154,15 +150,13 @@ public class UserServiceImpl implements UserService {
      * @return User by userName if the update process is successful
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not exist in the database
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @Override
-    public User updateUser(String userName, UserUpdateDTORequest dtoRequest) {
+    public User update(String userName, UserUpdateDTORequest dtoRequest) {
         User foundUser = findByUserName(userName);
-        foundUser.setFirstName(dtoRequest.getFirstName());
-        foundUser.setLastName(dtoRequest.getLastName());
-        foundUser.setEmail(dtoRequest.getEmail());
-        foundUser.setPhone(dtoRequest.getPhone());
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        modelMapper.map(dtoRequest, foundUser);
         return userRepository.save(foundUser);
     }
     /**

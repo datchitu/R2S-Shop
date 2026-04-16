@@ -19,16 +19,11 @@ public class CartServiceImpl implements CartService {
      * @param user
      * @return cartRepository.save(cart)
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public Cart addCart(User user) {
         Cart cart = new Cart();
-        cart.setTotalPrice(0.0);
-        cart.setPaymentType(false);
-        cart.setPaymentStatus(false);
-        cart.setStatus(false);
-        cart.setDeleted(false);
         cart.setUser(user);
         return this.cartRepository.save(cart);
     }

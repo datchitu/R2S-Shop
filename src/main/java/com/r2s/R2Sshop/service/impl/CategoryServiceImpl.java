@@ -6,6 +6,7 @@ import com.r2s.R2Sshop.model.Category;
 import com.r2s.R2Sshop.repository.CategoryRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.CategoryService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,8 @@ import java.util.Objects;
 public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     /**
      * Return category list by deleted.
@@ -65,16 +68,14 @@ public class CategoryServiceImpl implements CategoryService {
      * @return information of category if the add process is successful
      * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if category be found by categoryName
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public Category add(CategoryDTORequest dtoRequest) {
         if (categoryRepository.existsByName(dtoRequest.getName())) {
             throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
         }
-        Category category = new Category();
-        category.setName(dtoRequest.getName());
-        category.setDeleted(false);
+        Category category = modelMapper.map(dtoRequest, Category.class);
         return categoryRepository.save(category);
     }
 
@@ -89,7 +90,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED) if category already been deleted in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if category be found by categoryName
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
     public Category updateById(Long id, CategoryDTORequest dtoRequest) {
@@ -103,7 +104,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryRepository.existsByName(dtoRequest.getName())) {
             throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
         }
-        foundCategory.setName(dtoRequest.getName());
+        modelMapper.map(dtoRequest, foundCategory);
         return this.categoryRepository.save(foundCategory);
     }
 

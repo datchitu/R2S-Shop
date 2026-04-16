@@ -1,11 +1,9 @@
 package com.r2s.R2Sshop.DTO;
 
-import com.r2s.R2Sshop.model.Product;
 import com.r2s.R2Sshop.model.VariantProduct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.util.ObjectUtils;
 
 @Data
 @AllArgsConstructor

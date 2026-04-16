@@ -9,6 +9,7 @@ import com.r2s.R2Sshop.repository.ProductRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.CategoryService;
 import com.r2s.R2Sshop.service.ProductService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,8 @@ public class ProductServiceImpl implements ProductService {
     private CategoryService categoryService;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     /**
      * Return product by id.
@@ -80,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
      * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
      * @throws AppException(ResponseCode.PRODUCT_ALREADY_EXISTS) if product already been deleted in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public Product addByCategoryId(Long categoryId, ProductDTORequest dtoRequest) {
@@ -88,9 +91,7 @@ public class ProductServiceImpl implements ProductService {
         if (productRepository.existsByNameAndCategoryId(dtoRequest.getName(), categoryId)) {
             throw new AppException(ResponseCode.PRODUCT_ALREADY_EXISTS);
         }
-        Product product = new Product();
-        product.setName(dtoRequest.getName());
-        product.setDeleted(false);
+        Product product = modelMapper.map(dtoRequest, Product.class);
         product.setCategory(foundCategory);
         return productRepository.save(product);
     }
@@ -109,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
      * @throws AppException(ResponseCode.IMMUTABLE) if the name remains unchanged
      * @throws AppException(ResponseCode.PRODUCT_ALREADY_EXISTS) if product already been deleted in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public Product updateById(Long id, Long categoryId, ProductDTORequest dtoRequest) {
@@ -125,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
         if (productRepository.existsByNameAndCategoryId(dtoRequest.getName(), categoryId)) {
             throw new AppException(ResponseCode.PRODUCT_ALREADY_EXISTS);
         }
-        foundProduct.setName(dtoRequest.getName());
+        modelMapper.map(dtoRequest, foundProduct);
         foundProduct.setCategory(foundCategory);
         return productRepository.save(foundProduct);
     }

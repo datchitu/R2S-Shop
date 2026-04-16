@@ -25,15 +25,7 @@ public class Category {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.deleted == null) {
-            this.deleted = false;
-        }
-    }
+    private Boolean deleted = false;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)

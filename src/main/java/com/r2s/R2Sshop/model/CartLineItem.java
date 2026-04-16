@@ -19,21 +19,12 @@ public class CartLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
+    private Boolean deleted = false;
 
-    @PrePersist
-    protected void onCreate() {
-        if (this.deleted == null) {
-            this.deleted = false;
-        }
-    }
+    private Integer quantity = 0;
 
-    @Column(columnDefinition = "integer default 0")
-    private Integer quantity;
-
-    @Column(name = "total_price", columnDefinition = "double default 0")
-    private Double totalPrice;
+    @Column(name = "total_price")
+    private Double totalPrice = 0.0;
 
     @ManyToOne
     @JoinColumn(name = "variant_product_id", nullable = false)

@@ -9,6 +9,7 @@ import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.AddressService;
 import com.r2s.R2Sshop.service.UserService;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,8 @@ public class AddressServiceImpl implements AddressService {
     private AddressRepository addressRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ModelMapper modelMapper;
 
     /**
      * Find list by userId and deleted.
@@ -74,7 +77,7 @@ public class AddressServiceImpl implements AddressService {
      * if street, city, userName and deleted exist in the database
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if address does not exist in the database
      * @author HoangVu
-     * @since 1.4
+     * @since 1.5
      */
     @Override
     public Address addWithUser(String userName, AddressDTORequest dtoRequest) {
@@ -86,12 +89,7 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressRepository.findByStreetAndCityAndUser_UserNameAndDeleted(
                 dtoRequest.getStreet(), dtoRequest.getCity(), userName, true)
                 .orElseGet(() -> {
-                    Address newAddress = new Address();
-                    newAddress.setStreet(dtoRequest.getStreet());
-                    newAddress.setCity(dtoRequest.getCity());
-                    newAddress.setCountry(dtoRequest.getCountry());
-                    newAddress.setReceiverName(dtoRequest.getReceiverName());
-                    newAddress.setPhoneNumber(dtoRequest.getPhoneNumber());
+                    Address newAddress = modelMapper.map(dtoRequest, Address.class);
                     newAddress.setDefaulted(
                             !addressRepository.existsByDefaultedAndUser_UserName(true, userName));
                     newAddress.setUser(foundUser);
@@ -119,7 +117,7 @@ public class AddressServiceImpl implements AddressService {
      * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS)
      * if street, city, userName and deleted exist in the database
      * @author HoangVu
-     * @since 1.5
+     * @since 1.6
      */
     @Override
     public Address updateByIdAndUserName(String userName, Long id, AddressDTORequest dtoRequest) {
@@ -144,11 +142,7 @@ public class AddressServiceImpl implements AddressService {
                 throw new AppException(ResponseCode.DATA_ALREADY_EXISTS);
             }
         }
-        foundAddress.setStreet(dtoRequest.getStreet());
-        foundAddress.setCity(dtoRequest.getCity());
-        foundAddress.setCountry(dtoRequest.getCountry());
-        foundAddress.setReceiverName(dtoRequest.getReceiverName());
-        foundAddress.setPhoneNumber(dtoRequest.getPhoneNumber());
+        modelMapper.map(dtoRequest, foundAddress);
         return addressRepository.save(foundAddress);
     }
     /**

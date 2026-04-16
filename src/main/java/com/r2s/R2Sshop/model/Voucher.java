@@ -29,24 +29,14 @@ public class Voucher {
     @Column(unique = true, nullable = false)
     private String code;
 
-    @Column(columnDefinition = "integer default 0")
-    private Integer discount;
+    private Integer discount = 0;
 
-    @Column(columnDefinition = "integer default 0")
-    private Integer quantity;
+    private Integer quantity = 0;
 
-    @Column(name = "expire_date")
+    @Column(name = "expire_date", nullable = false)
     private LocalDateTime expireDate;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.deleted == null) {
-            this.deleted = false;
-        }
-    }
+    private Boolean deleted = false;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)

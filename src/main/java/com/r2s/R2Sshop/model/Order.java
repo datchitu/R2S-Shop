@@ -18,27 +18,18 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "delivery_time")
+    @Column(name = "delivery_time", nullable = false)
     private Date deliveryTime;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean status;
+    private Boolean status = false;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
+    private Boolean deleted = false;
 
-    @PrePersist
-    protected void onCreate() {
-        if (this.deleted == null) {
-            this.deleted = false;
-        }
-    }
-
-    @Column(name = "order_datetime")
+    @Column(name = "order_datetime", nullable = false)
     private Date orderDatetime;
 
     @Column(name = "total_price")
-    private Double totalPrice;
+    private Double totalPrice = 0.0;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

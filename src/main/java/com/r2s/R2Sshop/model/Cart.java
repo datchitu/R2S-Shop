@@ -21,29 +21,20 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "total_price", columnDefinition = "double default 0")
-    private Double totalPrice;
+    @Column(name = "total_price")
+    private Double totalPrice = 0.0;
 
     private String note;
 
-    @Column(name = "payment_type", columnDefinition = "boolean default false")
-    private Boolean paymentType;
+    @Column(name = "payment_type")
+    private Boolean paymentType = false;
 
-    @Column(name = "payment_status", columnDefinition = "boolean default false")
-    private Boolean paymentStatus;
+    @Column(name = "payment_status")
+    private Boolean paymentStatus = false;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean status;
+    private Boolean status = false;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.deleted == null) {
-            this.deleted = false;
-        }
-    }
+    private Boolean deleted = false;
 
     @CreationTimestamp
     @Column(name = "created_at",nullable = false)

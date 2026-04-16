@@ -40,14 +40,14 @@ public class UserController extends BaseRestController{
      * @throws AppException(ResponseCode.INVALID_VALUE) if the passed-in parameter values such as
      * last name, first name, phone number, email, password or userRole are missing
      * @author HoangVu
-     * @since 1.3
+     * @since 1.5
      */
     @PostMapping
-    public ResponseEntity<?> addUserWithCart(@Valid @RequestBody UserRegistrationDTORequest dtoRequest) {
+    public ResponseEntity<?> addWithCart(@Valid @RequestBody UserRegistrationDTORequest dtoRequest) {
         if  (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
         }
-        Map<String, Object> data = userService.registerUserWithCart(dtoRequest);
+        Map<String, Object> data = userService.registerWithCart(dtoRequest);
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("user", new UserDTOResponse((User) data.get("user")));
         responseData.put("cart", new CartDTOResponse((Cart) data.get("cart")));
@@ -106,7 +106,7 @@ public class UserController extends BaseRestController{
      * firstName, lastName, email, phone
      * @throws AppException(ResponseCode.FAILURE_USER_UPDATE) if update unsuccessful
      * @author HoangVu
-     * @since 1.4
+     * @since 1.5
      */
     @PutMapping
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
@@ -114,7 +114,7 @@ public class UserController extends BaseRestController{
         if (ObjectUtils.isEmpty(userDTORequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
         }
-        User updateUser = userService.updateUser(userDetails.getUsername(), userDTORequest);
+        User updateUser = userService.update(userDetails.getUsername(), userDTORequest);
         return super.success(new UserDTOResponse(updateUser));
     }
     /**

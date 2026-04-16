@@ -22,21 +22,12 @@ public class UserVoucher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "expire_date")
+    @Column(name = "expire_date", nullable = false)
     private Date expireDate;
 
-    @Column(name = "status", columnDefinition = "integer default 0")
-    private Integer status;
+    private Integer status = 0;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.deleted == null) {
-            this.deleted = false;
-        }
-    }
+    private Boolean deleted = false;
 
     @Column(name = "used_at")
     private Timestamp usedAt;

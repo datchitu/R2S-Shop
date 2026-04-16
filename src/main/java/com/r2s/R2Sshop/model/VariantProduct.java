@@ -26,24 +26,18 @@ public class VariantProduct {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false)
     private Double price;
 
+    @Column(nullable = false)
     private String color;
 
+    @Column(nullable = false)
     private String modelYear;
 
-    @Column(columnDefinition = "boolean default 0")
-    private Integer quantity;
+    private Integer quantity = 0;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.deleted == null) {
-            this.deleted = false;
-        }
-    }
+    private Boolean deleted = false;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)

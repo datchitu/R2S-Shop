@@ -9,6 +9,7 @@ import com.r2s.R2Sshop.repository.VariantProductRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.ProductService;
 import com.r2s.R2Sshop.service.VariantProductService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,8 @@ public class VariantProductServiceImpl implements VariantProductService {
     private ProductService productService;
     @Autowired
     private VariantProductRepository variantProductRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     /**
      * Return all variant products by product id and deleted.
@@ -87,7 +90,7 @@ public class VariantProductServiceImpl implements VariantProductService {
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_EXISTS)
      * if variant product already been deleted in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public VariantProduct addByProductId(Long productId, VariantServiceDTORequest dtoRequest) {
@@ -95,13 +98,7 @@ public class VariantProductServiceImpl implements VariantProductService {
         if (variantProductRepository.existsByName(dtoRequest.getName())) {
             throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_EXISTS);
         }
-        VariantProduct variantProduct = new VariantProduct();
-        variantProduct.setName(dtoRequest.getName());
-        variantProduct.setPrice(dtoRequest.getPrice());
-        variantProduct.setColor(dtoRequest.getColor());
-        variantProduct.setModelYear(dtoRequest.getModelYear());
-        variantProduct.setQuantity(dtoRequest.getQuantity());
-        variantProduct.setDeleted(false);
+        VariantProduct variantProduct = modelMapper.map(dtoRequest, VariantProduct.class);
         variantProduct.setProduct(foundProduct);
         return variantProductRepository.save(variantProduct);
     }
@@ -123,7 +120,7 @@ public class VariantProductServiceImpl implements VariantProductService {
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_EXISTS)
      * if variant product already been existed in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public VariantProduct updateById(Long id, Long productId, VariantServiceDTORequest dtoRequest) {
@@ -145,13 +142,7 @@ public class VariantProductServiceImpl implements VariantProductService {
                 throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_EXISTS);
             }
         }
-        Double price = dtoRequest.getPrice();
-        Integer quantity = dtoRequest.getQuantity();
-        foundVariantProduct.setName(dtoRequest.getName());
-        foundVariantProduct.setPrice(price);
-        foundVariantProduct.setColor(dtoRequest.getColor());
-        foundVariantProduct.setModelYear(dtoRequest.getModelYear());
-        foundVariantProduct.setQuantity(quantity);
+        modelMapper.map(dtoRequest, foundVariantProduct);
         foundVariantProduct.setProduct(foundProduct);
         return variantProductRepository.save(foundVariantProduct);
     }

@@ -32,22 +32,15 @@ public class Address {
     @Column(nullable = false)
     private String country;
 
+    @Column(nullable = false)
     private String receiverName;
 
+    @Column(nullable = false)
     private String phoneNumber;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean defaulted;
+    private Boolean defaulted = false;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.deleted == null) {
-            this.deleted = false;
-        }
-    }
+    private Boolean deleted = false;
 
     @CreationTimestamp
     @Column(name = "created_at",nullable = false)
