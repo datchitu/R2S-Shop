@@ -131,9 +131,9 @@ public class CategoryController extends BaseRestController{
     }
 
     /**
-     * Reactivated address.
+     * Reactivate address.
      * <p>
-     * This function is used to reactivated address by id.
+     * This function is used to reactivate address by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty

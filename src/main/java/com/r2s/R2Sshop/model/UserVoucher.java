@@ -9,7 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -23,22 +23,22 @@ public class UserVoucher {
     private Long id;
 
     @Column(name = "expire_date", nullable = false)
-    private Date expireDate;
+    private LocalDateTime expireDate;
 
     private Integer status = 0;
 
     private Boolean deleted = false;
 
     @Column(name = "used_at")
-    private Timestamp usedAt;
+    private LocalDateTime usedAt;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

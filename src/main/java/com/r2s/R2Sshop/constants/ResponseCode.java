@@ -20,6 +20,7 @@ public enum ResponseCode {
     PRODUCT_NOT_FOUND(6007, "Product not found", HttpStatus.NOT_FOUND),
     VARIANT_PRODUCT_NOT_FOUND(6008, "Variant product not found", HttpStatus.NOT_FOUND),
     VOUCHER_NOT_FOUND(6009, "Voucher not found", HttpStatus.NOT_FOUND),
+    USERVOUCHER_NOT_FOUND(6010, "UserVoucher not found", HttpStatus.NOT_FOUND),
     INVALID_VALUE(3001, "Invalid value", HttpStatus.BAD_REQUEST),
     INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
     FAILURE_SIGNIN(3000, "Failed sign in", HttpStatus.UNAUTHORIZED),
@@ -41,7 +42,15 @@ public enum ResponseCode {
     VARIANT_PRODUCT_ALREADY_EXISTS(2032, "Variant product already exists", HttpStatus.BAD_REQUEST),
     VOUCHER_ALREADY_EXISTS(2021, "Voucher already exists", HttpStatus.BAD_REQUEST),
     VOUCHER_ALREADY_DELETED(2033, "Voucher already been deleted", HttpStatus.BAD_REQUEST),
-    VOUCHER_ALREADY_REACTIVATED(2034, "Voucher already been reactivated", HttpStatus.BAD_REQUEST),
+    VOUCHER_ALREADY_REACTIVATED(2034, "UserVoucher already been reactivated", HttpStatus.BAD_REQUEST),
+    USERVOUCHER_ALREADY_DELETED(2035, "UserVoucher already been deleted", HttpStatus.BAD_REQUEST),
+    USERVOUCHER_ALREADY_REACTIVATED(2036, "Voucher already been reactivated", HttpStatus.BAD_REQUEST),
+    USERVOUCHER_ALREADY_NOT_RELEASED(2037, "UserVoucher already been not yet released",
+            HttpStatus.BAD_REQUEST),
+    USERVOUCHER_ALREADY_RELEASED(2038, "UserVoucher already been released",
+            HttpStatus.BAD_REQUEST),
+    USERVOUCHER_ALREADY_USED(2039, "UserVoucher already been used",
+            HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR);
 
 

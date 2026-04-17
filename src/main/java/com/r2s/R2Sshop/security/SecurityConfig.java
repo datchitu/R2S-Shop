@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers( "/users/**","/categories/**", "/products/**"
-                        , "/variant_products/**", "/addresses/**")
+                        , "/variant_products/**", "/addresses/**", "/vouchers/**", "/user_vouchers/**")
                 .hasAnyRole("ADMIN", "USER", "STAFF")
                 .and()
                 .authorizeHttpRequests()

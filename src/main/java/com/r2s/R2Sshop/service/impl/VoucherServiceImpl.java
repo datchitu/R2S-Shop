@@ -105,7 +105,7 @@ public class VoucherServiceImpl implements VoucherService {
      * @throws AppException(ResponseCode.VOUCHER_NOT_FOUND)
      * if voucher does not exist in the database
      * @throws AppException(ResponseCode.VOUCHER_ALREADY_DELETED)
-     * if voucher already been reactivated in the database
+     * if voucher already been deleted in the database
      * @author HoangVu
      * @since 1.0
      */

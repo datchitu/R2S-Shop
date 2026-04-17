@@ -145,9 +145,9 @@ public class VariantProductController extends BaseRestController {
         return super.success("Deleted successfully");
     }
     /**
-     * Reactivated variant product.
+     * Reactivate variant product.
      * <p>
-     * This function is used to reactivated variant product by id.
+     * This function is used to reactivate variant product by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty

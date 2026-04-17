@@ -149,9 +149,9 @@ public class ProductController extends BaseRestController{
         return super.success("Deleted successfully");
     }
     /**
-     * Reactivated product.
+     * Reactivate product.
      * <p>
-     * This function is used to reactivated product by id.
+     * This function is used to reactivate product by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty

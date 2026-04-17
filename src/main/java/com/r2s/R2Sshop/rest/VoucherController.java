@@ -102,9 +102,9 @@ public class VoucherController extends BaseRestController{
      * This function is used to update voucher by id.
      * @param id
      * @param dtoRequest
+     * @return voucher information by id if it is updated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * id is missing
-     * @return voucher information by id if it is updated successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @author HoangVu
      * @since 1.0
@@ -137,9 +137,9 @@ public class VoucherController extends BaseRestController{
     }
 
     /**
-     * Reactivated voucher.
+     * Reactivate voucher.
      * <p>
-     * This function is used to reactivated voucher by id.
+     * This function is used to reactivate voucher by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
