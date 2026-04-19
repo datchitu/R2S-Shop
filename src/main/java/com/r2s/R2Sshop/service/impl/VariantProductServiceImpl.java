@@ -9,6 +9,7 @@ import com.r2s.R2Sshop.repository.VariantProductRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.ProductService;
 import com.r2s.R2Sshop.service.VariantProductService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -92,6 +93,7 @@ public class VariantProductServiceImpl implements VariantProductService {
      * @author HoangVu
      * @since 1.1
      */
+    @Transactional
     @Override
     public VariantProduct addByProductId(Long productId, VariantServiceDTORequest dtoRequest) {
         Product foundProduct = productService.findById(productId);
@@ -122,6 +124,7 @@ public class VariantProductServiceImpl implements VariantProductService {
      * @author HoangVu
      * @since 1.2
      */
+    @Transactional
     @Override
     public VariantProduct updateById(Long id, Long productId, VariantServiceDTORequest dtoRequest) {
         Product foundProduct = productService.findById(productId);

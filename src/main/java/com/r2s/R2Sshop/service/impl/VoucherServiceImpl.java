@@ -6,6 +6,7 @@ import com.r2s.R2Sshop.model.Voucher;
 import com.r2s.R2Sshop.repository.VoucherRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.VoucherService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -67,6 +68,7 @@ public class VoucherServiceImpl implements VoucherService {
      * @author HoangVu
      * @since 1.0
      */
+    @Transactional
     @Override
     public Voucher add(VoucherDTORequest dtoRequest) {
         if (voucherRepository.existsByName(dtoRequest.getName())) {
@@ -88,6 +90,7 @@ public class VoucherServiceImpl implements VoucherService {
      * @author HoangVu
      * @since 1.0
      */
+    @Transactional
     @Override
     public Voucher updateById(Long id, VoucherDTORequest dtoRequest) {
         Voucher foundVoucher = findById(id);

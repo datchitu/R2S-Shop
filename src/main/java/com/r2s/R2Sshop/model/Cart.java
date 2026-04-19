@@ -27,7 +27,7 @@ public class Cart {
     private String note;
 
     @Column(name = "payment_type")
-    private Boolean paymentType = false;
+    private Boolean paymentType;
 
     @Column(name = "payment_status")
     private Boolean paymentStatus = false;

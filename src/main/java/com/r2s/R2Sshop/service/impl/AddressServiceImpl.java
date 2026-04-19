@@ -56,7 +56,7 @@ public class AddressServiceImpl implements AddressService {
      * This function returns address by id, with the id as the input parameter.
      * @param id
      * @return address by id
-     * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if the address cannot be found by categoriesId
+     * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if the address cannot be found by id
      * @author HoangVu
      * @since 1.1
      */
@@ -79,6 +79,7 @@ public class AddressServiceImpl implements AddressService {
      * @author HoangVu
      * @since 1.5
      */
+    @Transactional
     @Override
     public Address addWithUser(String userName, AddressDTORequest dtoRequest) {
         if (addressRepository.existsByStreetAndCityAndUser_UserNameAndDeleted(
@@ -119,6 +120,7 @@ public class AddressServiceImpl implements AddressService {
      * @author HoangVu
      * @since 1.6
      */
+    @Transactional
     @Override
     public Address updateByIdAndUserName(String userName, Long id, AddressDTORequest dtoRequest) {
         Address foundAddress = findById(id);

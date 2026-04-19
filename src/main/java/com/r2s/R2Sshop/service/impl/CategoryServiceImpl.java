@@ -6,6 +6,7 @@ import com.r2s.R2Sshop.model.Category;
 import com.r2s.R2Sshop.repository.CategoryRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.CategoryService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @author HoangVu
      * @since 1.2
      */
+    @Transactional
     @Override
     public Category add(CategoryDTORequest dtoRequest) {
         if (categoryRepository.existsByName(dtoRequest.getName())) {
@@ -92,6 +94,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @author HoangVu
      * @since 1.3
      */
+    @Transactional
     @Override
     public Category updateById(Long id, CategoryDTORequest dtoRequest) {
         Category foundCategory = findById(id);

@@ -10,6 +10,7 @@ import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.UserService;
 import com.r2s.R2Sshop.service.UserVoucherService;
 import com.r2s.R2Sshop.service.VoucherService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -107,6 +108,7 @@ public class UserVoucherServiceImpl implements UserVoucherService {
      * @author HoangVu
      * @since 1.0
      */
+    @Transactional
     @Override
     public UserVoucher addWithUserAndVoucher(UserVoucherDTORequest dtoRequest,
                                            Long userId, Long voucherId) {
@@ -128,6 +130,7 @@ public class UserVoucherServiceImpl implements UserVoucherService {
      * @author HoangVu
      * @since 1.0
      */
+    @Transactional
     @Override
     public UserVoucher updateById(Long id, UserVoucherDTORequest dtoRequest) {
         UserVoucher foundUserVoucher = findById(id);
@@ -226,14 +229,19 @@ public class UserVoucherServiceImpl implements UserVoucherService {
      * if userVoucher does not exist in the database
      * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_NOT_RELEASED)
      * if userVoucher already been disabled in the database
+     * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_USED)
+     * if userVoucher already been used in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public void disableById(Long id) {
         UserVoucher foundUserVoucher = findById(id);
         if (foundUserVoucher.getStatus() == 0){
             throw new AppException(ResponseCode.USERVOUCHER_ALREADY_NOT_RELEASED);
+        }
+        if (foundUserVoucher.getStatus() == 2){
+            throw new AppException(ResponseCode.USERVOUCHER_ALREADY_USED);
         }
         foundUserVoucher.setStatus(0);
         foundUserVoucher.setUsedAt(null);

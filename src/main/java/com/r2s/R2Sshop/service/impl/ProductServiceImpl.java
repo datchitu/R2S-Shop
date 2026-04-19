@@ -9,6 +9,7 @@ import com.r2s.R2Sshop.repository.ProductRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.CategoryService;
 import com.r2s.R2Sshop.service.ProductService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -85,6 +86,7 @@ public class ProductServiceImpl implements ProductService {
      * @author HoangVu
      * @since 1.1
      */
+    @Transactional
     @Override
     public Product addByCategoryId(Long categoryId, ProductDTORequest dtoRequest) {
         Category foundCategory = categoryService.findById(categoryId);
@@ -112,6 +114,7 @@ public class ProductServiceImpl implements ProductService {
      * @author HoangVu
      * @since 1.2
      */
+    @Transactional
     @Override
     public Product updateById(Long id, Long categoryId, ProductDTORequest dtoRequest) {
         Category foundCategory = categoryService.findById(categoryId);

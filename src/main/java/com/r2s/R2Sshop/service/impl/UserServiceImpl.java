@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
      * @author HoangVu
      * @since 1.4
      */
+    @Transactional
     @Override
     public User add(UserRegistrationDTORequest dtoRequest) {
         if (userRepository.existsByUserName(dtoRequest.getUserName())) {
@@ -152,6 +153,7 @@ public class UserServiceImpl implements UserService {
      * @author HoangVu
      * @since 1.4
      */
+    @Transactional
     @Override
     public User update(String userName, UserUpdateDTORequest dtoRequest) {
         User foundUser = findByUserName(userName);

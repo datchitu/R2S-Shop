@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "cart_line_items")
+@Table(name = "cart_line_items", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"variant_product_id", "cart_id", "deleted"})
+})
 public class CartLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +37,8 @@ public class CartLineItem {
     @JoinColumn(name = "cart_id", nullable = false)
     @JsonIgnoreProperties({"cartLineItems", "user", "userVoucher"})
     private Cart cart;
+
+    public Boolean isNew() {
+        return this.id == null;
+    }
 }
