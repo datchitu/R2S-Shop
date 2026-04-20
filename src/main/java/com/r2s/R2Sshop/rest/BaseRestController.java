@@ -22,8 +22,8 @@ public class BaseRestController{
     /**
      * Return data and HttpStatus.OK.
      * <p>
-     * This function reports the status HttpStatus.OK and returns data as a JSON file
-     * if the function retrieves the data successfully.
+     * This method reports the status HttpStatus.OK and returns data as a JSON file
+     * if the method retrieves the data successfully.
      * @param data
      * @return ResponseEntity<Map<String, Object>>(response, HttpStatus.OK)
      * @author HoangVu
@@ -41,7 +41,7 @@ public class BaseRestController{
     /**
      * Build a generic ErrorResponse.
      * <p>
-     * This function is used generally to build your response using the Builder method.
+     * This method is used generally to build your response using the Builder method.
      * returns the information including.
      * @param responseCode
      * @return buildErrorResponse(responseCode)
@@ -61,7 +61,7 @@ public class BaseRestController{
     /**
      * Configure GlobalExceptionHandler with Builder.
      * <p>
-     * This function configures the GlobalExceptionHandler with Builder and then reports the status HttpStatus error,
+     * This method configures the GlobalExceptionHandler with Builder and then reports the status HttpStatus error,
      * returns the information including.
      * code, message and timestamp if an exception occurs.
      * @param appException
@@ -77,7 +77,7 @@ public class BaseRestController{
     /**
      * Handle type mismatch.
      * <p>
-     * This function handles type mismatch.
+     * This method handles type mismatch.
      * Specifically, it handles situations where the parameters passed in do not match the required data types.
      * code, message and timestamp if an exception occurs.
      * @param methodArTypeMismchEx
@@ -94,7 +94,7 @@ public class BaseRestController{
     /**
      * Configure BadCredentialsException with Builder.
      * <p>
-     * This function configures the BadCredentialsException with Builder and then reports the status HttpStatus error,
+     * This method configures the BadCredentialsException with Builder and then reports the status HttpStatus error,
      * returns the information including.
      * code, message and timestamp if an exception occurs.
      * @param badCredentialsEx
@@ -109,7 +109,7 @@ public class BaseRestController{
     /**
      * Configure AuthenticationException with Builder.
      * <p>
-     * This function configures the AuthenticationException with Builder and then reports the status HttpStatus error,
+     * This method configures the AuthenticationException with Builder and then reports the status HttpStatus error,
      * returns the information including.
      * code, message and timestamp if an exception occurs.
      * @param authenticationEx
@@ -124,7 +124,7 @@ public class BaseRestController{
     /**
      * Configure MissingServletRequestParameterException with Builder.
      * <p>
-     * This function configures the MissingServletRequestParameterException with Builder
+     * This method configures the MissingServletRequestParameterException with Builder
      * and then reports the status HttpStatus error,
      * returns the information including.
      * code, message and timestamp if an exception occurs.
@@ -140,7 +140,7 @@ public class BaseRestController{
     /**
      * Configure MethodArgumentNotValidException with Builder.
      * <p>
-     * This function configures the MethodArgumentNotValidException with Builder
+     * This method configures the MethodArgumentNotValidException with Builder
      * and then reports the status HttpStatus error,
      * returns the message.
      * @param mthdAgmtNtVldEx

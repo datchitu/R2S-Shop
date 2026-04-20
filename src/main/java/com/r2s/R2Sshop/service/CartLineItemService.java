@@ -10,6 +10,7 @@ public interface CartLineItemService {
     CartLineItem findById(Long id);
     Page<CartLineItem> findAllByCartIdAndDeleted(Long cartId, Integer status,
                                                  Pageable pageable);
+    Page<CartLineItem> myCartLineItem(String userName, Pageable pageable);
     CartLineItem createNewCartLineItem(Long variantProductId, Cart cart);
     CartLineItem addWithVariantProductAndCart(Long variantProductId, Cart cart,
                                     CartLineItemDTORequest dtoRequest);

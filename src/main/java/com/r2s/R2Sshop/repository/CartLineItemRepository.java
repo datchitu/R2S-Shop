@@ -27,4 +27,7 @@ public interface CartLineItemRepository extends JpaRepository<CartLineItem, Long
                                                                      @Param("cartId")Long cartId,
                                                                      @Param("deleted")Boolean deleted);
     Optional<CartLineItem> findByVariantProductIdAndCartId(Long variantProductId, Long cartId);
+    @Query("SELECT SUM(cli.totalPrice) FROM CartLineItem cli WHERE cli.cart.id = :cartId " +
+            "AND cli.deleted = false")
+    Double sumTotalPriceByCartId(@Param("cartId") Long cartId);
 }

@@ -14,7 +14,7 @@ public class RoleSimpleDTOResponse {
     /**
      * Customize the output role information as a JSON file
      * <p>
-     * This function customizes the output role information, including
+     * This method customizes the output role information, including
      * roleName as a JSON file.
      * @param role
      * @author HoangVu

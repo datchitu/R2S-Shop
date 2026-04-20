@@ -20,19 +20,19 @@ public class CartLineItemDTOResponse
     /**
      * Customize the output cartLineItem information as a JSON file.
      * <p>
-     * This function customizes the output cartLineItem information, including
+     * This method customizes the output cartLineItem information, including
      * quantity and totalPrice, variantProductName and cartId as a JSON file.
      * @param cartLineItem
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     public CartLineItemDTOResponse(CartLineItem cartLineItem) {
         this.quantity = cartLineItem.getQuantity();
         this.totalPrice = cartLineItem.getTotalPrice();
-        if (ObjectUtils.isEmpty(cartLineItem.getVariantProduct())) {
+        if (!ObjectUtils.isEmpty(cartLineItem.getVariantProduct())) {
             this.variantProductName = cartLineItem.getVariantProduct().getName();
         }
-        if (ObjectUtils.isEmpty(cartLineItem.getCart())) {
+        if (!ObjectUtils.isEmpty(cartLineItem.getCart())) {
             this.cartId = cartLineItem.getCart().getId();
         }
     }

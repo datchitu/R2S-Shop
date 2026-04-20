@@ -1,27 +1,40 @@
 package com.r2s.R2Sshop.service.impl;
 
 import com.r2s.R2Sshop.constants.ResponseCode;
-import com.r2s.R2Sshop.model.Cart;
-import com.r2s.R2Sshop.model.User;
-import com.r2s.R2Sshop.repository.CartRepository;
+import com.r2s.R2Sshop.model.*;
+import com.r2s.R2Sshop.repository.*;
 import com.r2s.R2Sshop.rest.AppException;
-import com.r2s.R2Sshop.service.CartService;
-import com.r2s.R2Sshop.service.UserService;
+import com.r2s.R2Sshop.service.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
 
 @Service
 public class CartServiceImpl implements CartService {
+    private final Instant instant = Instant.now();
+    private final LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+
     @Autowired
     private CartRepository cartRepository;
     @Autowired
-    private UserService userService;
+    private CartLineItemRepository cartLineItemRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private VariantProductRepository variantProductRepository;
+    @Autowired
+    private UserVoucherService userVoucherService;
 
     /**
      * Add new cart.
      * <p>
-     * This function is used to add a new cart.
+     * This method is used to add a new cart.
      * @param user
      * @return cartRepository.save(cart)
      * @author HoangVu
@@ -37,7 +50,7 @@ public class CartServiceImpl implements CartService {
     /**
      * Return cart by id.
      * <p>
-     * This function returns cart by id, with the id as the input parameter.
+     * This method returns cart by id, with the id as the input parameter.
      * @param id
      * @return cart by id
      * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
@@ -52,24 +65,132 @@ public class CartServiceImpl implements CartService {
     /**
      * Return cart by userName.
      * <p>
-     * This function returns cart by userName, with the userName as the input parameter
+     * This method returns cart by userName, with the userName as the input parameter
      * if found by paymentStatus = false and userName. Opposite, it returns new cart.
      * @param userName
      * @return cart by userName
      * @throws AppException(ResponseCode.USER_NOT_FOUND)
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Transactional
     @Override
     public Cart myCart(String userName) {
-        User foundUser = userService.findByUserName(userName);
+        User foundUser = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
         return cartRepository.findByPaymentStatusAndUserUserName(false, userName)
-                .orElseGet(() -> {
-                    Cart cart = new Cart();
-                    cart.setUser(foundUser);
-                    return cartRepository.save(cart);
-                });
+                .orElseGet(() -> addCart(foundUser));
     }
+    /**
+     * UpdateTotalPrice by id.
+     * <p>
+     * This method updates updateTotalPrice by id, with the id as the input parameter.
+     * @param id
+     * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    @Transactional
+    public Double updateTotalPrice(Long id) {
+        Cart cart = findById(id);
+        Double totalPrice = cartLineItemRepository.sumTotalPriceByCartId(id);
+        cart.setTotalPrice(totalPrice != null ? totalPrice : 0.0);
+        cartRepository.save(cart);
+        return totalPrice;
+    }
+    /**
+     * Payment by card and apply voucher (if available) by userName.
+     * <p>
+     * This method used for payment by card and apply voucher (if available) by userName,
+     * with the userName, userVoucherId as the input parameter.
+     * @param userName
+     * @param note
+     * @param userVoucherId
+     * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    @Transactional
+    public void paymentByCard(String userName, String note, Long userVoucherId) {
+        Cart foundCart = myCart(userName);
+        Double totalPrice = updateTotalPrice(foundCart.getId());
 
+        if (!ObjectUtils.isEmpty(userVoucherId)) {
+            UserVoucher foundUserVoucher = userVoucherService.useById(userVoucherId);
+            totalPrice *= 1- foundUserVoucher.getVoucher().getDiscount();
+        }
+
+        foundCart.setNote(note);
+        foundCart.setPaymentType(true);
+        foundCart.setPaymentStatus(true);
+        foundCart.setPaidAt(localDateTime);
+        foundCart.setTotalPrice(totalPrice);
+
+        cartRepository.save(foundCart);
+    }
+    /**
+     * Payment by cash and apply voucher (if available) by id.
+     * <p>
+     * This method used for payment by cash and apply voucher (if available) by id,
+     * with the id, userVoucherId as the input parameter.
+     * @param id
+     * @param note
+     * @param userVoucherId
+     * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    @Transactional
+    public void paymentByCash(Long id, String note, Long userVoucherId) {
+        Cart foundCart = findById(id);
+        Double totalPrice = updateTotalPrice(foundCart.getId());
+
+        if (!ObjectUtils.isEmpty(userVoucherId)) {
+            UserVoucher foundUserVoucher = userVoucherService.useById(userVoucherId);
+            totalPrice *= 1- foundUserVoucher.getVoucher().getDiscount();
+        }
+        foundCart.setNote(note);
+        foundCart.setPaymentType(false);
+        foundCart.setPaymentStatus(true);
+        foundCart.setPaidAt(localDateTime);
+        foundCart.setTotalPrice(totalPrice);
+
+        cartRepository.save(foundCart);
+    }
+    /**
+     * SetStatus by id.
+     * <p>
+     * This method sets status and updates quantity of variant product by id, with the id as the input parameter.
+     * @param id
+     * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
+     * @throws AppException(ResponseCode.INSUFFICIENT_STOCK) if the variant product out of stock
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    @Transactional
+    public void setStatus(Long id) {
+        Cart foundCart = findById(id);
+
+        List<CartLineItem> cartLineItems = foundCart.getCartLineItems();
+        for (CartLineItem cartLineItem : cartLineItems) {
+            int updatedRows = variantProductRepository.decreaseStock(
+                    cartLineItem.getVariantProduct().getId(),
+                    cartLineItem.getQuantity()
+            );
+
+            if (updatedRows == 0) {
+//                String variantProductName = cartLineItem.getVariantProduct().getName();
+//                throw AppException.(ResponseCode.INSUFFICIENT_STOCK, "VariantProduct " + variantProductName);
+                throw new AppException(ResponseCode.INSUFFICIENT_STOCK);
+            }
+
+        }
+
+        foundCart.setStatus(true);
+        cartRepository.save(foundCart);
+    }
 }

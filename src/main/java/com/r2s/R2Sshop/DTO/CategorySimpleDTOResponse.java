@@ -15,7 +15,7 @@ public class CategorySimpleDTOResponse {
     /**
      * Customize the output category information as a JSON file.
      * <p>
-     * This function customizes the output category information, including
+     * This method customizes the output category information, including
      * name and deleted and list products as a JSON file.
      * @param category
      * @author HoangVu

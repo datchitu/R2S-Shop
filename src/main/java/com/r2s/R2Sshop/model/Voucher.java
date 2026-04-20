@@ -29,7 +29,7 @@ public class Voucher {
     @Column(unique = true, nullable = false)
     private String code;
 
-    private Integer discount = 0;
+    private Double discount = 0.0;
 
     private Integer quantity = 0;
 

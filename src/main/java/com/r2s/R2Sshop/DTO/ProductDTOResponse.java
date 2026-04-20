@@ -18,7 +18,7 @@ public class ProductDTOResponse {
     /**
      * Customize the output product information as a JSON file.
      * <p>
-     * This function customizes the output product information, including
+     * This method customizes the output product information, including
      * ID, name, deleted and list variantProducts as a JSON file.
      * @param product
      * @author HoangVu

@@ -13,14 +13,14 @@ import java.time.LocalDateTime;
 public class VoucherDTOResponse {
     private String name;
     private String code;
-    private Integer discount;
+    private Double discount;
     private Integer quantity;
     private LocalDateTime expireDate;
 
     /**
      * Customize the output variant product information as a JSON file.
      * <p>
-     * This function customizes the output variant product information, including
+     * This method customizes the output variant product information, including
      * name, code, discount, quantity and expireDate as a JSON file.
      * @param voucher
      * @author HoangVu

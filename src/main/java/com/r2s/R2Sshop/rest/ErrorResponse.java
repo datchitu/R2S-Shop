@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 /**
  * Export the ErrorResponse information as a JSON file.
  * <p>
- * This function exports the ErrorResponse information, including status, message, error
+ * This method exports the ErrorResponse information, including status, message, error
  * and timestamp as a JSON file.
  * This helps to initialize an object using the ErrorResponse.builder().status(404)...build() method.
  * @author HoangVu

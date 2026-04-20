@@ -35,7 +35,7 @@ public class CartLineItemServiceImpl implements CartLineItemService {
     /**
      * Return cartLineItem by id.
      * <p>
-     * This function returns cartLineItem by id, with the id as the input parameter
+     * This method returns cartLineItem by id, with the id as the input parameter
      * @param id
      * @return Information of cartLineItem by id
      * @throws AppException(ResponseCode.CART_LINE_ITEM_NOT_FOUND)
@@ -51,7 +51,7 @@ public class CartLineItemServiceImpl implements CartLineItemService {
     /**
      * Return cartLineItem list by deleted.
      * <p>
-     * This function returns all cartLineItem by cartId and deleted
+     * This method returns all cartLineItem by cartId and deleted
      * (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
@@ -78,11 +78,28 @@ public class CartLineItemServiceImpl implements CartLineItemService {
         }
     }
     /**
+     * Return my cartLineItem list.
+     * <p>
+     * This method returns cartLineItem list by cartId and pageable,
+     * with userName, pageable as the input parameter.
+     * @param userName
+     * @param pageable
+     * @return cartLineItem list by cartId and deleted
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public Page<CartLineItem> myCartLineItem(String userName, Pageable pageable){
+        Cart foundCart = cartService.myCart(userName);
+        return cartLineItemRepository.findAllByCartIdAndDeleted(foundCart.getId(),
+                false, pageable);
+    }
+    /**
      * Create new cartLineItem.
      * <p>
-     * This function is used to create a new cartLineItem.
+     * This method is used to create a new cartLineItem.
      * @param variantProductId
-     * @param cartId
+     * @param cart
      * @return information of cartLineItem if the create process is successful
      * @author HoangVu
      * @since 1.0
@@ -98,7 +115,7 @@ public class CartLineItemServiceImpl implements CartLineItemService {
     /**
      * Add new cartLineItem.
      * <p>
-     * This function is used to add a new cartLineItem.
+     * This method is used to add a new cartLineItem.
      * If cartLineItem does not exist create new cartLineItem.
      * If cartLineItem already exists check deleted (
      * with deleted == false, update quantity and totalPrice, else set newQuantity,
@@ -108,8 +125,8 @@ public class CartLineItemServiceImpl implements CartLineItemService {
      * @author HoangVu
      * @since 1.0
      */
-    @Transactional
     @Override
+    @Transactional
     public CartLineItem addWithVariantProductAndCart(Long variantProductId, Cart cart,
                                            CartLineItemDTORequest dtoRequest) {
         CartLineItem cartLineItem = cartLineItemRepository.findByVariantProductIdAndCartId(
@@ -131,24 +148,25 @@ public class CartLineItemServiceImpl implements CartLineItemService {
     /**
      * Add new cartLineItem to cart with product.
      * <p>
-     * This function is used to add a new cartLineItem to cart with product.
+     * This method is used to add a new cartLineItem to cart with product.
      * @param dtoRequest
      * @return information of cartLineItem if the add process is successful
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
-    @Transactional
     @Override
+    @Transactional
     public CartLineItem addToCartWithProduct(String userName, Long variantProductId,
                                              CartLineItemDTORequest dtoRequest) {
         Cart foundCart = cartService.myCart(userName);
-
-        return addWithVariantProductAndCart(variantProductId, foundCart, dtoRequest);
+        CartLineItem cartLineItem = addWithVariantProductAndCart(variantProductId, foundCart, dtoRequest);
+        cartService.updateTotalPrice(foundCart.getId());
+        return cartLineItem;
     }
     /**
      * Update cartLineItem by id.
      * <p>
-     * This function updates cartLineItem by id, with the id as the input parameter.
+     * This method updates cartLineItem by id, with the id as the input parameter.
      * @param id
      * @param dtoRequest
      * @return cartLineItem by id if the update process is successful
@@ -174,7 +192,7 @@ public class CartLineItemServiceImpl implements CartLineItemService {
     /**
      * Delete cartLineItem by id.
      * <p>
-     * This function deletes cartLineItem by id, with the id as the input parameter.
+     * This method deletes cartLineItem by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.VOUCHER_NOT_FOUND)
      * if cartLineItem does not exist in the database

@@ -7,4 +7,9 @@ public interface CartService {
     Cart addCart(User user);
     Cart findById(Long id);
     Cart myCart(String userName);
+    Double updateTotalPrice(Long id);
+    void paymentByCard(String userName, String note, Long userVoucherId);
+    void paymentByCash(Long id, String note, Long userVoucherId);
+    void setStatus(Long id);
+
 }

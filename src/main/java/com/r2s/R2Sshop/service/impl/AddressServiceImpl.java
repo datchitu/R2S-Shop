@@ -28,7 +28,7 @@ public class AddressServiceImpl implements AddressService {
     /**
      * Find list by userId and deleted.
      * <p>
-     * This function returns address list by userId and deleted(
+     * This method returns address list by userId and deleted(
      * With the passed-in status -1, return all by userName works;
      * with 0, return all by userName and deleted == false works;
      * and otherwise, it's return all by userName and deleted == true),
@@ -53,7 +53,7 @@ public class AddressServiceImpl implements AddressService {
     /**
      * Return address by id.
      * <p>
-     * This function returns address by id, with the id as the input parameter.
+     * This method returns address by id, with the id as the input parameter.
      * @param id
      * @return address by id
      * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if the address cannot be found by id
@@ -69,7 +69,7 @@ public class AddressServiceImpl implements AddressService {
     /**
      * Add new address with user.
      * <p>
-     * This function is used to add a new address with user.
+     * This method is used to add a new address with user.
      * @param dtoRequest
      * @param userName
      * @return information of address if the add process is successful
@@ -104,7 +104,7 @@ public class AddressServiceImpl implements AddressService {
     /**
      * Update address by id and userName.
      * <p>
-     * This function updates address by id and userName, with the userName, id as the input parameter.
+     * This method updates address by id and userName, with the userName, id as the input parameter.
      * @param userName
      * @param id
      * @param dtoRequest
@@ -150,7 +150,7 @@ public class AddressServiceImpl implements AddressService {
     /**
      * Set default address by id and userName.
      * <p>
-     * This function Sets default address by id and userName, with the userName, id as the input parameter.
+     * This method Sets default address by id and userName, with the userName, id as the input parameter.
      * @param userName
      * @param id
      * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if address does not exist in the database
@@ -187,7 +187,7 @@ public class AddressServiceImpl implements AddressService {
     /**
      * Delete address by id and userName.
      * <p>
-     * This function deletes address by id and userName, with the userName, id as the input parameter.
+     * This method deletes address by id and userName, with the userName, id as the input parameter.
      * @param userName
      * @param id
      * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if address does not exist in the database
@@ -222,7 +222,7 @@ public class AddressServiceImpl implements AddressService {
     /**
      * Reactivate address by id.
      * <p>
-     * This function reactivates address by id, with the userName, id as the input parameter.
+     * This method reactivates address by id, with the userName, id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if address does not exist in the database
      * @throws AppException(ResponseCode.ACCESS_DENIED) if the username does not match

@@ -29,7 +29,7 @@ public class VariantProductController extends BaseRestController {
     /**
      * Return variant product list by productId and status.
      * <p>
-     * This function returns variant product list by product id and
+     * This method returns variant product list by product id and
      * deleted (With the passed-in status -1, return all by productId works;
      * with 0, return all by productId and deleted == false works;
      * and otherwise, it's return all by product id and deleted == true),
@@ -64,7 +64,7 @@ public class VariantProductController extends BaseRestController {
     /**
      * Return product by id.
      * <p>
-     * This function returns product by id, with the id as the input parameter.
+     * This method returns product by id, with the id as the input parameter.
      * @param id
      * @return product by id
      * @author HoangVu
@@ -79,7 +79,7 @@ public class VariantProductController extends BaseRestController {
     /**
      * Add new variant product with category.
      * <p>
-     * This function is used to add a new variant product with product.
+     * This method is used to add a new variant product with product.
      * @param productId
      * @param dtoRequest
      * @return information of variant product if the add process is successful
@@ -106,7 +106,7 @@ public class VariantProductController extends BaseRestController {
     /**
      * Update variant product.
      * <p>
-     * This function is used to update variant product by id.
+     * This method is used to update variant product by id.
      * @param id
      * @param productId
      * @param dtoRequest
@@ -131,7 +131,7 @@ public class VariantProductController extends BaseRestController {
     /**
      * Delete variant product.
      * <p>
-     * This function is used to delete variant product by id.
+     * This method is used to delete variant product by id.
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
@@ -147,7 +147,7 @@ public class VariantProductController extends BaseRestController {
     /**
      * Reactivate variant product.
      * <p>
-     * This function is used to reactivate variant product by id.
+     * This method is used to reactivate variant product by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty

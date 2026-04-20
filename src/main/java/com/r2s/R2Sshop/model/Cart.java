@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -38,14 +39,14 @@ public class Cart {
 
     @CreationTimestamp
     @Column(name = "created_at",nullable = false)
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private LocalDateTime updatedAt;
 
     @Column(name = "paid_at")
-    private Timestamp paidAt;
+    private LocalDateTime paidAt;
 
     @OneToMany(mappedBy = "cart")
     @JsonIgnoreProperties({"variantProduct", "cart"})

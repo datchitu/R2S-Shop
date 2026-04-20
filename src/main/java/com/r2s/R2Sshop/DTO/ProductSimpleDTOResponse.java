@@ -14,7 +14,7 @@ public class ProductSimpleDTOResponse {
     /**
      * Customize the output product information as a JSON file.
      * <p>
-     * This function customizes the output product information, including
+     * This method customizes the output product information, including
      * name and deleted as a JSON file.
      * @param product
      * @author HoangVu

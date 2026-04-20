@@ -19,7 +19,7 @@ public class AddressSimpleDTOResponse {
     /**
      * Customize the output address information as a JSON file.
      * <p>
-     * This function customizes the output address information, including
+     * This method customizes the output address information, including
      * street, city, country, defaulted, receiverName
      * and phoneNumber as a JSON file.
      * @param address

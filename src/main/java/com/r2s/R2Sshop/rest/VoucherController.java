@@ -28,7 +28,7 @@ public class VoucherController extends BaseRestController{
     /**
      * Return voucher by id.
      * <p>
-     * This function returns voucher by id, with the id as the input parameter.
+     * This method returns voucher by id, with the id as the input parameter.
      * @param id
      * @return voucher by id
      * @author HoangVu
@@ -45,7 +45,7 @@ public class VoucherController extends BaseRestController{
     /**
      * Return voucher list by status.
      * <p>
-     * This function returns voucher list by deleted
+     * This method returns voucher list by deleted
      * (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
@@ -77,7 +77,7 @@ public class VoucherController extends BaseRestController{
     /**
      * Add new voucher with category.
      * <p>
-     * This function is used to add a new voucher.
+     * This method is used to add a new voucher.
      * @param dtoRequest
      * @return information of voucher if the add process is successful
      * @throws AppException(ResponseCode.NO_PARAM) if the passed-in parameter values such as
@@ -99,7 +99,7 @@ public class VoucherController extends BaseRestController{
     /**
      * Update voucher.
      * <p>
-     * This function is used to update voucher by id.
+     * This method is used to update voucher by id.
      * @param id
      * @param dtoRequest
      * @return voucher information by id if it is updated successfully.
@@ -122,7 +122,7 @@ public class VoucherController extends BaseRestController{
     /**
      * Delete voucher.
      * <p>
-     * This function is used to delete voucher by id.
+     * This method is used to delete voucher by id.
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
@@ -139,7 +139,7 @@ public class VoucherController extends BaseRestController{
     /**
      * Reactivate voucher.
      * <p>
-     * This function is used to reactivate voucher by id.
+     * This method is used to reactivate voucher by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty

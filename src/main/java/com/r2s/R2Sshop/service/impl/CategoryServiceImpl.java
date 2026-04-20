@@ -24,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * Return category list by deleted.
      * <p>
-     * This function returns all category by deleted(
+     * This method returns all category by deleted(
      * With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
@@ -48,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * Return category by id.
      * <p>
-     * This function returns category by id, with the id as the input parameter.
+     * This method returns category by id, with the id as the input parameter.
      * @param id
      * @return Category by id
      * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if the Category cannot be found by categoriesId
@@ -64,7 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * Add new category.
      * <p>
-     * This function is used to add a new category.
+     * This method is used to add a new category.
      * @param dtoRequest
      * @return information of category if the add process is successful
      * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if category be found by categoryName
@@ -84,7 +84,7 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * Update category by id.
      * <p>
-     * This function updates category by id, with the id as the input parameter.
+     * This method updates category by id, with the id as the input parameter.
      * @param id
      * @param dtoRequest
      * @return Category by id if the update process is successful
@@ -114,7 +114,7 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * Delete category by id and.
      * <p>
-     * This function deletes category by id, with the id as the input parameter.
+     * This method deletes category by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED) if category already been deleted in the database
@@ -133,7 +133,7 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * Reactivate category by id.
      * <p>
-     * This function reactives category by id, with the id as the input parameter.
+     * This method reactives category by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED) if category already been deleted in the database

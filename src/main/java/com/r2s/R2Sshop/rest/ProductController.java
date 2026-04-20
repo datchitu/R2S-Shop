@@ -29,7 +29,7 @@ public class ProductController extends BaseRestController{
     /**
      * Return all products by category id and status.
      * <p>
-     * This function returns all product by categoryId and status,
+     * This method returns all product by categoryId and status,
      * with the categoryId, status as the input parameter
      * and pagination is applied.
      * @param categoryId
@@ -62,7 +62,7 @@ public class ProductController extends BaseRestController{
     /**
      * Return product by id.
      * <p>
-     * This function returns product by id, with the id as the input parameter.
+     * This method returns product by id, with the id as the input parameter.
      * @param id
      * @return product by id
      * @author HoangVu
@@ -77,7 +77,7 @@ public class ProductController extends BaseRestController{
     /**
      * Add new product with category.
      * <p>
-     * This function is used to add a new product with category.
+     * This method is used to add a new product with category.
      * @param categoryId
      * @param dtoRequest
      * @return information of product if the add process is successful
@@ -104,7 +104,7 @@ public class ProductController extends BaseRestController{
     /**
      * Update product.
      * <p>
-     * This function is used to update product by id.
+     * This method is used to update product by id.
      * @param id
      * @param categoryId
      * @param dtoRequest
@@ -134,7 +134,7 @@ public class ProductController extends BaseRestController{
     /**
      * Delete product.
      * <p>
-     * This function is used to delete product by id.
+     * This method is used to delete product by id.
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
@@ -151,7 +151,7 @@ public class ProductController extends BaseRestController{
     /**
      * Reactivate product.
      * <p>
-     * This function is used to reactivate product by id.
+     * This method is used to reactivate product by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty

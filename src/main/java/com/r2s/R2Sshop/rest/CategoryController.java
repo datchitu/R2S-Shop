@@ -25,7 +25,7 @@ public class CategoryController extends BaseRestController{
     /**
      * Return category list.
      * <p>
-     * This function returns category list by status.
+     * This method returns category list by status.
      * @param status
      * @return the category list entity if the data is retrieved successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if status is outside the value (-1, 0, 1)
@@ -47,7 +47,7 @@ public class CategoryController extends BaseRestController{
     /**
      * Return category by id.
      * <p>
-     * This function returns category by id, with the id as the input parameter.
+     * This method returns category by id, with the id as the input parameter.
      * @param id
      * @return category by id
      * @author HoangVu
@@ -61,7 +61,7 @@ public class CategoryController extends BaseRestController{
     /**
      * Add new category.
      * <p>
-     * This function is used to add a new category.
+     * This method is used to add a new category.
      * @param dtoRequest
      * @return category information if it is added successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
@@ -87,7 +87,7 @@ public class CategoryController extends BaseRestController{
     /**
      * Update category.
      * <p>
-     * This function is used to update category by id.
+     * This method is used to update category by id.
      * @param id
      * @param dtoRequest
      * @return category information by id if it is updated successfully.
@@ -115,7 +115,7 @@ public class CategoryController extends BaseRestController{
     /**
      * Delete category.
      * <p>
-     * This function is used to delete category by id.
+     * This method is used to delete category by id.
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
@@ -133,7 +133,7 @@ public class CategoryController extends BaseRestController{
     /**
      * Reactivate address.
      * <p>
-     * This function is used to reactivate address by id.
+     * This method is used to reactivate address by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty

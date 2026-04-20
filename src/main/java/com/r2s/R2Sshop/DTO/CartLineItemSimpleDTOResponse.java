@@ -4,6 +4,7 @@ import com.r2s.R2Sshop.model.CartLineItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.ObjectUtils;
 
 @Data
 @AllArgsConstructor
@@ -11,11 +12,10 @@ import lombok.NoArgsConstructor;
 public class CartLineItemSimpleDTOResponse {
     private Integer quantity;
     private Double totalPrice;
-
     /**
      * Customize the output cartLineItem information as a JSON file.
      * <p>
-     * This function customizes the output cartLineItem information, including
+     * This method customizes the output cartLineItem information, including
      * quantity and totalPrice as a JSON file.
      * @param cartLineItem
      * @author HoangVu

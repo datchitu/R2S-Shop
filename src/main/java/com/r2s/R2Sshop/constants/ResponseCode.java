@@ -31,6 +31,7 @@ public enum ResponseCode {
     FAILURE_CATEGORY_UPDATE(3005, "Category update failed", HttpStatus.CONFLICT),
     FAILURE_PRODUCT_UPDATE(3006, "Product update failed", HttpStatus.CONFLICT),
     AUTHENTICATION_ERROR(3010, "Failed sign in", HttpStatus.UNAUTHORIZED),
+    INSUFFICIENT_STOCK(3011, "Insufficient stock", HttpStatus.BAD_REQUEST),
     IMMUTABLE(3007, "The value remains unchanged", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_EXISTS(2023, "Data already exists", HttpStatus.BAD_REQUEST),
     DATA_ALREADY_DELETED(2024, "Data already been deleted", HttpStatus.BAD_REQUEST),
@@ -55,7 +56,6 @@ public enum ResponseCode {
             HttpStatus.BAD_REQUEST),
     CART_LINE_ITEM_ALREADY_DELETED(2040, "CartLineItem already been deleted",
             HttpStatus.BAD_REQUEST),
-    CART_LINE_ITEM_ALREADY_REACTIVATED(2041, "CartLineItem already been reactivated", HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR);
 
 
@@ -66,7 +66,7 @@ public enum ResponseCode {
     /**
      * Assign the code, message, http status.
      * <p>
-     * This function is used to assign the code, message, http status passed in to the code,
+     * This method is used to assign the code, message, http status passed in to the code,
      * message and httpStatus above.
      * @param code
      * @param message

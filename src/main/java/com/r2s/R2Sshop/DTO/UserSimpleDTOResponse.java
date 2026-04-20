@@ -18,7 +18,7 @@ public class UserSimpleDTOResponse {
     /**
      * Customize the output user information as a JSON file.
      * <p>
-     * This function customizes the output user information, including
+     * This method customizes the output user information, including
      * firstName, lastName, userName, email and phone as a JSON file.
      * @param user
      * @author HoangVu

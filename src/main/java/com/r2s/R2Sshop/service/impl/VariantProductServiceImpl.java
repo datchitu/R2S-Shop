@@ -32,7 +32,7 @@ public class VariantProductServiceImpl implements VariantProductService {
     /**
      * Return all variant products by product id and deleted.
      * <p>
-     * This function returns all variant product by productId and deleted
+     * This method returns all variant product by productId and deleted
      * (With the passed-in status -1, return all by productId works;
      * with 0, return all by productId and deleted == false works;
      * and otherwise, it's return all by product id and deleted == true),
@@ -67,7 +67,7 @@ public class VariantProductServiceImpl implements VariantProductService {
     /**
      * Return variant product by id.
      * <p>
-     * This function returns variant product by id, with the id as the input parameter
+     * This method returns variant product by id, with the id as the input parameter
      * @param id
      * @return Information of variant product by id
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_NOT_FOUND)
@@ -83,7 +83,7 @@ public class VariantProductServiceImpl implements VariantProductService {
     /**
      * Add new variant product with product.
      * <p>
-     * This function is used to add a new variant product with product.
+     * This method is used to add a new variant product with product.
      * @param dtoRequest
      * @param productId
      * @return information of variant product if the add process is successful
@@ -107,7 +107,7 @@ public class VariantProductServiceImpl implements VariantProductService {
     /**
      * Update variant product by id.
      * <p>
-     * This function updates variant product by id, with the id as the input parameter.
+     * This method updates variant product by id, with the id as the input parameter.
      * @param id
      * @param productId
      * @param dtoRequest
@@ -152,7 +152,7 @@ public class VariantProductServiceImpl implements VariantProductService {
     /**
      * Delete variant product by id.
      * <p>
-     * This function deletes variant product by id, with the id as the input parameter.
+     * This method deletes variant product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_NOT_FOUND)
      * if variant product does not exist in the database
@@ -173,7 +173,7 @@ public class VariantProductServiceImpl implements VariantProductService {
     /**
      * Reactivate variant product by id.
      * <p>
-     * This function reactivates variant product by id, with the id as the input parameter.
+     * This method reactivates variant product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_NOT_FOUND)
      * if variant product does not exist in the database

@@ -16,6 +16,6 @@ public interface UserVoucherService {
     void deleteById(Long id);
     void reactivateById(Long id);
     void releaseById(Long id);
-    void useById(Long id);
+    UserVoucher useById(Long id);
     void disableById(Long id);
 }

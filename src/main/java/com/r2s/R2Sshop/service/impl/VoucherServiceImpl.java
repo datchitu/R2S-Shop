@@ -23,7 +23,7 @@ public class VoucherServiceImpl implements VoucherService {
     /**
      * Return voucher by id.
      * <p>
-     * This function returns voucher by id, with the id as the input parameter
+     * This method returns voucher by id, with the id as the input parameter
      * @param id
      * @return Information of voucher by id
      * @throws AppException(ResponseCode.VOUCHER_NOT_FOUND)
@@ -39,7 +39,7 @@ public class VoucherServiceImpl implements VoucherService {
     /**
      * Return voucher list by deleted.
      * <p>
-     * This function returns all voucher by deleted (With the passed-in status -1, return all works;
+     * This method returns all voucher by deleted (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
      * with the status and pageable as the input parameter.
@@ -61,7 +61,7 @@ public class VoucherServiceImpl implements VoucherService {
     /**
      * Add new voucher.
      * <p>
-     * This function is used to add a new voucher.
+     * This method is used to add a new voucher.
      * @param dtoRequest
      * @return information of voucher if the add process is successful
      * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if voucher be found by name
@@ -80,7 +80,7 @@ public class VoucherServiceImpl implements VoucherService {
     /**
      * Update voucher by id.
      * <p>
-     * This function updates voucher by id, with the id as the input parameter.
+     * This method updates voucher by id, with the id as the input parameter.
      * @param id
      * @param dtoRequest
      * @return voucher by id if the update process is successful
@@ -103,7 +103,7 @@ public class VoucherServiceImpl implements VoucherService {
     /**
      * Delete voucher by id.
      * <p>
-     * This function deletes voucher by id, with the id as the input parameter.
+     * This method deletes voucher by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.VOUCHER_NOT_FOUND)
      * if voucher does not exist in the database
@@ -124,7 +124,7 @@ public class VoucherServiceImpl implements VoucherService {
     /**
      * Reactivate voucher by id.
      * <p>
-     * This function reactivates voucher by id, with the id as the input parameter.
+     * This method reactivates voucher by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.VOUCHER_NOT_FOUND)
      * if voucher does not exist in the database

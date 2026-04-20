@@ -28,7 +28,7 @@ public class AddressController extends BaseRestController{
     /**
      * Return address list by userName and status.
      * <p>
-     * This function returns address list by userName and
+     * This method returns address list by userName and
      * status(With the passed-in status -1, return all by userName works;
      * with 0, return all by userName and deleted == false works;
      * and otherwise, it's return all by userName and deleted == true),
@@ -56,7 +56,7 @@ public class AddressController extends BaseRestController{
     /**
      * Add new address with userName.
      * <p>
-     * This function is used to add a new address with userName.
+     * This method is used to add a new address with userName.
      * @param dtoRequest
      * @return address information with userName if it is added successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
@@ -78,7 +78,7 @@ public class AddressController extends BaseRestController{
     /**
      * Update address with userName.
      * <p>
-     * This function is used to update address with userName.
+     * This method is used to update address with userName.
      * @param id
      * @param dtoRequest
      * @return address information with userName if it is updated successfully.
@@ -104,7 +104,7 @@ public class AddressController extends BaseRestController{
     /**
      * Delete address with userName.
      * <p>
-     * This function is used to delete address by id and userName.
+     * This method is used to delete address by id and userName.
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
@@ -123,7 +123,7 @@ public class AddressController extends BaseRestController{
     /**
      * Reactivated address.
      * <p>
-     * This function is used to reactivated address by id.
+     * This method is used to reactivated address by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
@@ -140,7 +140,7 @@ public class AddressController extends BaseRestController{
     /**
      * Set default address by id and userName.
      * <p>
-     * This function Sets default address by id and userName, with the userName, id as the input parameter.
+     * This method Sets default address by id and userName, with the userName, id as the input parameter.
      * @param id
      * @return "Set default successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty

@@ -27,7 +27,7 @@ public class AuthenController extends BaseRestController {
     /**
      * Signin.
      * <p>
-     * This function is used to authenticate signin information from username and password.
+     * This method is used to authenticate signin information from username and password.
      * Then returns a token and a message.
      * @param authen
      * @return token and "Successful signin!".

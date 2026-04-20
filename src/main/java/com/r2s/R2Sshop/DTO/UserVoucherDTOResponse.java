@@ -21,7 +21,7 @@ public class UserVoucherDTOResponse {
     /**
      * Customize the output variant product information as a JSON file.
      * <p>
-     * This function customizes the output userVoucher information, including
+     * This method customizes the output userVoucher information, including
      * expireDate, status and usedAt as a JSON file.
      * @param userVoucher
      * @author HoangVu

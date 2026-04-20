@@ -5,6 +5,7 @@ import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.User;
 import com.r2s.R2Sshop.model.UserVoucher;
 import com.r2s.R2Sshop.model.Voucher;
+import com.r2s.R2Sshop.repository.UserRepository;
 import com.r2s.R2Sshop.repository.UserVoucherRepository;
 import com.r2s.R2Sshop.rest.AppException;
 import com.r2s.R2Sshop.service.UserService;
@@ -13,6 +14,7 @@ import com.r2s.R2Sshop.service.VoucherService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,13 +26,13 @@ import java.util.List;
 
 @Service
 public class UserVoucherServiceImpl implements UserVoucherService {
-    Instant instant = Instant.now();
-    LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    private final Instant instant = Instant.now();
+    private final LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
 
     @Autowired
     private UserVoucherRepository userVoucherRepository;
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
     @Autowired
     private VoucherService voucherService;
     @Autowired
@@ -38,7 +40,7 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     /**
      * Return userVoucher by id.
      * <p>
-     * This function returns userVoucher by id, with the id as the input parameter
+     * This method returns userVoucher by id, with the id as the input parameter
      * @param id
      * @return Information of userVoucher by id
      * @throws AppException(ResponseCode.USERVOUCHER_NOT_FOUND)
@@ -55,7 +57,7 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     /**
      * Return userVoucher list by deleted.
      * <p>
-     * This function returns all userVoucher by deleted (With the passed-in status -1, return all works;
+     * This method returns all userVoucher by deleted (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
      * with the status and pageable as the input parameter.
@@ -79,7 +81,7 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     /**
      * Return userVoucher list by userName and deleted.
      * <p>
-     * This function returns all userVoucher by userName and deleted (With the passed-in status -1, return all works;
+     * This method returns all userVoucher by userName and deleted (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
      * with the userName and status as the input parameter.
@@ -102,7 +104,7 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     /**
      * Add new userVoucher.
      * <p>
-     * This function is used to add a new userVoucher with userName and voucherId.
+     * This method is used to add a new userVoucher with userName and voucherId.
      * @param dtoRequest
      * @return information of userVoucher with userName and voucherId if the add process is successful
      * @author HoangVu
@@ -112,7 +114,8 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     @Override
     public UserVoucher addWithUserAndVoucher(UserVoucherDTORequest dtoRequest,
                                            Long userId, Long voucherId) {
-        User foundUser = userService.findById(userId);
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
         Voucher foundVoucher = voucherService.findById(voucherId);
         UserVoucher userVoucher = modelMapper.map(dtoRequest, UserVoucher.class);
         userVoucher.setVoucher(foundVoucher);
@@ -122,7 +125,7 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     /**
      * Update userVoucher by id.
      * <p>
-     * This function updates userVoucher by id, with the id as the input parameter.
+     * This method updates userVoucher by id, with the id as the input parameter.
      * @param id
      * @param dtoRequest
      * @return userVoucher by id if the update process is successful
@@ -140,7 +143,7 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     /**
      * Delete userVoucher by id.
      * <p>
-     * This function deletes userVoucher by id, with the id as the input parameter.
+     * This method deletes userVoucher by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USERVOUCHER_NOT_FOUND)
      * if userVoucher does not exist in the database
@@ -161,7 +164,7 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     /**
      * Reactivate userVoucher by id.
      * <p>
-     * This function reactivates userVoucher by id, with the id as the input parameter.
+     * This method reactivates userVoucher by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USERVOUCHER_NOT_FOUND)
      * if userVoucher does not exist in the database
@@ -182,14 +185,14 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     /**
      * Release userVoucher by id.
      * <p>
-     * This function releases userVoucher by id, with the id as the input parameter.
+     * This method releases userVoucher by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USERVOUCHER_NOT_FOUND)
      * if userVoucher does not exist in the database
      * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_RELEASED)
      * if userVoucher already been released in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public void releaseById(Long id) {
@@ -198,32 +201,35 @@ public class UserVoucherServiceImpl implements UserVoucherService {
             throw new AppException(ResponseCode.USERVOUCHER_ALREADY_RELEASED);
         }
         foundUserVoucher.setStatus(1);
+        userVoucherRepository.save(foundUserVoucher);
     }
     /**
      * Use userVoucher by id.
      * <p>
-     * This function uses userVoucher by id, with the id as the input parameter.
+     * This method uses userVoucher by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USERVOUCHER_NOT_FOUND)
      * if userVoucher does not exist in the database
      * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_USED)
      * if userVoucher already been used in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
-    public void useById(Long id) {
-        UserVoucher foundUserVoucher = findById(id);
+    public UserVoucher useById(Long id) {
+        UserVoucher foundUserVoucher = userVoucherRepository.findByIdWithLock(id)
+                .orElseThrow(() -> new AppException(ResponseCode.USERVOUCHER_NOT_FOUND));
         if (foundUserVoucher.getStatus() == 2){
             throw new AppException(ResponseCode.USERVOUCHER_ALREADY_USED);
         }
         foundUserVoucher.setStatus(2);
         foundUserVoucher.setUsedAt(localDateTime);
+        return userVoucherRepository.save(foundUserVoucher);
     }
     /**
      * Disable userVoucher by id.
      * <p>
-     * This function disables userVoucher by id, with the id as the input parameter.
+     * This method disables userVoucher by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USERVOUCHER_NOT_FOUND)
      * if userVoucher does not exist in the database
@@ -232,7 +238,7 @@ public class UserVoucherServiceImpl implements UserVoucherService {
      * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_USED)
      * if userVoucher already been used in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public void disableById(Long id) {
@@ -245,5 +251,6 @@ public class UserVoucherServiceImpl implements UserVoucherService {
         }
         foundUserVoucher.setStatus(0);
         foundUserVoucher.setUsedAt(null);
+        userVoucherRepository.save(foundUserVoucher);
     }
 }

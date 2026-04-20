@@ -29,7 +29,7 @@ public class UserDTOResponse {
     /**
      * Customize the output user information as a JSON file.
      * <p>
-     * This function customizes the output user information, including
+     * This method customizes the output user information, including
      * ID, firstName, lastName, userName, email, phone, deleted, cart list, role list, order list and
      * address list as a JSON file.
      * @param user

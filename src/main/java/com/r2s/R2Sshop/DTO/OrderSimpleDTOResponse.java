@@ -20,7 +20,7 @@ public class OrderSimpleDTOResponse {
     /**
      * Customize the output order information as a JSON file
      * <p>
-     * This function customizes the output order information, including
+     * This method customizes the output order information, including
      * orderId, deliveryTime, status, datetime and totalPrice as a JSON file.
      * @param order
      * @author HoangVu

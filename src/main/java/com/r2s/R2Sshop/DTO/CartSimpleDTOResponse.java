@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -16,13 +16,13 @@ public class CartSimpleDTOResponse {
     private Boolean paymentType;
     private Boolean paymentStatus;
     private Boolean status;
-    private Timestamp createdAt;
-    private Timestamp paidAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime paidAt;
 
     /**
      * Customize the output cart information as a JSON file
      * <p>
-     * This function customizes the output cart information, including
+     * This method customizes the output cart information, including
      * totalPrice, note, paymentType, paymentStatus, status, createdAt and paidAt as a JSON file.
      * @param cart
      * @author HoangVu

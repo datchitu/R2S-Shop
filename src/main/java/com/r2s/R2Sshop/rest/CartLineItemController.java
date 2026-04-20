@@ -2,7 +2,6 @@ package com.r2s.R2Sshop.rest;
 
 import com.r2s.R2Sshop.DTO.CartLineItemDTORequest;
 import com.r2s.R2Sshop.DTO.CartLineItemDTOResponse;
-import com.r2s.R2Sshop.DTO.CartLineItemSimpleDTOResponse;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.CartLineItem;
 import com.r2s.R2Sshop.service.CartLineItemService;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -31,7 +29,7 @@ public class CartLineItemController extends BaseRestController{
     /**
      * Return cartLineItem by id.
      * <p>
-     * This function returns cartLineItem by id, with the id as the input parameter.
+     * This method returns cartLineItem by id, with the id as the input parameter.
      * @param id
      * @return cart by id
      * @author HoangVu
@@ -48,7 +46,7 @@ public class CartLineItemController extends BaseRestController{
     /**
      * Return cartLineItem list by cartId and status.
      * <p>
-     * This function returns cartLineItem list by cartId and deleted
+     * This method returns cartLineItem list by cartId and deleted
      * (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
@@ -62,7 +60,7 @@ public class CartLineItemController extends BaseRestController{
      * @author HoangVu
      * @since 1.0
      */
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping
     public ResponseEntity<?> getAllByCartIdAndDeleted(@RequestParam Long cartId,
                                                       @RequestParam(defaultValue = "-1") Integer status,
@@ -74,15 +72,40 @@ public class CartLineItemController extends BaseRestController{
         Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
         Page<CartLineItem> cartLineItemPage = cartLineItemService
                 .findAllByCartIdAndDeleted(cartId, status, pageable);
-        List<CartLineItemSimpleDTOResponse> responses = cartLineItemPage.stream()
-                .map(CartLineItemSimpleDTOResponse :: new)
+        List<CartLineItemDTOResponse> responses = cartLineItemPage.stream()
+                .map(CartLineItemDTOResponse :: new)
+                .collect(Collectors.toList());
+        return super.success(responses);
+    }
+    /**
+     * Return my cartLineItem list.
+     * <p>
+     * This method returns cartLineItem list by cartId and pagination is applied,
+     * with userName, pageable as the input parameter.
+     * @param userDetails
+     * @param offset
+     * @param limit
+     * @return cartLineItem list by cartId and deleted
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/my-cart-line-item")
+    public ResponseEntity<?> myCartLineItem(@AuthenticationPrincipal UserDetails userDetails,
+                                            @RequestParam(defaultValue = "0") Integer offset,
+                                            @RequestParam(defaultValue = "5") Integer limit) {
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
+        Page<CartLineItem> cartLineItemPage = cartLineItemService
+                .myCartLineItem(userDetails.getUsername(), pageable);
+        List<CartLineItemDTOResponse> responses = cartLineItemPage.stream()
+                .map(CartLineItemDTOResponse :: new)
                 .collect(Collectors.toList());
         return super.success(responses);
     }
     /**
      * Add new cartLineItem to cart with product.
      * <p>
-     * This function is used to add a new cartLineItem to cart with product.
+     * This method is used to add a new cartLineItem to cart with product.
      * @param dtoRequest
      * @return information of cartLineItem if the add process is successful
      * @author HoangVu
@@ -100,7 +123,7 @@ public class CartLineItemController extends BaseRestController{
     /**
      * Update cartLineItem by id.
      * <p>
-     * This function updates cartLineItem by id, with the id as the input parameter.
+     * This method updates cartLineItem by id, with the id as the input parameter.
      * @param id
      * @param dtoRequest
      * @return cartLineItem by id if the update process is successful
@@ -108,17 +131,19 @@ public class CartLineItemController extends BaseRestController{
      * @throws AppException(ResponseCode.CART_LINE_ITEM_ALREADY_DELETED)
      * if cartLineItem already been deleted in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping
     public ResponseEntity<?> updateById(@RequestParam Long id,
-                                        @RequestBody CartLineItemDTORequest dtoRequest) {
+                                        @Valid @RequestBody CartLineItemDTORequest dtoRequest) {
         CartLineItem updatedCartLineItem = cartLineItemService.updateById(id, dtoRequest);
         return super.success(new CartLineItemDTOResponse(updatedCartLineItem));
     }
     /**
      * Delete cartLineItem by id.
      * <p>
-     * This function deletes cartLineItem by id, with the id as the input parameter.
+     * This method deletes cartLineItem by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.VOUCHER_NOT_FOUND)
      * if cartLineItem does not exist in the database
@@ -128,7 +153,7 @@ public class CartLineItemController extends BaseRestController{
      * @since 1.0
      */
     @PreAuthorize("hasRole('USER')")
-    @DeleteMapping("/delete-by-id")
+    @DeleteMapping
     public ResponseEntity<?> deleteById(@RequestParam Long id) {
         cartLineItemService.deleteById(id);
         return super.success("Deleted successfully");

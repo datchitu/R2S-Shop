@@ -21,7 +21,7 @@ public class VoucherDTORequest {
     private String code;
     @NotNull(message = "Discount cannot be empty !!!")
     @Min(value = 0, message = "Discount must be greater than or equal to 0 !!!")
-    private Integer discount;
+    private Double discount;
     @NotNull(message = "Quantity cannot be empty !!!")
     @Min(value = 1, message = "Quantity must be at least 1 !!!")
     private Integer quantity;

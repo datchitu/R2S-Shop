@@ -20,7 +20,7 @@ public class VariantProductDTOResponse {
     /**
      * Customize the output variant product information as a JSON file.
      * <p>
-     * This function customizes the output variant product information, including
+     * This method customizes the output variant product information, including
      * ID, name, price, color, modelYear, quantity, deleted, productId, productName as a JSON file.
      * @param variantProduct
      * @author HoangVu

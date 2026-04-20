@@ -30,7 +30,7 @@ public class UserVoucherController extends BaseRestController{
     /**
      * Return userVoucher by id.
      * <p>
-     * This function returns userVoucher by id, with the id as the input parameter.
+     * This method returns userVoucher by id, with the id as the input parameter.
      * @param id
      * @return userVoucher by id
      * @author HoangVu
@@ -46,7 +46,7 @@ public class UserVoucherController extends BaseRestController{
     /**
      * Return userVoucher list by status.
      * <p>
-     * This function returns userVoucher list by deleted
+     * This method returns userVoucher list by deleted
      * (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
@@ -78,7 +78,7 @@ public class UserVoucherController extends BaseRestController{
     /**
      * Return userVoucher list by status.
      * <p>
-     * This function returns userVoucher list by userName and deleted
+     * This method returns userVoucher list by userName and deleted
      * (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
@@ -106,7 +106,7 @@ public class UserVoucherController extends BaseRestController{
     /**
      * Add new userVoucher.
      * <p>
-     * This function is used to add a new userVoucher with user and voucher.
+     * This method is used to add a new userVoucher with user and voucher.
      * @param dtoRequest
      * @return information of userVoucher if the add process is successful
      * @throws AppException(ResponseCode.NO_PARAM) if the passed-in parameter values such as
@@ -129,7 +129,7 @@ public class UserVoucherController extends BaseRestController{
     /**
      * Update userVoucher.
      * <p>
-     * This function is used to update userVoucher by id.
+     * This method is used to update userVoucher by id.
      * @param dtoRequest
      * @return information of userVoucher if the add process is successful
      * @throws AppException(ResponseCode.NO_PARAM) if the passed-in parameter values such as
@@ -152,7 +152,7 @@ public class UserVoucherController extends BaseRestController{
     /**
      * Delete userVoucher.
      * <p>
-     * This function is used to delete userVoucher by id.
+     * This method is used to delete userVoucher by id.
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
@@ -168,7 +168,7 @@ public class UserVoucherController extends BaseRestController{
     /**
      * Reactivate userVoucher.
      * <p>
-     * This function is used to reactivate userVoucher by id.
+     * This method is used to reactivate userVoucher by id.
      * @param id
      * @return "Reactivated successfully" if it is reactivated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
@@ -184,7 +184,7 @@ public class UserVoucherController extends BaseRestController{
     /**
      * Release userVoucher.
      * <p>
-     * This function is used to release userVoucher by id.
+     * This method is used to release userVoucher by id.
      * @param id
      * @return "Released successfully" if it is released successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
@@ -200,7 +200,7 @@ public class UserVoucherController extends BaseRestController{
     /**
      * Use userVoucher.
      * <p>
-     * This function is used to apply userVoucher by id for cart.
+     * This method is used to apply userVoucher by id for cart.
      * @param id
      * @return "Applied successfully" if it is applied successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
@@ -216,7 +216,7 @@ public class UserVoucherController extends BaseRestController{
     /**
      * Disable userVoucher.
      * <p>
-     * This function is used to disable userVoucher by id.
+     * This method is used to disable userVoucher by id.
      * @param id
      * @return "Disabled successfully" if it is disabled successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty

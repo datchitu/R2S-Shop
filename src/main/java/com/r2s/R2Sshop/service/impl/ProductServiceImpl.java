@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Return product by id.
      * <p>
-     * This function returns product by id, with the id as the input parameter
+     * This method returns product by id, with the id as the input parameter
      * @param id
      * @return Information of product by id
      * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if the product cannot be found by id
@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Return all products by category id and deleted.
      * <p>
-     * This function returns all product by categoryId and deleted
+     * This method returns all product by categoryId and deleted
      * (With the passed-in status -1, return all by CategoryId works;
      * with 0, return all by CategoryId and deleted == false works;
      * and otherwise, it's return all by CategoryId and deleted == true),
@@ -77,7 +77,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Add new product with category.
      * <p>
-     * This function is used to add a new product with category.
+     * This method is used to add a new product with category.
      * @param dtoRequest
      * @param categoryId
      * @return information of product if the add process is successful
@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Update product by id.
      * <p>
-     * This function updates product by id, with the id as the input parameter.
+     * This method updates product by id, with the id as the input parameter.
      * @param id
      * @param categoryId
      * @param dtoRequest
@@ -136,7 +136,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Delete product by id.
      * <p>
-     * This function deletes product by id, with the id as the input parameter.
+     * This method deletes product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
@@ -156,7 +156,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Reactivate product by id.
      * <p>
-     * This function reactivates product by id, with the id as the input parameter.
+     * This method reactivates product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
      * @throws AppException(ResponseCode.DATA_ALREADY_REACTIVATED)

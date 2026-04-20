@@ -33,7 +33,7 @@ public class UserController extends BaseRestController{
     /**
      * Add new user with new cart.
      * <p>
-     * This function is used to add a new user with new card for this user.
+     * This method is used to add a new user with new card for this user.
      * @param dtoRequest
      * @return user with cart information if user with cart is added successfully.
      * @throws AppException(ResponseCode.NO_PARAM) if newUser is empty
@@ -56,7 +56,7 @@ public class UserController extends BaseRestController{
     /**
      * Return user list.
      * <p>
-     * This function returns user list by status(With the passed-in status -1, return all works;
+     * This method returns user list by status(With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
      * with the status as the input parameter.
@@ -84,7 +84,7 @@ public class UserController extends BaseRestController{
     /**
      * Return user info from token(userName).
      * <p>
-     * This function returns user info from token(userName).
+     * This method returns user info from token(userName).
      * @return user info entity from token(userName)
      * @author HoangVu
      * @since 1.1
@@ -98,7 +98,7 @@ public class UserController extends BaseRestController{
     /**
      * Update ỉnfo user.
      * <p>
-     * This function returns user info from token(userName) after successful update.
+     * This method returns user info from token(userName) after successful update.
      * @param userDTORequest
      * @return user info entity from token(userName)
      * @throws AppException(ResponseCode.NO_PARAM) if userDTORequest is empty
@@ -120,7 +120,7 @@ public class UserController extends BaseRestController{
     /**
      * Charge password user.
      * <p>
-     * This function charges user password.
+     * This method charges user password.
      * @return success
      * @throws AppException(ResponseCode.NO_PARAM) if userDTORequest is empty
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
@@ -142,7 +142,7 @@ public class UserController extends BaseRestController{
     /**
      * Delete user by id.
      * <p>
-     * This function delete user by id, with the id as the input parameter.
+     * This method delete user by id, with the id as the input parameter.
      * @param id
      * @author HoangVu
      * @since 1.0
@@ -156,7 +156,7 @@ public class UserController extends BaseRestController{
     /**
      * Reactivate user by id.
      * <p>
-     * This function reactivate user by id, with the id as the input parameter.
+     * This method reactivate user by id, with the id as the input parameter.
      * @param id
      * @author HoangVu
      * @since 1.0
@@ -170,29 +170,29 @@ public class UserController extends BaseRestController{
     /**
      * Block user by id.
      * <p>
-     * This function block user by id, with the id as the input parameter.
+     * This method block user by id, with the id as the input parameter.
      * @param id
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/block-by-id")
     public ResponseEntity<?> blockById(@RequestParam Long id) {
-        userService.deleteById(id);
+        userService.blockById(id);
         return super.success("Blocked successfully");
     }
     /**
      * Unblock user by id.
      * <p>
-     * This function unblock user by id, with the id as the input parameter.
+     * This method unblock user by id, with the id as the input parameter.
      * @param id
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/unblock-by-id")
     public ResponseEntity<?> unblockById(@RequestParam Long id) {
-        userService.reactivateById(id);
+        userService.unblockById(id);
         return super.success("Unblocked successfully");
     }
 }

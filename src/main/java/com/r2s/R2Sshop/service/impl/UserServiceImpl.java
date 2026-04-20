@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Add new user.
      * <p>
-     * This function is used to add a new user.
+     * This method is used to add a new user.
      * @param dtoRequest
      * @return information of user if the add process is successful
      * @throws AppException(ResponseCode.DATA_ALREADY_EXISTS) if user be found by userName
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Find by userName.
      * <p>
-     * This function is used find user by userName.
+     * This method is used find user by userName.
      * @param userName
      * @return information of user if user is found
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if the User cannot be found by userName
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Find by id.
      * <p>
-     * This function is used find user by id.
+     * This method is used find user by id.
      * @param id
      * @return information of user if user is found
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if the User cannot be found by id
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Register user with cart by userName.
      * <p>
-     * This function is used to insert the user and cart into the database., with the newUser as the input parameter.
+     * This method is used to insert the user and cart into the database., with the newUser as the input parameter.
      * @param dtoRequest
      * @return User and cart information if insertion is successful.
      * @throws AppException(ResponseCode.INSERT_FAILURE) if insertUser and insertCart is empty
@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Return user list by deleted.
      * <p>
-     * This function returns all user by deleted (With the passed-in status -1, return all works;
+     * This method returns all user by deleted (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
      * with the status and pageable as the input parameter.
@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Update user by userName.
      * <p>
-     * This function updates user by userName, with the userName as the input parameter.
+     * This method updates user by userName, with the userName as the input parameter.
      * @param userName
      * @param dtoRequest
      * @return User by userName if the update process is successful
@@ -164,7 +164,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Charge user password by userName.
      * <p>
-     * This function charges user password by userName, with the userName, newPassword as the input parameter.
+     * This method charges user password by userName, with the userName, newPassword as the input parameter.
      * @param userName
      * @param newPassword
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not exist in the database
@@ -189,7 +189,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Delete user by id.
      * <p>
-     * This function deletes user by id, with the id as the input parameter.
+     * This method deletes user by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USER_NOT_FOUND)
      * if user does not exist in the database
@@ -210,7 +210,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Reactivate user by id.
      * <p>
-     * This function reactivates user by id, with the id as the input parameter.
+     * This method reactivates user by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USER_NOT_FOUND)
      * if user does not exist in the database
@@ -231,7 +231,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Block user by id.
      * <p>
-     * This function blocks user by id, with the id as the input parameter.
+     * This method blocks user by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USER_NOT_FOUND)
      * if user does not exist in the database
@@ -252,7 +252,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Unblock user by id.
      * <p>
-     * This function unblocks user by id, with the id as the input parameter.
+     * This method unblocks user by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USER_NOT_FOUND)
      * if user does not exist in the database
