@@ -40,11 +40,11 @@ public class Voucher {
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"voucher", "user", "carts"})

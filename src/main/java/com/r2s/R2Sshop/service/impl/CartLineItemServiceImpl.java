@@ -19,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class CartLineItemServiceImpl implements CartLineItemService {
     @Autowired
@@ -133,15 +135,15 @@ public class CartLineItemServiceImpl implements CartLineItemService {
                 variantProductId, cart.getId())
                 .orElseGet(() -> createNewCartLineItem(variantProductId, cart));
 
-        Integer newQuantity = dtoRequest.getQuantity();
+        BigDecimal newQuantity = new BigDecimal(dtoRequest.getQuantity());
 
         if (!cartLineItem.isNew() && Boolean.FALSE.equals(cartLineItem.getDeleted())) {
-            newQuantity += cartLineItem.getQuantity();
+            newQuantity = newQuantity.add(new BigDecimal(cartLineItem.getQuantity()));
         }
 
         cartLineItem.setDeleted(false);
-        cartLineItem.setQuantity(newQuantity);
-        cartLineItem.setTotalPrice(newQuantity * cartLineItem.getVariantProduct().getPrice());
+        cartLineItem.setQuantity(newQuantity.intValue());
+        cartLineItem.setTotalPrice(newQuantity.multiply(cartLineItem.getVariantProduct().getPrice()));
 
         return cartLineItemRepository.save(cartLineItem);
     }
@@ -174,7 +176,7 @@ public class CartLineItemServiceImpl implements CartLineItemService {
      * @throws AppException(ResponseCode.CART_LINE_ITEM_ALREADY_DELETED)
      * if cartLineItem already been deleted in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Transactional
     @Override
@@ -183,10 +185,11 @@ public class CartLineItemServiceImpl implements CartLineItemService {
         if (Boolean.TRUE.equals(foundCartLineItem.getDeleted())) {
             throw new AppException(ResponseCode.CART_LINE_ITEM_ALREADY_DELETED);
         }
+        BigDecimal newQuantity = new BigDecimal(dtoRequest.getQuantity());
         VariantProduct foundVariantProduct = variantProductService
                 .findById(foundCartLineItem.getVariantProduct().getId());
         modelMapper.map(dtoRequest, foundCartLineItem);
-        foundCartLineItem.setTotalPrice(dtoRequest.getQuantity() * foundVariantProduct.getPrice());
+        foundCartLineItem.setTotalPrice(newQuantity.multiply(foundVariantProduct.getPrice()));
         return cartLineItemRepository.save(foundCartLineItem);
     }
     /**
@@ -208,7 +211,7 @@ public class CartLineItemServiceImpl implements CartLineItemService {
             throw new AppException(ResponseCode.CART_LINE_ITEM_ALREADY_DELETED);
         }
         foundCartLineItem.setQuantity(0);
-        foundCartLineItem.setTotalPrice(0.0);
+        foundCartLineItem.setTotalPrice(BigDecimal.ZERO);
         foundCartLineItem.setDeleted(true);
         cartLineItemRepository.save(foundCartLineItem);
     }

@@ -12,7 +12,9 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VariantServiceDTORequest {
+public class OrderItemDTORequest {
+    @NotNull(message = "VariantProductId cannot be empty !!!")
+    private Long variantProductId;
     @NotBlank(message = "Name cannot be empty !!!")
     private String name;
     @NotNull(message = "Price cannot be empty !!!")

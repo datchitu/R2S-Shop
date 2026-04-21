@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -12,10 +14,10 @@ import java.util.Date;
 @NoArgsConstructor
 public class OrderSimpleDTOResponse {
     private Long orderId;
-    private Date deliveryTime;
+    private LocalDateTime deliveryTime;
     private Boolean status;
-    private Date datetime;
-    private Double totalPrice;
+    private LocalDateTime datetime;
+    private BigDecimal totalPrice;
 
     /**
      * Customize the output order information as a JSON file

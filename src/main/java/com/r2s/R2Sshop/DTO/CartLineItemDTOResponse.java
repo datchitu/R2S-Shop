@@ -8,13 +8,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.ObjectUtils;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartLineItemDTOResponse
 {
     private Integer quantity;
-    private Double totalPrice;
+    private BigDecimal totalPrice;
     private String variantProductName;
     private Long cartId;
     /**

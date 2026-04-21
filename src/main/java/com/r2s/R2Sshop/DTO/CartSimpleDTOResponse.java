@@ -5,13 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartSimpleDTOResponse {
-    private Double totalPrice;
+    private BigDecimal totalPrice;
     private String note;
     private Boolean paymentType;
     private Boolean paymentStatus;

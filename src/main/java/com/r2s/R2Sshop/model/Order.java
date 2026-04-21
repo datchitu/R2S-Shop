@@ -5,8 +5,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -19,17 +23,20 @@ public class Order {
     private Long id;
 
     @Column(name = "delivery_time", nullable = false)
-    private Date deliveryTime;
+    private LocalDateTime deliveryTime;
+
+    private Boolean statusDelivery = false;
 
     private Boolean status = false;
 
     private Boolean deleted = false;
 
+    @CreationTimestamp
     @Column(name = "order_datetime", nullable = false)
-    private Date orderDatetime;
+    private LocalDateTime orderDatetime;
 
     @Column(name = "total_price")
-    private Double totalPrice = 0.0;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -40,4 +47,8 @@ public class Order {
     @JoinColumn(name = "address_id")
     @JsonIgnoreProperties({"orders", "user"})
     private Address address;
+
+    @OneToMany(mappedBy = "order")
+    @JsonIgnoreProperties({"order"})
+    private List<OrderItem> orderItems;
 }

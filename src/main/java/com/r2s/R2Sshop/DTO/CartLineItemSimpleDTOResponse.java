@@ -6,12 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.ObjectUtils;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartLineItemSimpleDTOResponse {
     private Integer quantity;
-    private Double totalPrice;
+    private BigDecimal totalPrice;
     /**
      * Customize the output cartLineItem information as a JSON file.
      * <p>

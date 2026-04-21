@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +24,7 @@ public class Cart {
     private Long id;
 
     @Column(name = "total_price")
-    private Double totalPrice = 0.0;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
     private String note;
 

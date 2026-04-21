@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -69,7 +71,7 @@ public class CartServiceImpl implements CartService {
      * if found by paymentStatus = false and userName. Opposite, it returns new cart.
      * @param userName
      * @return cart by userName
-     * @throws AppException(ResponseCode.USER_NOT_FOUND)
+     * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not found
      * @author HoangVu
      * @since 1.1
      */
@@ -92,10 +94,10 @@ public class CartServiceImpl implements CartService {
      */
     @Override
     @Transactional
-    public Double updateTotalPrice(Long id) {
+    public BigDecimal updateTotalPrice(Long id) {
         Cart cart = findById(id);
-        Double totalPrice = cartLineItemRepository.sumTotalPriceByCartId(id);
-        cart.setTotalPrice(totalPrice != null ? totalPrice : 0.0);
+        BigDecimal totalPrice = cartLineItemRepository.sumTotalPriceByCartId(id);
+        cart.setTotalPrice(totalPrice != null ? totalPrice : BigDecimal.ZERO);
         cartRepository.save(cart);
         return totalPrice;
     }
@@ -109,17 +111,23 @@ public class CartServiceImpl implements CartService {
      * @param userVoucherId
      * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     @Transactional
     public void paymentByCard(String userName, String note, Long userVoucherId) {
         Cart foundCart = myCart(userName);
-        Double totalPrice = updateTotalPrice(foundCart.getId());
+        if (Boolean.TRUE.equals(foundCart.getStatus())) {
+            throw new AppException(ResponseCode.CART_ALREADY_PAID);
+        }
+
+        BigDecimal totalPrice = updateTotalPrice(foundCart.getId());
 
         if (!ObjectUtils.isEmpty(userVoucherId)) {
             UserVoucher foundUserVoucher = userVoucherService.useById(userVoucherId);
-            totalPrice *= 1- foundUserVoucher.getVoucher().getDiscount();
+            BigDecimal discount = BigDecimal.valueOf(foundUserVoucher.getVoucher().getDiscount());
+            BigDecimal discountFactor = BigDecimal.ONE.subtract(discount);
+            totalPrice = totalPrice.multiply(discountFactor.setScale(2, RoundingMode.HALF_UP));
         }
 
         foundCart.setNote(note);
@@ -140,17 +148,22 @@ public class CartServiceImpl implements CartService {
      * @param userVoucherId
      * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     @Transactional
     public void paymentByCash(Long id, String note, Long userVoucherId) {
         Cart foundCart = findById(id);
-        Double totalPrice = updateTotalPrice(foundCart.getId());
+        if (Boolean.TRUE.equals(foundCart.getStatus())) {
+            throw new AppException(ResponseCode.CART_ALREADY_PAID);
+        }
 
+        BigDecimal totalPrice = updateTotalPrice(foundCart.getId());
         if (!ObjectUtils.isEmpty(userVoucherId)) {
             UserVoucher foundUserVoucher = userVoucherService.useById(userVoucherId);
-            totalPrice *= 1- foundUserVoucher.getVoucher().getDiscount();
+            BigDecimal discount = BigDecimal.valueOf(foundUserVoucher.getVoucher().getDiscount());
+            BigDecimal discountFactor = BigDecimal.ONE.subtract(discount);
+            totalPrice = totalPrice.multiply(discountFactor.setScale(2, RoundingMode.HALF_UP)) ;
         }
         foundCart.setNote(note);
         foundCart.setPaymentType(false);

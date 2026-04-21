@@ -23,6 +23,8 @@ public enum ResponseCode {
     USERVOUCHER_NOT_FOUND(6010, "UserVoucher not found", HttpStatus.NOT_FOUND),
     CART_LINE_ITEM_NOT_FOUND(6011, "CartLineItem not found", HttpStatus.NOT_FOUND),
     CART_NOT_FOUND(6012, "Cart not found", HttpStatus.NOT_FOUND),
+    ORDER_NOT_FOUND(6013, "Order not found", HttpStatus.NOT_FOUND),
+    ORDER_ITEM_NOT_FOUND(6014, "Order item not found", HttpStatus.NOT_FOUND),
     INVALID_VALUE(3001, "Invalid value", HttpStatus.BAD_REQUEST),
     INVALID_PARAM(3002, "Invalid parameter", HttpStatus.BAD_REQUEST),
     FAILURE_SIGNIN(3000, "Failed sign in", HttpStatus.UNAUTHORIZED),
@@ -56,6 +58,12 @@ public enum ResponseCode {
             HttpStatus.BAD_REQUEST),
     CART_LINE_ITEM_ALREADY_DELETED(2040, "CartLineItem already been deleted",
             HttpStatus.BAD_REQUEST),
+    CART_ALREADY_PAID(2041, "Cart already been paid", HttpStatus.BAD_REQUEST),
+    ORDER_ALREADY_DELETED(2042, "Order already been deleted", HttpStatus.BAD_REQUEST),
+    ORDER_ALREADY_RESTORED(2043, "Order already been restored", HttpStatus.BAD_REQUEST),
+    ORDER_ALREADY_CANCELED(2044, "Order already been canceled", HttpStatus.BAD_REQUEST),
+    ORDER_ALREADY_REACTIVATED(2045, "Order already been reactivated", HttpStatus.BAD_REQUEST),
+    ORDER_ALREADY_DELIVERED(2046, "Order already been delivered", HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR);
 
 

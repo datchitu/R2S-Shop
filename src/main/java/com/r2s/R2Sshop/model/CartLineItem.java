@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,7 +28,7 @@ public class CartLineItem {
     private Integer quantity = 0;
 
     @Column(name = "total_price")
-    private Double totalPrice = 0.0;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
     @ManyToOne
     @JoinColumn(name = "variant_product_id", nullable = false)

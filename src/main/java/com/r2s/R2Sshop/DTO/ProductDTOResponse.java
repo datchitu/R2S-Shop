@@ -30,7 +30,7 @@ public class ProductDTOResponse {
         this.deleted = product.getDeleted();
         if (!ObjectUtils.isEmpty(product.getVariantProducts())) {
             this.variantProducts = product.getVariantProducts().stream()
-                    .map(VariantServiceSimpleDTOResponse::new)
+                    .map(VariantServiceSimpleDTOResponse :: new)
                     .collect(Collectors.toList());
         }
     }

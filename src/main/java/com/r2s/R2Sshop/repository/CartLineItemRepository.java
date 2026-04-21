@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 
@@ -29,5 +30,5 @@ public interface CartLineItemRepository extends JpaRepository<CartLineItem, Long
     Optional<CartLineItem> findByVariantProductIdAndCartId(Long variantProductId, Long cartId);
     @Query("SELECT SUM(cli.totalPrice) FROM CartLineItem cli WHERE cli.cart.id = :cartId " +
             "AND cli.deleted = false")
-    Double sumTotalPriceByCartId(@Param("cartId") Long cartId);
+    BigDecimal sumTotalPriceByCartId(@Param("cartId") Long cartId);
 }
