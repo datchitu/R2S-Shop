@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class MyCartDTOResponse {
     private BigDecimal totalPrice;
-    private String note;
     private Boolean paymentType;
     private Boolean paymentStatus;
     private Boolean status;
@@ -30,7 +29,6 @@ public class MyCartDTOResponse {
      */
     public MyCartDTOResponse(Cart cart) {
         this.totalPrice = cart.getTotalPrice();
-        this.note = cart.getNote();
         this.paymentType = cart.getPaymentType();
         this.paymentStatus = cart.getPaymentStatus();
         this.status = cart.getStatus();

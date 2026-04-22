@@ -12,8 +12,6 @@ public enum ResponseCode {
     ADDRESS_NOT_FOUND(405, "Address Not found", HttpStatus.NOT_FOUND),
     NO_PARAM(6001, "No param", HttpStatus.BAD_REQUEST),
     MISSING_PARAM(6002, "Missing param", HttpStatus.BAD_REQUEST),
-    NO_CONTENT(6003, "No content", HttpStatus.NOT_FOUND),
-    INTERNAL_SERVER_ERROR(5000, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_NOT_FOUND(6004, "User not found", HttpStatus.NOT_FOUND),
     ROLE_NOT_FOUND(6005, "Role not found", HttpStatus.NOT_FOUND),
     CATEGORY_NOT_FOUND(6006, "Category not found", HttpStatus.NOT_FOUND),
@@ -64,6 +62,8 @@ public enum ResponseCode {
     ORDER_ALREADY_CANCELED(2044, "Order already been canceled", HttpStatus.BAD_REQUEST),
     ORDER_ALREADY_REACTIVATED(2045, "Order already been reactivated", HttpStatus.BAD_REQUEST),
     ORDER_ALREADY_DELIVERED(2046, "Order already been delivered", HttpStatus.BAD_REQUEST),
+    CART_ALREADY_ORDERED(2047, "Cart already been ordered", HttpStatus.BAD_REQUEST),
+    CART_IS_EMPTY(2047, "Cart is empty", HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR);
 
 

@@ -20,6 +20,7 @@ public interface CartLineItemRepository extends JpaRepository<CartLineItem, Long
     Page<CartLineItem> findAllByCartIdAndDeleted(@Param("cartId") Long cartId,
                                                         @Param("deleted") Boolean deleted,
                                                         Pageable pageable);
+
     @Query("SELECT cli FROM CartLineItem cli " +
             "WHERE cli.variantProduct.id =:variantProductId " +
             "AND cli.cart.id = :cartId " +
@@ -27,8 +28,15 @@ public interface CartLineItemRepository extends JpaRepository<CartLineItem, Long
     Optional<CartLineItem> findByVariantProductIdAndCartIdAndDeleted(@Param("variantProductId")Long variantProductId,
                                                                      @Param("cartId")Long cartId,
                                                                      @Param("deleted")Boolean deleted);
+
     Optional<CartLineItem> findByVariantProductIdAndCartId(Long variantProductId, Long cartId);
+
     @Query("SELECT SUM(cli.totalPrice) FROM CartLineItem cli WHERE cli.cart.id = :cartId " +
             "AND cli.deleted = false")
     BigDecimal sumTotalPriceByCartId(@Param("cartId") Long cartId);
+
+    @Query("UPDATE CartLineItem cli SET cli.deleted = true " +
+            "WHERE cli.cart.id = :cartId " +
+            "And cli.deleted = false")
+    void deleteAllActiveItemsByCartId(@Param("cartId") Long cartId);
 }

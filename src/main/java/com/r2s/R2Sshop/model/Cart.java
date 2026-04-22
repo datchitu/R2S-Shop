@@ -26,8 +26,6 @@ public class Cart {
     @Column(name = "total_price")
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
-    private String note;
-
     @Column(name = "payment_type")
     private Boolean paymentType;
 

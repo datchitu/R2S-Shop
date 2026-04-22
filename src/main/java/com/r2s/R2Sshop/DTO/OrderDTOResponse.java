@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class OrderDTOResponse {
     private Long id;
     private LocalDateTime deliveryTime;
+    private String note;
     private Boolean statusDelivery;
     private Boolean status;
     private LocalDateTime datetime;
@@ -27,14 +28,16 @@ public class OrderDTOResponse {
      * Customize the output order information as a JSON file.
      * <p>
      * This method customizes the output order information, including
-     * id, deliveryTime, statusDelivery, status, datetime, totalPrice and list orderItems as a JSON file.
+     * id, deliveryTime, note, statusDelivery, status, datetime,
+     * totalPrice and list orderItems as a JSON file.
      * @param order
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     public OrderDTOResponse(Order order) {
         this.id = order.getId();
         this.deliveryTime = order.getDeliveryTime();
+        this.note = order.getNote();
         this.statusDelivery = order.getStatusDelivery();
         this.status = order.getStatus();
         this.datetime = order.getOrderDatetime();

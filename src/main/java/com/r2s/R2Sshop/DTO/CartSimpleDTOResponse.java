@@ -31,7 +31,6 @@ public class CartSimpleDTOResponse {
      */
     public CartSimpleDTOResponse(Cart cart) {
         this.totalPrice = cart.getTotalPrice();
-        this.note = cart.getNote();
         this.paymentType = cart.getPaymentType();
         this.paymentStatus = cart.getPaymentStatus();
         this.status = cart.getStatus();

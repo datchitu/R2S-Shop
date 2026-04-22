@@ -22,8 +22,13 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "cart_id", nullable = false)
+    private Long cartId;
+
     @Column(name = "delivery_time", nullable = false)
     private LocalDateTime deliveryTime;
+
+    private String note;
 
     private Boolean statusDelivery = false;
 

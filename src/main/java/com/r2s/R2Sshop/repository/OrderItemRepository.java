@@ -6,7 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.util.Optional;
+
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     Page<OrderItem> findAllByOrderId(Long orderId, Pageable pageable);
+    Optional<OrderItem> findByVariantProductIdAndPriceAndOrderId(Long variantProductId,
+                                                      BigDecimal price,
+                                                      Long orderId);
 }

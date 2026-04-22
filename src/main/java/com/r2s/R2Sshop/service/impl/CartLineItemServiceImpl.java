@@ -4,7 +4,6 @@ import com.r2s.R2Sshop.DTO.CartLineItemDTORequest;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Cart;
 import com.r2s.R2Sshop.model.CartLineItem;
-import com.r2s.R2Sshop.model.User;
 import com.r2s.R2Sshop.model.VariantProduct;
 import com.r2s.R2Sshop.repository.CartLineItemRepository;
 import com.r2s.R2Sshop.rest.AppException;
@@ -122,7 +121,9 @@ public class CartLineItemServiceImpl implements CartLineItemService {
      * If cartLineItem already exists check deleted (
      * with deleted == false, update quantity and totalPrice, else set newQuantity,
      * totalPrice and set false for deleted)
+     * @param variantProductId
      * @param dtoRequest
+     * @param cart
      * @return information of cartLineItem if the add process is successful
      * @author HoangVu
      * @since 1.0

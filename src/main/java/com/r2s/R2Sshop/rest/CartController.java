@@ -1,11 +1,12 @@
 package com.r2s.R2Sshop.rest;
 
 import com.r2s.R2Sshop.DTO.CartDTOResponse;
-import com.r2s.R2Sshop.DTO.CartPaymentDTORequest;
 import com.r2s.R2Sshop.DTO.MyCartDTOResponse;
+import com.r2s.R2Sshop.DTO.OrderDTORequest;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.Cart;
 import com.r2s.R2Sshop.service.CartService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -69,39 +70,43 @@ public class CartController extends BaseRestController{
      * <p>
      * This method is used for payment by card and apply voucher (if available) by id.
      * @param dtoRequest
-     * @param userVoucherId 
+     * @param userVoucherId
+     * @param addressId
      * @return "Payment successful" if the payment method í successful.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id and userVoucherId are empty
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/payment-by-card")
     public ResponseEntity<?> paymentByCard(@AuthenticationPrincipal UserDetails userDetails,
-                                           @RequestBody CartPaymentDTORequest dtoRequest,
-                                           @RequestParam Long userVoucherId) {
-        cartService.paymentByCard(userDetails.getUsername(), dtoRequest.getNote(),
-                userVoucherId);
+                                           @Valid @RequestBody OrderDTORequest dtoRequest,
+                                           @RequestParam Long userVoucherId,
+                                           @RequestParam Long addressId) {
+        cartService.paymentByCard(userDetails.getUsername(), userVoucherId,
+                dtoRequest, addressId);
         return super.success("Payment successful");
     }
     /**
      * Payment by cash.
      * <p>
      * This method is used for payment by cash and apply voucher (if available) by id.
-     * @param id
      * @param dtoRequest 
      * @param userVoucherId
+     * @param addressId
      * @return "Payment successful" if the payment method í successful.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id and userVoucherId are empty
      * @author HoangVu
-     * @since 1.0
+     * @since 1.2
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/payment-by-cash")
-    public ResponseEntity<?> paymentByCash(@RequestParam Long id,
-                                           @RequestBody CartPaymentDTORequest dtoRequest,
-                                           @RequestParam Long userVoucherId) {
-        cartService.paymentByCash(id, dtoRequest.getNote(), userVoucherId);
+    public ResponseEntity<?> paymentByCash(@AuthenticationPrincipal UserDetails userDetails,
+                                           @Valid @RequestBody OrderDTORequest dtoRequest,
+                                           @RequestParam Long userVoucherId,
+                                           @RequestParam Long addressId) {
+        cartService.paymentByCash(userDetails.getUsername(), userVoucherId,
+                dtoRequest, addressId);
         return super.success("Payment successful");
     }
     /**

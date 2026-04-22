@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class CartDTOResponse {
     private BigDecimal totalPrice;
-    private String note;
     private Boolean paymentType;
     private Boolean paymentStatus;
     private Boolean status;
@@ -27,14 +26,13 @@ public class CartDTOResponse {
      * Customize the output cart information as a JSON file
      * <p>
      * This method customizes the output cart information, including
-     * ID, totalPrice, note, paymentType, paymentStatus, status, paidAt and cartLineItem list as a JSON file.
+     * ID, totalPrice, paymentType, paymentStatus, status, paidAt and cartLineItem list as a JSON file.
      * @param cart
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     public CartDTOResponse(Cart cart) {
         this.totalPrice = cart.getTotalPrice();
-        this.note = cart.getNote();
         this.paymentType = cart.getPaymentType();
         this.paymentStatus = cart.getPaymentStatus();
         this.status = cart.getStatus();

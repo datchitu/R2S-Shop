@@ -1,5 +1,6 @@
 package com.r2s.R2Sshop.service.impl;
 
+import com.r2s.R2Sshop.DTO.OrderDTORequest;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import com.r2s.R2Sshop.model.*;
 import com.r2s.R2Sshop.repository.*;
@@ -32,6 +33,8 @@ public class CartServiceImpl implements CartService {
     private VariantProductRepository variantProductRepository;
     @Autowired
     private UserVoucherService userVoucherService;
+    @Autowired
+    private OrderService orderService;
 
     /**
      * Add new cart.
@@ -71,7 +74,7 @@ public class CartServiceImpl implements CartService {
      * if found by paymentStatus = false and userName. Opposite, it returns new cart.
      * @param userName
      * @return cart by userName
-     * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not found
+     * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not found by userName
      * @author HoangVu
      * @since 1.1
      */
@@ -102,23 +105,30 @@ public class CartServiceImpl implements CartService {
         return totalPrice;
     }
     /**
-     * Payment by card and apply voucher (if available) by userName.
+     * Payment by card and apply voucher (if available) and create order by userName.
      * <p>
-     * This method used for payment by card and apply voucher (if available) by userName,
+     * This method used for payment by card and apply voucher (if available) and create order by userName,
      * with the userName, userVoucherId as the input parameter.
      * @param userName
      * @param note
      * @param userVoucherId
+     * @param dtoRequest
+     * @param addressId
      * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     @Transactional
-    public void paymentByCard(String userName, String note, Long userVoucherId) {
+    public void paymentByCard(String userName, Long userVoucherId,
+                              OrderDTORequest dtoRequest, Long addressId) {
         Cart foundCart = myCart(userName);
         if (Boolean.TRUE.equals(foundCart.getStatus())) {
             throw new AppException(ResponseCode.CART_ALREADY_PAID);
+        }
+
+        if (ObjectUtils.isEmpty(foundCart.getCartLineItems())) {
+            throw new AppException(ResponseCode.CART_IS_EMPTY);
         }
 
         BigDecimal totalPrice = updateTotalPrice(foundCart.getId());
@@ -130,32 +140,39 @@ public class CartServiceImpl implements CartService {
             totalPrice = totalPrice.multiply(discountFactor.setScale(2, RoundingMode.HALF_UP));
         }
 
-        foundCart.setNote(note);
         foundCart.setPaymentType(true);
         foundCart.setPaymentStatus(true);
         foundCart.setPaidAt(localDateTime);
         foundCart.setTotalPrice(totalPrice);
 
         cartRepository.save(foundCart);
+
+        orderService.create(userName, foundCart.getId(), dtoRequest, addressId);
     }
     /**
-     * Payment by cash and apply voucher (if available) by id.
+     * Payment by cash and apply voucher (if available) and create order by userName.
      * <p>
-     * This method used for payment by cash and apply voucher (if available) by id,
-     * with the id, userVoucherId as the input parameter.
-     * @param id
-     * @param note
+     * This method used for payment by cash and apply voucher (if available) and create order by userName,
+     * with the userName, userVoucherId as the input parameter.
+     * @param userName
      * @param userVoucherId
-     * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
+     * @param dtoRequest
+     * @param addressId
+     * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by userName
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     @Transactional
-    public void paymentByCash(Long id, String note, Long userVoucherId) {
-        Cart foundCart = findById(id);
+    public void paymentByCash(String userName, Long userVoucherId,
+                              OrderDTORequest dtoRequest, Long addressId) {
+        Cart foundCart = myCart(userName);
         if (Boolean.TRUE.equals(foundCart.getStatus())) {
             throw new AppException(ResponseCode.CART_ALREADY_PAID);
+        }
+
+        if (ObjectUtils.isEmpty(foundCart.getCartLineItems())) {
+            throw new AppException(ResponseCode.CART_IS_EMPTY);
         }
 
         BigDecimal totalPrice = updateTotalPrice(foundCart.getId());
@@ -165,13 +182,14 @@ public class CartServiceImpl implements CartService {
             BigDecimal discountFactor = BigDecimal.ONE.subtract(discount);
             totalPrice = totalPrice.multiply(discountFactor.setScale(2, RoundingMode.HALF_UP)) ;
         }
-        foundCart.setNote(note);
         foundCart.setPaymentType(false);
         foundCart.setPaymentStatus(true);
         foundCart.setPaidAt(localDateTime);
         foundCart.setTotalPrice(totalPrice);
 
         cartRepository.save(foundCart);
+
+        orderService.create(userName, foundCart.getId(), dtoRequest, addressId);
     }
     /**
      * SetStatus by id.
