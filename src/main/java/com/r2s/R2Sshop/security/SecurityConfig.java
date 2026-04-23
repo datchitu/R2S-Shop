@@ -47,13 +47,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/signin", "/users","/categories", "/categories/get-by-id", "/products",
                         "/products/get-by-category-id", "/products/get-by-id", "/variant-products",
-                        "/variant-products/get-all-by-product-id-and-deleted", "/carts",
-                        "/carts/update-total-price")
+                        "/variant-products/get-all-by-product-id-and-deleted")
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers( "/users/**","/categories/**", "/products/**"
-                        , "/variant_products/**", "/addresses/**", "/vouchers/**", "/user_vouchers/**")
+                        , "/variant_products/**", "/addresses/**", "/vouchers/**", "/user_vouchers/**", "/carts/**",
+                        "/orders/**", "/order_items/**")
                 .hasAnyRole("ADMIN", "USER", "STAFF")
                 .and()
                 .authorizeHttpRequests()

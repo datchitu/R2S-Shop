@@ -9,6 +9,8 @@ import com.r2s.R2Sshop.service.OrderService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,38 +39,77 @@ public class OrderServiceImpl implements OrderService {
      * @param id
      * @return order by id
      * @throws AppException(ResponseCode.ORDER_NOT_FOUND) if the order cannot be found by id
-     * @throws AppException(ResponseCode.ACCESS_DENIED) if orderItem is not owned by the user
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public Order findById(Long id, String userName) {
-        Order foundOrder = orderRepository.findById(id)
-                .orElseThrow(() -> new AppException(ResponseCode.ORDER_NOT_FOUND));
-        if (!foundOrder.getUser().getUserName().equals(userName)) {
-            throw new AppException(ResponseCode.ACCESS_DENIED);
+        if (userName == null) {
+            return orderRepository.findById(id)
+                    .orElseThrow(() -> new AppException(ResponseCode.ORDER_NOT_FOUND));
         }
-        return foundOrder;
+        return orderRepository.findByIdAndUserUserName(id, userName)
+                .orElseThrow(() -> new AppException(ResponseCode.ORDER_NOT_FOUND));
     }
     /**
-     * Return order by id.
+     * Return order list by deliveryStatus.
      * <p>
-     * This method returns order by id, with the id as the input parameter.
-     * @param id
-     * @return order by id
-     * @throws AppException(ResponseCode.ORDER_NOT_FOUND) if the order cannot be found by id
+     * This method returns all order by deliveryStatus (With the passed-in status -1, return all works;
+     * with 0, return all by deliveryStatus == false works;
+     * and otherwise, it's return all by deliveryStatus == true),
+     * with the deliveryStatus and pageable as the input parameter.
+     * @param status
+     * @param pageable
+     * @return order list by deliveryStatus
      * @author HoangVu
      * @since 1.0
      */
     @Override
-    public Order findByIdWithoutAuthor(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new AppException(ResponseCode.ORDER_NOT_FOUND));
+    public Page<Order> findAllByDeliveryStatus(Integer status, Pageable pageable) {
+        if (status == -1) {
+            return orderRepository.findAllByDeliveryStatus(null, pageable);
+        } else if (status == 0){
+            return orderRepository.findAllByDeliveryStatus(false, pageable);
+        } else {
+            return orderRepository.findAllByDeliveryStatus(true, pageable);
+        }
     }
+    /**
+     * Return order list by deliveryStatus And userName.
+     * <p>
+     * This method returns all order by deliveryStatus And userName
+     * (With the passed-in status -1, return all works;
+     * with 0, return all by deliveryStatus == false works;
+     * and otherwise, it's return all by deliveryStatus == true),
+     * with the deliveryStatus and pageable as the input parameter.
+     * @param status
+     * @param pageable
+     * @return order list by deliveryStatus
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public Page<Order> findAllByDeliveryStatusAndUserName(Integer status, String userName,
+                                                          Pageable pageable) {
+        if (status == -1) {
+            return orderRepository
+                    .findByDeliveryStatusAndUserName(null, userName,pageable);
+        } else if (status == 0){
+            return orderRepository
+                    .findByDeliveryStatusAndUserName(false, userName, pageable);
+        } else {
+            return orderRepository
+                    .findByDeliveryStatusAndUserName(true, userName, pageable);
+        }
+    }
+
     /**
      * Return order by status and userName.
      * <p>
-     * This method returns order by status and userName, with the status and userName as the input parameter.
+     * This method returns order by status and userName (With the passed-in status -1, return all works;
+     * with 0, return all by status == false works;
+     * and otherwise, it's return all by status == true),
+     * with the status and pageable as the input parameter.
      * @param status
      * @param userName
      * @return order by status and userName
@@ -77,13 +118,16 @@ public class OrderServiceImpl implements OrderService {
      * @since 1.1
      */
     @Override
-    public Order myOrder(Integer status, String userName) {
-        if (status == 0) {
-            return orderRepository.findByStatusAndUserUserName(false, userName)
-                    .orElseThrow(() -> new AppException(ResponseCode.ORDER_NOT_FOUND));
+    public Page<Order> myOrder(Integer status, String userName, Pageable pageable) {
+        if (status == -1) {
+            return orderRepository
+                    .findByStatusAndUserUserName(null, userName, pageable);
+        } else if (status == 0){
+            return orderRepository
+                    .findByStatusAndUserUserName(false, userName, pageable);
         } else {
-            return orderRepository.findByStatusAndUserUserName(true, userName)
-                    .orElseThrow(() -> new AppException(ResponseCode.ORDER_NOT_FOUND));
+            return orderRepository
+                    .findByStatusAndUserUserName(true, userName, pageable);
         }
     }
     /**
@@ -158,7 +202,6 @@ public class OrderServiceImpl implements OrderService {
      * @param dtoRequest
      * @return order information by id if it is updated successfully.
      * @throws AppException(ResponseCode.ORDER_NOT_FOUND) if order does not found
-     * @throws AppException(ResponseCode.ACCESS_DENIED) if order is not owned by the user
      * @author HoangVu
      * @since 1.0
      */
@@ -177,7 +220,6 @@ public class OrderServiceImpl implements OrderService {
      * @param userName
      * @param addressId
      * @throws AppException(ResponseCode.ORDER_NOT_FOUND) if order does not found
-     * @throws AppException(ResponseCode.ACCESS_DENIED) if order is not owned by the user
      * @throws AppException(ResponseCode.IMMUTABLE) if address is remains unchanged
      * @author HoangVu
      * @since 1.0
@@ -206,18 +248,18 @@ public class OrderServiceImpl implements OrderService {
      * @throws AppException(ResponseCode.ORDER_ALREADY_DELETED)
      * if order already been deleted in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
-    public void setStatusDelivery(Long id) {
-        Order foundOrder = findByIdWithoutAuthor(id);
-        if (Boolean.TRUE.equals(foundOrder.getStatusDelivery())) {
+    public void setDeliveryStatus(Long id) {
+        Order foundOrder = findById(id, null);
+        if (Boolean.TRUE.equals(foundOrder.getDeliveryStatus())) {
             throw new AppException(ResponseCode.ORDER_ALREADY_DELIVERED);
         }
         if (Boolean.TRUE.equals(foundOrder.getDeleted())) {
-
+            throw  new AppException(ResponseCode.ORDER_ALREADY_DELETED);
         }
-        foundOrder.setStatusDelivery(true);
+        foundOrder.setDeliveryStatus(true);
         orderRepository.save(foundOrder);
     }
 
@@ -230,14 +272,19 @@ public class OrderServiceImpl implements OrderService {
      * if order does not exist in the database
      * @throws AppException(ResponseCode.ORDER_ALREADY_CANCELED)
      * if order already been canceled in the database
+     * @throws AppException(ResponseCode.ORDER_ALREADY_DELIVERED)
+     * if order already been delivered in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
-    public void cancel(Long id, String userName) {
+    public void cancelById(Long id, String userName) {
         Order foundOrder = findById(id, userName);
         if (Boolean.TRUE.equals(foundOrder.getStatus())) {
             throw new AppException(ResponseCode.ORDER_ALREADY_CANCELED);
+        }
+        if (Boolean.TRUE.equals(foundOrder.getDeliveryStatus())) {
+            throw new AppException(ResponseCode.ORDER_ALREADY_DELIVERED);
         }
         foundOrder.setStatus(true);
         orderRepository.save(foundOrder);
@@ -275,15 +322,15 @@ public class OrderServiceImpl implements OrderService {
      * @throws AppException(ResponseCode.ORDER_ALREADY_DELIVERED)
      * if order already been delivered in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public void deleteById(Long id) {
-        Order foundOrder = findByIdWithoutAuthor(id);
+        Order foundOrder = findById(id, null);
         if (Boolean.TRUE.equals(foundOrder.getDeleted())) {
             throw new AppException(ResponseCode.ORDER_ALREADY_DELETED);
         }
-        if (Boolean.TRUE.equals(foundOrder.getStatusDelivery())) {
+        if (Boolean.TRUE.equals(foundOrder.getDeliveryStatus())) {
             throw new AppException(ResponseCode.ORDER_ALREADY_DELIVERED);
         }
         foundOrder.setDeleted(true);
@@ -299,11 +346,11 @@ public class OrderServiceImpl implements OrderService {
      * @throws AppException(ResponseCode.ORDER_ALREADY_RESTORED)
      * if order already been restored in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public void restoreById(Long id) {
-        Order foundOrder = findByIdWithoutAuthor(id);
+        Order foundOrder = findById(id, null);
         if (Boolean.FALSE.equals(foundOrder.getDeleted())) {
             throw new AppException(ResponseCode.ORDER_ALREADY_RESTORED);
         }

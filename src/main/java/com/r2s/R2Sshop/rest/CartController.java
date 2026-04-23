@@ -20,7 +20,7 @@ public class CartController extends BaseRestController{
     @Autowired
     private CartService cartService;
     /**
-     * Return cart by id.
+     * Return cart by id for staff.
      * <p>
      * This method returns cart by id, with the id as the input parameter.
      * @param id
@@ -28,9 +28,25 @@ public class CartController extends BaseRestController{
      * @author HoangVu
      * @since 1.0
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping("/get-by-id")
-    public ResponseEntity<?> getById(@RequestParam(name = "id", required = false
+    @PreAuthorize("hasRole('STAFF')")
+    @GetMapping("/staff/get-by-id")
+    public ResponseEntity<?> getByIdForStaff(@RequestParam(name = "id", required = false
+            , defaultValue = "1") Long id) {
+        Cart foundCart = cartService.findById(id);
+        return super.success(new CartDTOResponse(foundCart));
+    }
+    /**
+     * Return cart by id for admin.
+     * <p>
+     * This method returns cart by id, with the id as the input parameter.
+     * @param id
+     * @return cart by id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/get-by-id")
+    public ResponseEntity<?> getByIdForAdmin(@RequestParam(name = "id", required = false
             , defaultValue = "1") Long id) {
         Cart foundCart = cartService.findById(id);
         return super.success(new CartDTOResponse(foundCart));
@@ -94,10 +110,10 @@ public class CartController extends BaseRestController{
      * @param dtoRequest 
      * @param userVoucherId
      * @param addressId
-     * @return "Payment successful" if the payment method í successful.
+     * @return "Order successful" if the payment method í successful.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id and userVoucherId are empty
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/payment-by-cash")
@@ -107,10 +123,10 @@ public class CartController extends BaseRestController{
                                            @RequestParam Long addressId) {
         cartService.paymentByCash(userDetails.getUsername(), userVoucherId,
                 dtoRequest, addressId);
-        return super.success("Payment successful");
+        return super.success("Order successful");
     }
     /**
-     * Set status.
+     * Set status for staff.
      * <p>
      * This method is used to confirm card by id.
      * @param id
@@ -119,9 +135,26 @@ public class CartController extends BaseRestController{
      * @author HoangVu
      * @since 1.0
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @PutMapping("/set-status")
-    public ResponseEntity<?> setStatus(@RequestParam Long id) {
+    @PreAuthorize("hasRole('STAFF')")
+    @PutMapping("/staff/set-status")
+    public ResponseEntity<?> setStatusForStaff(@RequestParam Long id) {
+        cartService.setStatus(id);
+        return super.success("Confirmed successfully");
+    }
+
+    /**
+     * Set status for admin.
+     * <p>
+     * This method is used to confirm card by id.
+     * @param id
+     * @return "Confirmed successfully" if it is confirmed successfully.
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/admin/set-status")
+    public ResponseEntity<?> setStatusForAdmin(@RequestParam Long id) {
         cartService.setStatus(id);
         return super.success("Confirmed successfully");
     }

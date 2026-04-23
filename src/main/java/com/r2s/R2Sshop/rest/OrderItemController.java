@@ -29,7 +29,7 @@ public class OrderItemController extends BaseRestController{
     /**
      * Return orderItem by id.
      * <p>
-     * This method returns orderItem by id, with the id as the input parameter.
+     * This method returns orderItem by id and userName, with the id as the input parameter.
      * @param id
      * @return orderItem by id
      * @author HoangVu
@@ -40,6 +40,36 @@ public class OrderItemController extends BaseRestController{
     public ResponseEntity<?> getById(@AuthenticationPrincipal UserDetails userDetails,
                                          @RequestParam(name = "id", required = false) Long id) {
         OrderItem foundOrderItem = orderItemService.findById(id, userDetails.getUsername());
+        return super.success(new OrderItemDTOResponse(foundOrderItem));
+    }
+    /**
+     * Return orderItem by id for staff.
+     * <p>
+     * This method returns orderItem by id, with the id as the input parameter.
+     * @param id
+     * @return orderItem by id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('STAFF')")
+    @GetMapping("/staff/get-by-id")
+    public ResponseEntity<?> getByIdForStaff(@RequestParam(name = "id", required = false) Long id) {
+        OrderItem foundOrderItem = orderItemService.findById(id, null);
+        return super.success(new OrderItemDTOResponse(foundOrderItem));
+    }
+    /**
+     * Return orderItem by id for admin.
+     * <p>
+     * This method returns orderItem by id, with the id as the input parameter.
+     * @param id
+     * @return orderItem by id
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/get-by-id")
+    public ResponseEntity<?> getByIdForAdmin(@RequestParam(name = "id", required = false) Long id) {
+        OrderItem foundOrderItem = orderItemService.findById(id, null);
         return super.success(new OrderItemDTOResponse(foundOrderItem));
     }
 
@@ -64,6 +94,56 @@ public class OrderItemController extends BaseRestController{
         Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
         Page<OrderItem> orderItemPage = orderItemService.findAllByOrderId(orderId, pageable,
                 userDetails.getUsername());
+        List<OrderItemDTOResponse> responses = orderItemPage.stream()
+                .map(OrderItemDTOResponse:: new)
+                .collect(Collectors.toList());
+        return super.success(responses);
+    }
+    /**
+     * Return orderItem list by orderId for staff.
+     * <p>
+     * This method returns orderItem list by orderId
+     * and pagination is applied.
+     * @param orderId
+     * @param offset
+     * @param limit
+     * @return the orderItem list by orderId if the data is retrieved successfully.
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('STAFF')")
+    @GetMapping("/staff")
+    public ResponseEntity<?> getAllByOrderIdForStaff(@RequestParam Long orderId,
+                                             @RequestParam(defaultValue = "0") Integer offset,
+                                             @RequestParam(defaultValue = "5") Integer limit) {
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
+        Page<OrderItem> orderItemPage = orderItemService.findAllByOrderId(orderId, pageable,
+                null);
+        List<OrderItemDTOResponse> responses = orderItemPage.stream()
+                .map(OrderItemDTOResponse:: new)
+                .collect(Collectors.toList());
+        return super.success(responses);
+    }
+    /**
+     * Return orderItem list by orderId for admin.
+     * <p>
+     * This method returns orderItem list by orderId
+     * and pagination is applied.
+     * @param orderId
+     * @param offset
+     * @param limit
+     * @return the orderItem list by orderId if the data is retrieved successfully.
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public ResponseEntity<?> getAllByOrderIdForAdmin(@RequestParam Long orderId,
+                                             @RequestParam(defaultValue = "0") Integer offset,
+                                             @RequestParam(defaultValue = "5") Integer limit) {
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
+        Page<OrderItem> orderItemPage = orderItemService.findAllByOrderId(orderId, pageable,
+                null);
         List<OrderItemDTOResponse> responses = orderItemPage.stream()
                 .map(OrderItemDTOResponse:: new)
                 .collect(Collectors.toList());

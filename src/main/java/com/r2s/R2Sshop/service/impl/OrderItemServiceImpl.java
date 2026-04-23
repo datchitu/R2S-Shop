@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-
+import org.springframework.util.ObjectUtils;
 
 @Service
 public class OrderItemServiceImpl implements OrderItemService {
@@ -32,18 +30,17 @@ public class OrderItemServiceImpl implements OrderItemService {
      * @param id
      * @return order item by id
      * @throws AppException(ResponseCode.ORDER_ITEM_NOT_FOUND) if the order item cannot be found by id
-     * @throws AppException(ResponseCode.ACCESS_DENIED) if orderItem is not owned by the user
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public OrderItem findById(Long id, String userName) {
-        OrderItem foundOrderItem = orderItemRepository.findById(id)
-                .orElseThrow(() -> new AppException(ResponseCode.ORDER_ITEM_NOT_FOUND));
-        if (!foundOrderItem.getOrder().getUser().getUserName().equals(userName)) {
-            throw new AppException(ResponseCode.ACCESS_DENIED);
+        if (userName == null){
+            return orderItemRepository.findById(id)
+                    .orElseThrow(() -> new AppException(ResponseCode.ORDER_ITEM_NOT_FOUND));
         }
-        return foundOrderItem;
+        return orderItemRepository.findByIdAndUserName(id, userName)
+                .orElseThrow(() -> new AppException(ResponseCode.ORDER_ITEM_NOT_FOUND));
     }
     /**
      * Return order item list by orderId.
@@ -54,16 +51,20 @@ public class OrderItemServiceImpl implements OrderItemService {
      * @param pageable
      * @return order item list by orderId
      * @throws AppException(ResponseCode.ORDER_NOT_FOUND) if the order cannot be found by id
-     * @throws AppException(ResponseCode.ACCESS_DENIED) if orderItem is not owned by the user
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public Page<OrderItem> findAllByOrderId(Long orderId, Pageable pageable, String userName) {
-        Order foundOrder = orderService.findById(orderId, userName);
-        if (!foundOrder.getUser().getUserName().equals(userName)) {
-            throw new AppException(ResponseCode.ACCESS_DENIED);
+        Page<OrderItem> orderItems;
+        if (userName == null) {
+            orderItems = orderItemRepository.findAllByOrderId(orderId, pageable);
+        } else {
+            orderItems = orderItemRepository.findAllByOrderIdAndUserName(orderId, userName, pageable);
         }
-        return orderItemRepository.findAllByOrderId(orderId, pageable);
+        if (ObjectUtils.isEmpty(orderItems)) {
+            throw new AppException(ResponseCode.ORDER_ITEM_NOT_FOUND);
+        }
+        return orderItems;
     }
 }

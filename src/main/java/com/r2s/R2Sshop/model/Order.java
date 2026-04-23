@@ -30,7 +30,8 @@ public class Order {
 
     private String note;
 
-    private Boolean statusDelivery = false;
+    @Column(name = "delivery_status")
+    private Boolean deliveryStatus = false;
 
     private Boolean status = false;
 

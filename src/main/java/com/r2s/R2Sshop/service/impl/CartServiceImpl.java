@@ -110,7 +110,6 @@ public class CartServiceImpl implements CartService {
      * This method used for payment by card and apply voucher (if available) and create order by userName,
      * with the userName, userVoucherId as the input parameter.
      * @param userName
-     * @param note
      * @param userVoucherId
      * @param dtoRequest
      * @param addressId

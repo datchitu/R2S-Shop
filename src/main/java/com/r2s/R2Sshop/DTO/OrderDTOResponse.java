@@ -19,7 +19,7 @@ public class OrderDTOResponse {
     private Long id;
     private LocalDateTime deliveryTime;
     private String note;
-    private Boolean statusDelivery;
+    private Boolean deliveryStatus;
     private Boolean status;
     private LocalDateTime datetime;
     private BigDecimal totalPrice;
@@ -28,7 +28,7 @@ public class OrderDTOResponse {
      * Customize the output order information as a JSON file.
      * <p>
      * This method customizes the output order information, including
-     * id, deliveryTime, note, statusDelivery, status, datetime,
+     * id, deliveryTime, note, deliveryStatus, status, datetime,
      * totalPrice and list orderItems as a JSON file.
      * @param order
      * @author HoangVu
@@ -38,7 +38,7 @@ public class OrderDTOResponse {
         this.id = order.getId();
         this.deliveryTime = order.getDeliveryTime();
         this.note = order.getNote();
-        this.statusDelivery = order.getStatusDelivery();
+        this.deliveryStatus = order.getDeliveryStatus();
         this.status = order.getStatus();
         this.datetime = order.getOrderDatetime();
         this.totalPrice = order.getTotalPrice();
