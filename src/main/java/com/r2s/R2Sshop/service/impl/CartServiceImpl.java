@@ -115,14 +115,14 @@ public class CartServiceImpl implements CartService {
      * @param addressId
      * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
     @Transactional
     public void paymentByCard(String userName, Long userVoucherId,
                               OrderDTORequest dtoRequest, Long addressId) {
         Cart foundCart = myCart(userName);
-        if (Boolean.TRUE.equals(foundCart.getStatus())) {
+        if (Boolean.TRUE.equals(foundCart.getPaymentStatus())) {
             throw new AppException(ResponseCode.CART_ALREADY_PAID);
         }
 
@@ -158,15 +158,16 @@ public class CartServiceImpl implements CartService {
      * @param dtoRequest
      * @param addressId
      * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by userName
+     *
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
     @Transactional
     public void paymentByCash(String userName, Long userVoucherId,
                               OrderDTORequest dtoRequest, Long addressId) {
         Cart foundCart = myCart(userName);
-        if (Boolean.TRUE.equals(foundCart.getStatus())) {
+        if (Boolean.TRUE.equals(foundCart.getPaymentStatus())) {
             throw new AppException(ResponseCode.CART_ALREADY_PAID);
         }
 
@@ -196,14 +197,18 @@ public class CartServiceImpl implements CartService {
      * This method sets status and updates quantity of variant product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
+     * @throws AppException(ResponseCode.CART_NOT_YET_PAID) if the cart is not yet paid for
      * @throws AppException(ResponseCode.INSUFFICIENT_STOCK) if the variant product out of stock
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     @Transactional
     public void setStatus(Long id) {
         Cart foundCart = findById(id);
+        if (Boolean.TRUE.equals(foundCart.getPaymentStatus())) {
+            throw new AppException(ResponseCode.CART_NOT_YET_PAID);
+        }
 
         List<CartLineItem> cartLineItems = foundCart.getCartLineItems();
         for (CartLineItem cartLineItem : cartLineItems) {

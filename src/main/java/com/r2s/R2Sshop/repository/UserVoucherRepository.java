@@ -17,7 +17,10 @@ import java.util.Optional;
 public interface UserVoucherRepository extends JpaRepository<UserVoucher, Long> {
     @Query("SELECT uv FROM UserVoucher uv WHERE (:deleted IS NULL OR uv.deleted = :deleted)")
     Page<UserVoucher> findAllByDeleted(@Param("deleted") Boolean deleted, Pageable pageable);
-    List<UserVoucher> findByUserUserNameAndDeleted(String userName, Boolean deleted);
+    @Query("SELECT uv FROM UserVoucher uv WHERE uv.user.userName = :userName " +
+            "AND (:deleted IS NULL OR uv.deleted = :deleted)")
+    List<UserVoucher> findByUserUserNameAndDeleted(@Param("userName") String userName,
+                                                   @Param("deleted") Boolean deleted);
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT uv FROM UserVoucher uv WHERE uv.id = :id")
     Optional<UserVoucher> findByIdWithLock(Long id);

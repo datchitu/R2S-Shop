@@ -64,6 +64,12 @@ public enum ResponseCode {
     ORDER_ALREADY_DELIVERED(2046, "Order already been delivered", HttpStatus.BAD_REQUEST),
     CART_ALREADY_ORDERED(2047, "Cart already been ordered", HttpStatus.BAD_REQUEST),
     CART_IS_EMPTY(2047, "Cart is empty", HttpStatus.BAD_REQUEST),
+    CART_NOT_YET_PAID(2048, "Cart is not yet pair for", HttpStatus.BAD_REQUEST),
+    EXPIRE_DATE_IS_AFTER(2049, "ExpireDate is after voucher expireDate", HttpStatus.BAD_REQUEST),
+    UNISSUED_VOUCHER(2050, "Unissued voucher ", HttpStatus.BAD_REQUEST),
+    VOUCHER_ALREADY_USED(2051, "Voucher already been used",
+            HttpStatus.BAD_REQUEST),
+    OUT_OF_STOCK_VOUCHER(2052, "Out of stock voucher", HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR);
 
 

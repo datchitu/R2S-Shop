@@ -13,4 +13,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     boolean existsByName(String name);
     @Query("SELECT v FROM Voucher v WHERE (:deleted IS NULL OR v.deleted = :deleted)")
     Page<Voucher> findAllByDeleted(@Param("deleted") Boolean deleted, Pageable pageable);
+    @Query("UPDATE Voucher v SET v.quantity = v.quantity - 1 " +
+            "WHERE v.id = :id AND v.quantity >= 1")
+    int decreaseStock(@Param("id") Long id);
 }

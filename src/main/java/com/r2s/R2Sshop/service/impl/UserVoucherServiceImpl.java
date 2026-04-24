@@ -7,14 +7,13 @@ import com.r2s.R2Sshop.model.UserVoucher;
 import com.r2s.R2Sshop.model.Voucher;
 import com.r2s.R2Sshop.repository.UserRepository;
 import com.r2s.R2Sshop.repository.UserVoucherRepository;
+import com.r2s.R2Sshop.repository.VoucherRepository;
 import com.r2s.R2Sshop.rest.AppException;
-import com.r2s.R2Sshop.service.UserService;
 import com.r2s.R2Sshop.service.UserVoucherService;
 import com.r2s.R2Sshop.service.VoucherService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +32,8 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     private UserVoucherRepository userVoucherRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private VoucherRepository voucherRepository;
     @Autowired
     private VoucherService voucherService;
     @Autowired
@@ -107,8 +108,10 @@ public class UserVoucherServiceImpl implements UserVoucherService {
      * This method is used to add a new userVoucher with userName and voucherId.
      * @param dtoRequest
      * @return information of userVoucher with userName and voucherId if the add process is successful
+     * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not found by userName
+     * @throws AppException(ResponseCode.EXPIRE_DATE_IS_AFTER) if expireDate is after voucher expireDate
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Transactional
     @Override
@@ -117,6 +120,11 @@ public class UserVoucherServiceImpl implements UserVoucherService {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
         Voucher foundVoucher = voucherService.findById(voucherId);
+        LocalDateTime voucherExpire = foundVoucher.getExpireDate();
+        LocalDateTime userVoucherExpire = dtoRequest.getExpireDate();
+        if (userVoucherExpire.isAfter(voucherExpire)) {
+            throw new AppException(ResponseCode.EXPIRE_DATE_IS_AFTER);
+        }
         UserVoucher userVoucher = modelMapper.map(dtoRequest, UserVoucher.class);
         userVoucher.setVoucher(foundVoucher);
         userVoucher.setUser(foundUser);
@@ -130,13 +138,25 @@ public class UserVoucherServiceImpl implements UserVoucherService {
      * @param dtoRequest
      * @return userVoucher by id if the update process is successful
      * @throws AppException(ResponseCode.USERVOUCHER_NOT_FOUND) if userVoucher does not exist in the database
+     * @throws AppException(ResponseCode.IMMUTABLE) if expireDate remains unchanged
+     * @throws AppException(ResponseCode.EXPIRE_DATE_IS_AFTER) if expireDate is after voucher expireDate
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Transactional
     @Override
     public UserVoucher updateById(Long id, UserVoucherDTORequest dtoRequest) {
         UserVoucher foundUserVoucher = findById(id);
+        LocalDateTime voucherExpire = foundUserVoucher.getVoucher().getExpireDate();
+        LocalDateTime userVoucherExpire = dtoRequest.getExpireDate();
+
+        if (userVoucherExpire.isEqual(foundUserVoucher.getExpireDate())) {
+            throw new AppException(ResponseCode.IMMUTABLE);
+        }
+
+        if (userVoucherExpire.isAfter(voucherExpire)) {
+            throw new AppException(ResponseCode.EXPIRE_DATE_IS_AFTER);
+        }
         modelMapper.map(dtoRequest, foundUserVoucher);
         return userVoucherRepository.save(foundUserVoucher);
     }
@@ -208,19 +228,34 @@ public class UserVoucherServiceImpl implements UserVoucherService {
      * <p>
      * This method uses userVoucher by id, with the id as the input parameter.
      * @param id
-     * @throws AppException(ResponseCode.USERVOUCHER_NOT_FOUND)
-     * if userVoucher does not exist in the database
-     * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_USED)
-     * if userVoucher already been used in the database
+     * @throws AppException(ResponseCode.UNISSUED_VOUCHER)
+     * if unissued voucher
+     * @throws AppException(ResponseCode.VOUCHER_NOT_FOUND)
+     * if voucher does not exist in the database
+     * @throws AppException(ResponseCode.VOUCHER_ALREADY_USED)
+     * if voucher already been used in the database
+     * @throws AppException(ResponseCode.OUT_OF_STOCK_VOUCHER) if the voucher out of stock
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
+    @Transactional
     public UserVoucher useById(Long id) {
         UserVoucher foundUserVoucher = userVoucherRepository.findByIdWithLock(id)
-                .orElseThrow(() -> new AppException(ResponseCode.USERVOUCHER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ResponseCode.VOUCHER_NOT_FOUND));
+        if (foundUserVoucher.getStatus() == 0) {
+            throw new AppException(ResponseCode.UNISSUED_VOUCHER);
+        }
         if (foundUserVoucher.getStatus() == 2){
-            throw new AppException(ResponseCode.USERVOUCHER_ALREADY_USED);
+            throw new AppException(ResponseCode.VOUCHER_ALREADY_USED);
+        }
+        if (Boolean.TRUE.equals(foundUserVoucher.getDeleted())) {
+            throw new AppException(ResponseCode.VOUCHER_ALREADY_DELETED);
+        }
+        Long voucherId = foundUserVoucher.getVoucher().getId();
+        int updatedRows = voucherRepository.decreaseStock(voucherId);
+        if (updatedRows == 0) {
+            throw new AppException(ResponseCode.OUT_OF_STOCK_VOUCHER);
         }
         foundUserVoucher.setStatus(2);
         foundUserVoucher.setUsedAt(localDateTime);

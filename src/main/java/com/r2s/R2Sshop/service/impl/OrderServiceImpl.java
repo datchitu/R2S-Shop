@@ -202,13 +202,25 @@ public class OrderServiceImpl implements OrderService {
      * @param dtoRequest
      * @return order information by id if it is updated successfully.
      * @throws AppException(ResponseCode.ORDER_NOT_FOUND) if order does not found
+     * @throws AppException(ResponseCode.IMMUTABLE) if expireDate remains unchanged
+     * @throws AppException(ResponseCode.ORDER_ALREADY_DELIVERED)
+     * if order already been delivered in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     @Transactional
     public Order updateById(Long id, String userName, OrderDTORequest dtoRequest) {
         Order foundOrder = findById(id, userName);
+        if (foundOrder.getDeliveryTime().isEqual(dtoRequest.getDeliveryTime()) &&
+                foundOrder.getNote().equals(dtoRequest.getNote())) {
+            throw new AppException(ResponseCode.IMMUTABLE);
+        }
+
+        if (Boolean.TRUE.equals(foundOrder.getDeliveryStatus())) {
+            throw new AppException(ResponseCode.ORDER_ALREADY_DELIVERED);
+        }
+
         modelMapper.map(dtoRequest, foundOrder);
         return orderRepository.save(foundOrder);
     }

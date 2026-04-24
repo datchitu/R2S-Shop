@@ -11,32 +11,26 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserVoucherDTOResponse {
-    private Long id;
+public class UserVoucherSimpleDTOResponse {
     private LocalDateTime expireDate;
     private Integer status;
     private LocalDateTime usedAt;
-    private String userName;
     private String codeVoucher;
 
     /**
      * Customize the output variant product information as a JSON file.
      * <p>
      * This method customizes the output userVoucher information, including
-     * id, expireDate, status, userName and usedAt as a JSON file.
+     * expireDate, status, usedAt and codeVoucher as a JSON file.
      * @param userVoucher
      * @author HoangVu
-     * @since 1.1
+     * @since 1.0
      */
-    public UserVoucherDTOResponse(UserVoucher userVoucher) {
-        this.id = userVoucher.getId();
+    public UserVoucherSimpleDTOResponse(UserVoucher userVoucher) {
         this.expireDate = userVoucher.getExpireDate();
         this.status = userVoucher.getStatus();
         if (!ObjectUtils.isEmpty(userVoucher.getUsedAt())) {
             this.usedAt = userVoucher.getUsedAt();
-        }
-        if (!ObjectUtils.isEmpty(userVoucher.getUser().getUserName())) {
-            this.userName = userVoucher.getUser().getUserName();
         }
         if (!ObjectUtils.isEmpty(userVoucher.getVoucher().getCode())) {
             this.codeVoucher = userVoucher.getVoucher().getCode();

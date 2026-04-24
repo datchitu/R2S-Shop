@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartDTOResponse {
+    private Long id;
     private BigDecimal totalPrice;
     private Boolean paymentType;
     private Boolean paymentStatus;
@@ -29,9 +30,10 @@ public class CartDTOResponse {
      * ID, totalPrice, paymentType, paymentStatus, status, paidAt and cartLineItem list as a JSON file.
      * @param cart
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     public CartDTOResponse(Cart cart) {
+        this.id = cart.getId();
         this.totalPrice = cart.getTotalPrice();
         this.paymentType = cart.getPaymentType();
         this.paymentStatus = cart.getPaymentStatus();
