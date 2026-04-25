@@ -17,5 +17,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findAllByCategory_IdAndDeleted(@Param("categoryId") Long categoryId,
                                                  @Param("deleted") Boolean deleted,
                                                  Pageable pageable);
+
     boolean existsByNameAndCategoryId(String name, Long categoryId);
 }

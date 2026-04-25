@@ -14,8 +14,10 @@ public interface UserVoucherService {
     UserVoucher addWithUserAndVoucher(UserVoucherDTORequest dtoRequest, Long userId, Long voucherId);
     UserVoucher updateById(Long id, UserVoucherDTORequest dtoRequest);
     void deleteById(Long id);
-    void reactivateById(Long id);
+    void restoreById(Long id);
     void releaseById(Long id);
+    void releaseAllByVoucherId(Long voucherId);
     UserVoucher useById(Long id);
     void disableById(Long id);
+    void disableAllById(Long voucherId);
 }

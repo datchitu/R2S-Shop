@@ -53,4 +53,7 @@ public class UserVoucher {
     @OneToMany(mappedBy = "userVoucher")
     @JsonIgnoreProperties({"userVoucher", "user", "cartLineItems"})
     private List<Cart> carts;
+
+    @Version
+    private Long version;
 }

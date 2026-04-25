@@ -57,4 +57,7 @@ public class Order {
     @OneToMany(mappedBy = "order")
     @JsonIgnoreProperties({"order"})
     private List<OrderItem> orderItems;
+
+    @Version
+    private Long version;
 }

@@ -109,9 +109,11 @@ public class UserVoucherServiceImpl implements UserVoucherService {
      * @param dtoRequest
      * @return information of userVoucher with userName and voucherId if the add process is successful
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not found by userName
+     * @throws AppException(ResponseCode.VOUCHER_ALREADY_DELETED)
+     * if voucher already been deleted in the database
      * @throws AppException(ResponseCode.EXPIRE_DATE_IS_AFTER) if expireDate is after voucher expireDate
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Transactional
     @Override
@@ -120,6 +122,9 @@ public class UserVoucherServiceImpl implements UserVoucherService {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
         Voucher foundVoucher = voucherService.findById(voucherId);
+        if (Boolean.TRUE.equals(foundVoucher.getDeleted())) {
+            throw new AppException(ResponseCode.VOUCHER_ALREADY_DELETED);
+        }
         LocalDateTime voucherExpire = foundVoucher.getExpireDate();
         LocalDateTime userVoucherExpire = dtoRequest.getExpireDate();
         if (userVoucherExpire.isAfter(voucherExpire)) {
@@ -184,22 +189,22 @@ public class UserVoucherServiceImpl implements UserVoucherService {
     /**
      * Reactivate userVoucher by id.
      * <p>
-     * This method reactivates userVoucher by id, with the id as the input parameter.
+     * This method restores userVoucher by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USERVOUCHER_NOT_FOUND)
      * if userVoucher does not exist in the database
-     * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_REACTIVATED)
-     * if userVoucher already been reactivated in the database
+     * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_RESTORED)
+     * if userVoucher already been restored in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.2
      */
     @Override
-    public void reactivateById(Long id) {
+    public void restoreById(Long id) {
         UserVoucher foundUserVoucher = findById(id);
-        if (Boolean.TRUE.equals(foundUserVoucher.getDeleted())) {
-            throw new AppException(ResponseCode.USERVOUCHER_ALREADY_REACTIVATED);
+        if (Boolean.FALSE.equals(foundUserVoucher.getDeleted())) {
+            throw new AppException(ResponseCode.USERVOUCHER_ALREADY_RESTORED);
         }
-        foundUserVoucher.setDeleted(true);
+        foundUserVoucher.setDeleted(false);
         userVoucherRepository.save(foundUserVoucher);
     }
     /**
@@ -222,6 +227,27 @@ public class UserVoucherServiceImpl implements UserVoucherService {
         }
         foundUserVoucher.setStatus(1);
         userVoucherRepository.save(foundUserVoucher);
+    }
+    /**
+     * Release all userVoucher by voucherId.
+     * <p>
+     * This method releases all userVoucher by voucherId, with the voucherId as the input parameter.
+     * @param voucherId
+     * @throws AppException(ResponseCode.VOUCHER_NOT_FOUND)
+     * if userVoucher does not exist in the database
+     * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_RELEASED)
+     * if userVoucher already been released in the database
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    @Transactional
+    public void releaseAllByVoucherId(Long voucherId) {
+        voucherService.findById(voucherId);
+        int updatedRows = userVoucherRepository.chargeStatusAllByVoucherId(voucherId, 1);
+        if (updatedRows == 0) {
+            throw new AppException(ResponseCode.USERVOUCHER_ALREADY_RELEASED);
+        }
     }
     /**
      * Use userVoucher by id.
@@ -273,19 +299,39 @@ public class UserVoucherServiceImpl implements UserVoucherService {
      * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_USED)
      * if userVoucher already been used in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
     public void disableById(Long id) {
         UserVoucher foundUserVoucher = findById(id);
         if (foundUserVoucher.getStatus() == 0){
-            throw new AppException(ResponseCode.USERVOUCHER_ALREADY_NOT_RELEASED);
+            throw new AppException(ResponseCode.USERVOUCHER_ALREADY_NOT_YET_RELEASED);
         }
         if (foundUserVoucher.getStatus() == 2){
             throw new AppException(ResponseCode.USERVOUCHER_ALREADY_USED);
         }
         foundUserVoucher.setStatus(0);
-        foundUserVoucher.setUsedAt(null);
         userVoucherRepository.save(foundUserVoucher);
+    }
+    /**
+     * Release all userVoucher by voucherId.
+     * <p>
+     * This method releases all userVoucher by voucherId, with the voucherId as the input parameter.
+     * @param voucherId
+     * @throws AppException(ResponseCode.VOUCHER_NOT_FOUND)
+     * if userVoucher does not exist in the database
+     * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_NOT_YET_RELEASED)
+     * if userVoucher already been disabled in the database
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    @Transactional
+    public void disableAllById(Long voucherId) {
+        voucherService.findById(voucherId);
+        int updatedRows = userVoucherRepository.disableAllByVoucherId(voucherId);
+        if (updatedRows == 0) {
+            throw new AppException(ResponseCode.USERVOUCHER_ALREADY_NOT_YET_RELEASED);
+        }
     }
 }

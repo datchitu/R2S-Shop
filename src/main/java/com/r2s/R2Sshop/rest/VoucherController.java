@@ -26,26 +26,73 @@ public class VoucherController extends BaseRestController{
     @Autowired
     private VoucherService voucherService;
     /**
-     * Return voucher by id.
+     * Return voucher by id for admin.
      * <p>
-     * This method returns voucher by id, with the id as the input parameter.
+     * This method returns voucher by id for admin, with the id as the input parameter.
+     * @param id
+     * @return voucher by id
+     * @author HoangVu
+     * @since 1.1
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/get-by-id")
+    public ResponseEntity<?> getByIdForAdmin(@RequestParam(name = "id", required = false
+            , defaultValue = "1") Long id) {
+        Voucher foundVoucher = voucherService.findById(id);
+        return super.success(new VoucherDTOResponse(foundVoucher));
+    }
+    /**
+     * Return voucher by id for staff.
+     * <p>
+     * This method returns voucher by id for staff, with the id as the input parameter.
      * @param id
      * @return voucher by id
      * @author HoangVu
      * @since 1.0
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping("/get-by-id")
-    public ResponseEntity<?> getById(@RequestParam(name = "id", required = false
+    @PreAuthorize("hasRole('STAFF')")
+    @GetMapping("/staff/get-by-id")
+    public ResponseEntity<?> getByIdForStaff(@RequestParam(name = "id", required = false
             , defaultValue = "1") Long id) {
         Voucher foundVoucher = voucherService.findById(id);
         return super.success(new VoucherDTOResponse(foundVoucher));
     }
-
     /**
-     * Return voucher list by status.
+     * Return voucher list by status for admin.
      * <p>
-     * This method returns voucher list by deleted
+     * This method returns voucher list by deleted for staff
+     * (With the passed-in status -1, return all works;
+     * with 0, return all by deleted == false works;
+     * and otherwise, it's return all by deleted == true),
+     * with the status as the input parameter
+     * and pagination is applied.
+     * @param offset
+     * @param limit
+     * @param status (-1, 0, 1)
+     * @return the voucher list by status if the data is retrieved successfully.
+     * @throws AppException(ResponseCode.INVALID_PARAM) if status is outside the value (-1, 0, 1)
+     * @author HoangVu
+     * @since 1.1
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public ResponseEntity<?> getAllByDeletedForAdmin(@RequestParam(defaultValue = "-1") Integer status,
+                                             @RequestParam(defaultValue = "0") Integer offset,
+                                             @RequestParam(defaultValue = "5") Integer limit) {
+        if (!Arrays.asList(-1, 0, 1).contains(status)) {
+            throw new AppException(ResponseCode.INVALID_PARAM);
+        }
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
+        Page<Voucher> voucherPage = voucherService.findAllByDeleted(status, pageable);
+        List<VoucherDTOResponse> responses = voucherPage.stream()
+                .map(VoucherDTOResponse :: new)
+                .collect(Collectors.toList());
+        return super.success(responses);
+    }
+    /**
+     * Return voucher list by status for staff.
+     * <p>
+     * This method returns voucher list by deleted for staff
      * (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
@@ -59,9 +106,9 @@ public class VoucherController extends BaseRestController{
      * @author HoangVu
      * @since 1.0
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping
-    public ResponseEntity<?> getAllByDeleted(@RequestParam(defaultValue = "-1") Integer status,
+    @PreAuthorize("hasRole('STAFF')")
+    @GetMapping("/staff")
+    public ResponseEntity<?> getAllByDeletedForStaff(@RequestParam(defaultValue = "-1") Integer status,
                                              @RequestParam(defaultValue = "0") Integer offset,
                                              @RequestParam(defaultValue = "5") Integer limit) {
         if (!Arrays.asList(-1, 0, 1).contains(status)) {
@@ -85,10 +132,10 @@ public class VoucherController extends BaseRestController{
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * name, code, discount, quantity and expireDate are missing
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<?> add(@Valid @RequestBody VoucherDTORequest dtoRequest) {
         if (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
@@ -97,9 +144,32 @@ public class VoucherController extends BaseRestController{
         return super.success(new VoucherDTOResponse(insertedVoucher));
     }
     /**
-     * Update voucher.
+     * Update voucher for admin.
      * <p>
-     * This method is used to update voucher by id.
+     * This method is used to update voucher by id for admin.
+     * @param id
+     * @param dtoRequest
+     * @return voucher information by id if it is updated successfully.
+     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * id is missing
+     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
+     * @author HoangVu
+     * @since 1.1
+     */
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PutMapping("/admin")
+    public ResponseEntity<?> updateByIdForAdmin(@RequestParam Long id,
+                                    @Valid @RequestBody VoucherDTORequest dtoRequest) {
+        if (ObjectUtils.isEmpty(dtoRequest)) {
+            throw new AppException(ResponseCode.NO_PARAM);
+        }
+        Voucher updatedVoucher = voucherService.updateById(id, dtoRequest);
+        return super.success(new VoucherDTOResponse(updatedVoucher));
+    }
+    /**
+     * Update voucher for staff.
+     * <p>
+     * This method is used to update voucher by id for staff.
      * @param id
      * @param dtoRequest
      * @return voucher information by id if it is updated successfully.
@@ -109,10 +179,10 @@ public class VoucherController extends BaseRestController{
      * @author HoangVu
      * @since 1.0
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @PutMapping
-    public ResponseEntity<?> updateById(@RequestParam Long id,
-                                    @Valid @RequestBody VoucherDTORequest dtoRequest) {
+    @PreAuthorize("hasRole('STAFF')")
+    @PutMapping("/staff")
+    public ResponseEntity<?> updateByIdForStaff(@RequestParam Long id,
+                                        @Valid @RequestBody VoucherDTORequest dtoRequest) {
         if (ObjectUtils.isEmpty(dtoRequest)) {
             throw new AppException(ResponseCode.NO_PARAM);
         }
@@ -127,29 +197,29 @@ public class VoucherController extends BaseRestController{
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete-by-id")
+    @DeleteMapping("/admin/delete-by-id")
     public ResponseEntity<?> deleteById(@RequestParam Long id) {
         voucherService.deleteById(id);
         return super.success("Deleted successfully");
     }
 
     /**
-     * Reactivate voucher.
+     * Restore voucher.
      * <p>
-     * This method is used to reactivate voucher by id.
+     * This method is used to restore voucher by id.
      * @param id
-     * @return "Reactivated successfully" if it is reactivated successfully.
+     * @return "Restored successfully" if it is restored successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/reactivate-by-id")
-    public ResponseEntity<?> reactivateById(@RequestParam Long id) {
-        voucherService.reactivateById(id);
-        return super.success("Reactivated successfully");
+    @PutMapping("/admin/restore-by-id")
+    public ResponseEntity<?> restoreById(@RequestParam Long id) {
+        voucherService.restoreById(id);
+        return super.success("Restored successfully");
     }
 }

@@ -95,9 +95,8 @@ public class CategoryController extends BaseRestController{
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @throws AppException(ResponseCode.INVALID_VALUE) if the passed-in parameter values such as
      * name are missing
-     * @throws AppException(ResponseCode.FAILURE_CATEGORY_UPDATE) if it is updated fails
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
@@ -107,9 +106,6 @@ public class CategoryController extends BaseRestController{
             throw new AppException(ResponseCode.NO_PARAM);
         }
         Category updatedCategory = categoryService.updateById(id, dtoRequest);
-        if (ObjectUtils.isEmpty(updatedCategory)) {
-            throw new AppException(ResponseCode.FAILURE_CATEGORY_UPDATE);
-        }
         return super.success(new CategoryDTOResponse(updatedCategory));
     }
     /**

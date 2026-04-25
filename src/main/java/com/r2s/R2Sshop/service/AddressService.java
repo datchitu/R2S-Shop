@@ -12,5 +12,5 @@ public interface AddressService {
     Address updateByIdAndUserName(String userName, Long id, AddressDTORequest DTORequest);
     void setDefault(String userName, Long id);
     void deleteByIdAndUserName(String userName, Long id);
-    void reactivateById(Long id);
+    void restoreById(Long id);
 }

@@ -220,22 +220,22 @@ public class AddressServiceImpl implements AddressService {
     }
 
     /**
-     * Reactivate address by id.
+     * Restore address by id.
      * <p>
-     * This method reactivates address by id, with the userName, id as the input parameter.
+     * This method restores address by id, with the userName, id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.ADDRESS_NOT_FOUND) if address does not exist in the database
      * @throws AppException(ResponseCode.ACCESS_DENIED) if the username does not match
      * the username retrieved from the address's user
-     * @throws AppException(ResponseCode.DATA_ALREADY_REACTIVATED) if address already been reactivated in the database
+     * @throws AppException(ResponseCode.ADDRESS_ALREADY_RESTORED) if address already been restored in the database
      * @author HoangVu
      * @since 1.3
      */
     @Override
-    public void reactivateById(Long id) {
+    public void restoreById(Long id) {
         Address foundAddress = findById(id);
         if (Boolean.FALSE.equals(foundAddress.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_REACTIVATED);
+            throw new AppException(ResponseCode.ADDRESS_ALREADY_RESTORED);
         }
         foundAddress.setDeleted(false);
         addressRepository.save(foundAddress);

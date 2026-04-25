@@ -59,4 +59,7 @@ public class Address {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnoreProperties({"addresses", "orders", "password", "roles", "carts", "userVouchers"})
     private User user;
+
+    @Version
+    private Long version;
 }

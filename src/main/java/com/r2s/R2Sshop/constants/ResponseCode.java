@@ -28,8 +28,7 @@ public enum ResponseCode {
     FAILURE_SIGNIN(3000, "Failed sign in", HttpStatus.UNAUTHORIZED),
     NOT_MATCH_PASSWORD(3003, "Password does not match", HttpStatus.BAD_REQUEST),
     DUPLICATE_PASSWORD(3004, "Duplicate old password", HttpStatus.BAD_REQUEST),
-    FAILURE_CATEGORY_UPDATE(3005, "Category update failed", HttpStatus.CONFLICT),
-    FAILURE_PRODUCT_UPDATE(3006, "Product update failed", HttpStatus.CONFLICT),
+    REQUEST_IS_CONFLICT(3006, "The request is in conflict", HttpStatus.CONFLICT),
     AUTHENTICATION_ERROR(3010, "Failed sign in", HttpStatus.UNAUTHORIZED),
     INSUFFICIENT_STOCK(3011, "Insufficient stock", HttpStatus.BAD_REQUEST),
     IMMUTABLE(3007, "The value remains unchanged", HttpStatus.BAD_REQUEST),
@@ -45,10 +44,10 @@ public enum ResponseCode {
     VARIANT_PRODUCT_ALREADY_EXISTS(2032, "Variant product already exists", HttpStatus.BAD_REQUEST),
     VOUCHER_ALREADY_EXISTS(2021, "Voucher already exists", HttpStatus.BAD_REQUEST),
     VOUCHER_ALREADY_DELETED(2033, "Voucher already been deleted", HttpStatus.BAD_REQUEST),
-    VOUCHER_ALREADY_REACTIVATED(2034, "UserVoucher already been reactivated", HttpStatus.BAD_REQUEST),
+    VOUCHER_ALREADY_RESTORED(2034, "UserVoucher already been restored", HttpStatus.BAD_REQUEST),
     USERVOUCHER_ALREADY_DELETED(2035, "UserVoucher already been deleted", HttpStatus.BAD_REQUEST),
-    USERVOUCHER_ALREADY_REACTIVATED(2036, "UserVoucher already been reactivated", HttpStatus.BAD_REQUEST),
-    USERVOUCHER_ALREADY_NOT_RELEASED(2037, "UserVoucher already been not yet released",
+    USERVOUCHER_ALREADY_RESTORED(2036, "UserVoucher already been restored", HttpStatus.BAD_REQUEST),
+    USERVOUCHER_ALREADY_NOT_YET_RELEASED(2037, "UserVoucher already been not yet released",
             HttpStatus.BAD_REQUEST),
     USERVOUCHER_ALREADY_RELEASED(2038, "UserVoucher already been released",
             HttpStatus.BAD_REQUEST),
@@ -70,6 +69,7 @@ public enum ResponseCode {
     VOUCHER_ALREADY_USED(2051, "Voucher already been used",
             HttpStatus.BAD_REQUEST),
     OUT_OF_STOCK_VOUCHER(2052, "Out of stock voucher", HttpStatus.BAD_REQUEST),
+    ADDRESS_ALREADY_RESTORED(2053, "Address already been restored", HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR);
 
 

@@ -43,4 +43,7 @@ public class CartLineItem {
     public Boolean isNew() {
         return this.id == null;
     }
+
+    @Version
+    private Long version;
 }

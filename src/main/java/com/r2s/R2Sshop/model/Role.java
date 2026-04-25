@@ -25,4 +25,5 @@ public class Role {
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"roles", "password", "userVouchers", "addresses", "carts", "orders"})
     private Set<User> users;
+
 }

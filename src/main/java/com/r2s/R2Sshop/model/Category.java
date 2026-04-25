@@ -39,4 +39,7 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"category", "variantProducts"})
     private List<Product> products;
+
+    @Version
+    private Long version;
 }

@@ -46,4 +46,7 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"product", "cartLineItems"})
     private List<VariantProduct> variantProducts;
+
+    @Version
+    private Long version;
 }

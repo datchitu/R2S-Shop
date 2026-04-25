@@ -40,6 +40,7 @@ public class AddressController extends BaseRestController{
      * @author HoangVu
      * @since 1.2
      */
+    @PreAuthorize("hasRole('USER')")
     @RequestMapping("/get-by-user-name")
     public ResponseEntity<?> getAllByUserIdAndDeleted(@AuthenticationPrincipal UserDetails userDetails,
                                                       @RequestParam(defaultValue = "-1") Integer status) {
@@ -65,6 +66,7 @@ public class AddressController extends BaseRestController{
      * @author HoangVu
      * @since 1.3
      */
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<?> addWithUserName(@Valid @RequestBody AddressDTORequest dtoRequest,
                                              @AuthenticationPrincipal UserDetails userDetails) {
@@ -121,21 +123,38 @@ public class AddressController extends BaseRestController{
         return super.success("Deleted successfully");
     }
     /**
-     * Reactivated address.
+     * Restored address for admin.
      * <p>
-     * This method is used to reactivated address by id.
+     * This method is used to restored address by id fro admin.
      * @param id
-     * @return "Reactivated successfully" if it is reactivated successfully.
+     * @return "Restored successfully" if it is restored successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
-     * @throws AppException(ResponseCode.FAILURE_ADDRESS_REACTIVATE) if it is reactivated fails
+     * @throws AppException(ResponseCode.FAILURE_ADDRESS_REstore) if it is restored fails
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/reactivate-by-id")
-    public ResponseEntity<?> reactivateByIdAndUserName(@RequestParam Long id) {
-        addressService.reactivateById(id);
-        return super.success("Reactivated successfully");
+    @PutMapping("/admin/restore-by-id")
+    public ResponseEntity<?> restoreByIdForAdmin(@RequestParam Long id) {
+        addressService.restoreById(id);
+        return super.success("Restored successfully");
+    }
+    /**
+     * Restored address for staff.
+     * <p>
+     * This method is used to restored address by id for staff.
+     * @param id
+     * @return "Restored successfully" if it is restored successfully.
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
+     * @throws AppException(ResponseCode.FAILURE_ADDRESS_REstore) if it is restored fails
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('STAFF')")
+    @PutMapping("/staff/restore-by-id")
+    public ResponseEntity<?> restoreByIdForStaff(@RequestParam Long id) {
+        addressService.restoreById(id);
+        return super.success("Restored successfully");
     }
     /**
      * Set default address by id and userName.

@@ -77,4 +77,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"user", "voucher", "carts"})
     private List<UserVoucher> userVouchers;
+
+    @Version
+    private Long version;
 }

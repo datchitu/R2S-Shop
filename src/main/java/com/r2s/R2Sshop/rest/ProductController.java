@@ -113,9 +113,8 @@ public class ProductController extends BaseRestController{
      * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * name is missing
-     * @throws AppException(ResponseCode.FAILURE_PRODUCT_UPDATE) if it is updated fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
@@ -126,9 +125,6 @@ public class ProductController extends BaseRestController{
             throw new AppException(ResponseCode.NO_PARAM);
         }
         Product updatedProduct = productService.updateById(id, categoryId, dtoRequest);
-        if (ObjectUtils.isEmpty(updatedProduct)) {
-            throw new AppException(ResponseCode.FAILURE_PRODUCT_UPDATE);
-        }
         return super.success(new ProductDTOResponse(updatedProduct));
     }
     /**

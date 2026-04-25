@@ -122,22 +122,22 @@ public class VoucherServiceImpl implements VoucherService {
         voucherRepository.save(foundVoucher);
     }
     /**
-     * Reactivate voucher by id.
+     * Restore voucher by id.
      * <p>
-     * This method reactivates voucher by id, with the id as the input parameter.
+     * This method restores voucher by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.VOUCHER_NOT_FOUND)
      * if voucher does not exist in the database
-     * @throws AppException(ResponseCode.VOUCHER_ALREADY_REACTIVATED)
-     * if voucher already been reactivated in the database
+     * @throws AppException(ResponseCode.VOUCHER_ALREADY_RESTORED)
+     * if voucher already been restored in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
-    public void reactivateById(Long id) {
+    public void restoreById(Long id) {
         Voucher foundVoucher = findById(id);
         if (Boolean.FALSE.equals(foundVoucher.getDeleted())) {
-            throw new AppException(ResponseCode.VOUCHER_ALREADY_REACTIVATED);
+            throw new AppException(ResponseCode.VOUCHER_ALREADY_RESTORED);
         }
         foundVoucher.setDeleted(false);
         voucherRepository.save(foundVoucher);

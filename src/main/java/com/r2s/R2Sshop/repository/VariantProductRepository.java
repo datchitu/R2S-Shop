@@ -16,7 +16,9 @@ public interface VariantProductRepository extends JpaRepository<VariantProduct, 
     Page<VariantProduct> findAllByProduct_IdAndDeleted(@Param("productId") Long productId,
                                                        @Param("deleted") Boolean deleted,
                                                        Pageable pageable);
+
     boolean existsByName(String name);
+
     @Modifying(clearAutomatically = true)
     @Query("UPDATE VariantProduct vp SET vp.quantity = vp.quantity - :quantity " +
             "WHERE vp.id = :id AND vp.quantity >= :quantity")

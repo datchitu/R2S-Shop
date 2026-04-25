@@ -257,26 +257,26 @@ public class UserVoucherController extends BaseRestController{
      * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/admin/delete-by-id")
+    @DeleteMapping("/admin")
     public ResponseEntity<?> deleteByIdForAdmin(@RequestParam Long id) {
         userVoucherService.deleteById(id);
         return super.success("Deleted successfully");
     }
     /**
-     * Reactivate userVoucher for admin.
+     * Restore userVoucher for admin.
      * <p>
-     * This method is used to reactivate userVoucher by id for admin.
+     * This method is used to restore userVoucher by id for admin.
      * @param id
-     * @return "Reactivated successfully" if it is reactivated successfully.
+     * @return "Restored successfully" if it is restored successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/admin/reactivate-by-id")
-    public ResponseEntity<?> reactivateByIdForAdmin(@RequestParam Long id) {
-        userVoucherService.reactivateById(id);
-        return super.success("Reactivated successfully");
+    @PutMapping("/admin/restore-by-id")
+    public ResponseEntity<?> restoreByIdForAdmin(@RequestParam Long id) {
+        userVoucherService.restoreById(id);
+        return super.success("Restored successfully");
     }
     /**
      * Release userVoucher for admin.
@@ -311,20 +311,36 @@ public class UserVoucherController extends BaseRestController{
         return super.success("Released successfully");
     }
     /**
-     * Use userVoucher.
+     * Release all userVoucher by voucherId for admin.
      * <p>
-     * This method is used to apply userVoucher by id for cart.
-     * @param id
-     * @return "Applied successfully" if it is applied successfully.
+     * This method is used to release all userVoucher by voucherId for admin.
+     * @param voucherId
+     * @return "Released successfully" if it is released successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @author HoangVu
      * @since 1.0
      */
-    @PreAuthorize("hasRole('USER')")
-    @PutMapping("/use-by-id")
-    public ResponseEntity<?> useById(@RequestParam Long id) {
-        userVoucherService.useById(id);
-        return super.success("Applied successfully");
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/admin/released-all-by-voucher-id")
+    public ResponseEntity<?> releaseAllByVoucherIdForAdmin(@RequestParam Long voucherId) {
+        userVoucherService.releaseAllByVoucherId(voucherId);
+        return super.success("Released successfully");
+    }
+    /**
+     * Release userVoucher for staff.
+     * <p>
+     * This method is used to release all userVoucher by voucherId for staff.
+     * @param voucherId
+     * @return "Released successfully" if it is released successfully.
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('STAFF')")
+    @PutMapping("/staff/released-all-by-voucher-id")
+    public ResponseEntity<?> releaseAllByVoucherIdForStaff(@RequestParam Long voucherId) {
+        userVoucherService.releaseAllByVoucherId(voucherId);
+        return super.success("Released successfully");
     }
     /**
      * Disable userVoucher for admin.
@@ -340,6 +356,22 @@ public class UserVoucherController extends BaseRestController{
     @PutMapping("/admin/disable-by-id")
     public ResponseEntity<?> disableByIdForAdmin(@RequestParam Long id) {
         userVoucherService.disableById(id);
+        return super.success("Disabled successfully");
+    }
+    /**
+     * Disable all userVoucher by voucherId for admin.
+     * <p>
+     * This method is used to disable all userVoucher by voucherId for admin.
+     * @param voucherId
+     * @return "Disabled successfully" if it is disabled successfully.
+     * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/admin/disable-all-by-Voucher-id")
+    public ResponseEntity<?> disableAllByVoucherIdForAdmin(@RequestParam Long voucherId) {
+        userVoucherService.disableAllById(voucherId);
         return super.success("Disabled successfully");
     }
 }

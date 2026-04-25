@@ -11,5 +11,5 @@ public interface VoucherService {
     Voucher add(VoucherDTORequest dtoRequest);
     Voucher updateById(Long id, VoucherDTORequest dtoRequest);
     void deleteById(Long id);
-    void reactivateById(Long id);
+    void restoreById(Long id);
 }

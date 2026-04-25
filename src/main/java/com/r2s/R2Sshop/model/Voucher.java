@@ -49,4 +49,7 @@ public class Voucher {
     @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"voucher", "user", "carts"})
     private List<UserVoucher> userVouchers;
+
+    @Version
+    private Long version;
 }

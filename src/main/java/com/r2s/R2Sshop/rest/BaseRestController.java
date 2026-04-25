@@ -3,6 +3,7 @@ package com.r2s.R2Sshop.rest;
 import com.r2s.R2Sshop.constants.ResponseCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -154,6 +155,22 @@ public class BaseRestController{
         mthdAgmtNtVldEx.getBindingResult().getFieldErrors().forEach(error ->
                 fieldErrors.put(error.getField(), error.getDefaultMessage()));
         return buildErrorResponse(ResponseCode.INVALID_VALUE, fieldErrors);
+    }
+    /**
+     * Configure ObjectOptimisticLockingFailureException with Builder.
+     * <p>
+     * This method configures the ObjectOptimisticLockingFailureException with Builder
+     * and then reports the status HttpStatus error,
+     * returns the message.
+     * @param objOtmstcLkgFlrEx
+     * @return message if any information is missing
+     * @author HoangVu
+     * @since 1.1
+     */
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<?> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException
+                                                                        objOtmstcLkgFlrEx) {
+        return buildErrorResponse(ResponseCode.REQUEST_IS_CONFLICT, null);
     }
 }
 

@@ -51,4 +51,7 @@ public class OrderItem {
     @JoinColumn(name = "order_id")
     @JsonIgnoreProperties({"orderItems", "user", "address"})
     private Order order;
+
+    @Version
+    private Long version;
 }

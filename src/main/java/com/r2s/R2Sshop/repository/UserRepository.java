@@ -13,7 +13,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserName(String userName);
+
     Boolean existsByUserName(String userName);
+
     @Query("SELECT u FROM User u WHERE (:deleted IS NULL OR u.deleted = :deleted)")
     Page<User> findAllByDeleted(@Param("deleted") Boolean deleted, Pageable pageable);
 }

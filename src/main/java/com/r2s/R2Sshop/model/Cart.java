@@ -60,4 +60,7 @@ public class Cart {
     @JoinColumn(name = "user_voucher_id")
     @JsonIgnoreProperties({"carts", "user"})
     private UserVoucher userVoucher;
+
+    @Version
+    private Long version;
 }
