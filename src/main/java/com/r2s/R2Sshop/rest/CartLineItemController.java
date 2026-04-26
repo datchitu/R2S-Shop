@@ -26,27 +26,78 @@ import java.util.stream.Collectors;
 public class CartLineItemController extends BaseRestController{
     @Autowired
     private CartLineItemService cartLineItemService;
+
     /**
-     * Return cartLineItem by id.
+     * Return cartLineItem by id for admin.
      * <p>
-     * This method returns cartLineItem by id, with the id as the input parameter.
+     * This method returns cartLineItem by id for admin, with the id as the input parameter.
+     * @param id
+     * @return cart by id
+     * @author HoangVu
+     * @since 1.1
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/get-by-id")
+    public ResponseEntity<?> getByIdForAdmin(@RequestParam(name = "id", required = false
+            , defaultValue = "1") Long id) {
+        CartLineItem foundCartLineItem = cartLineItemService.findById(id);
+        return super.success(new CartLineItemDTOResponse(foundCartLineItem));
+    }
+    /**
+     * Return cartLineItem by id for staff.
+     * <p>
+     * This method returns cartLineItem by id for staff, with the id as the input parameter.
      * @param id
      * @return cart by id
      * @author HoangVu
      * @since 1.0
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping("/get-by-id")
-    public ResponseEntity<?> getById(@RequestParam(name = "id", required = false
+    @PreAuthorize("hasRole('STAFF')")
+    @GetMapping("/staff/get-by-id")
+    public ResponseEntity<?> getByIdForStaff(@RequestParam(name = "id", required = false
             , defaultValue = "1") Long id) {
         CartLineItem foundCartLineItem = cartLineItemService.findById(id);
         return super.success(new CartLineItemDTOResponse(foundCartLineItem));
     }
 
     /**
-     * Return cartLineItem list by cartId and status.
+     * Return cartLineItem list by cartId and status for admin.
      * <p>
-     * This method returns cartLineItem list by cartId and deleted
+     * This method returns cartLineItem list by cartId and deleted for admin
+     * (With the passed-in status -1, return all works;
+     * with 0, return all by deleted == false works;
+     * and otherwise, it's return all by deleted == true),
+     * with the status as the input parameter
+     * and pagination is applied.
+     * @param offset
+     * @param limit
+     * @param status (-1, 0, 1)
+     * @return the voucher list by status if the data is retrieved successfully.
+     * @throws AppException(ResponseCode.INVALID_PARAM) if status is outside the value (-1, 0, 1)
+     * @author HoangVu
+     * @since 1.1
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public ResponseEntity<?> getAllByCartIdAndDeletedForAdmin(@RequestParam Long cartId,
+                                                      @RequestParam(defaultValue = "-1") Integer status,
+                                                      @RequestParam(defaultValue = "0") Integer offset,
+                                                      @RequestParam(defaultValue = "5") Integer limit) {
+        if (!Arrays.asList(-1, 0, 1).contains(status)) {
+            throw new AppException(ResponseCode.INVALID_PARAM);
+        }
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
+        Page<CartLineItem> cartLineItemPage = cartLineItemService
+                .findAllByCartIdAndDeleted(cartId, status, pageable);
+        List<CartLineItemDTOResponse> responses = cartLineItemPage.stream()
+                .map(CartLineItemDTOResponse :: new)
+                .collect(Collectors.toList());
+        return super.success(responses);
+    }
+    /**
+     * Return cartLineItem list by cartId and status for staff.
+     * <p>
+     * This method returns cartLineItem list by cartId and deleted for staff
      * (With the passed-in status -1, return all works;
      * with 0, return all by deleted == false works;
      * and otherwise, it's return all by deleted == true),
@@ -60,9 +111,9 @@ public class CartLineItemController extends BaseRestController{
      * @author HoangVu
      * @since 1.0
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping
-    public ResponseEntity<?> getAllByCartIdAndDeleted(@RequestParam Long cartId,
+    @PreAuthorize("hasRole('STAFF')")
+    @GetMapping("/staff")
+    public ResponseEntity<?> getAllByCartIdAndDeletedForStaff(@RequestParam Long cartId,
                                                       @RequestParam(defaultValue = "-1") Integer status,
                                                       @RequestParam(defaultValue = "0") Integer offset,
                                                       @RequestParam(defaultValue = "5") Integer limit) {

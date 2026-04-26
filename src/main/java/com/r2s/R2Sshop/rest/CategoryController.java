@@ -64,19 +64,15 @@ public class CategoryController extends BaseRestController{
      * This method is used to add a new category.
      * @param dtoRequest
      * @return category information if it is added successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * name are missing
      * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<?> add(@Valid @RequestBody CategoryDTORequest dtoRequest) {
-        if  (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         Category insertedCategory = categoryService.add(dtoRequest);
         if (ObjectUtils.isEmpty(insertedCategory)) {
             throw new AppException(ResponseCode.INSERT_FAILURE);
@@ -92,19 +88,15 @@ public class CategoryController extends BaseRestController{
      * @param dtoRequest
      * @return category information by id if it is updated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @throws AppException(ResponseCode.INVALID_VALUE) if the passed-in parameter values such as
      * name are missing
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping
+    @PutMapping("/admin")
     public ResponseEntity<?> updateById(@RequestParam Long id,
                                         @Valid @RequestBody CategoryDTORequest dtoRequest) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         Category updatedCategory = categoryService.updateById(id, dtoRequest);
         return super.success(new CategoryDTOResponse(updatedCategory));
     }
@@ -115,32 +107,30 @@ public class CategoryController extends BaseRestController{
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
-     * @throws AppException(ResponseCode.FAILURE_CATEGORY_DELETE) if it is deleted fails
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete-by-id")
+    @DeleteMapping("/admin/delete-by-id")
     public ResponseEntity<?> deleteById(@RequestParam Long id) {
         categoryService.deleteById(id);
         return super.success("Deleted successfully");
     }
 
     /**
-     * Reactivate address.
+     * Restore address.
      * <p>
-     * This method is used to reactivate address by id.
+     * This method is used to restore address by id.
      * @param id
-     * @return "Reactivated successfully" if it is reactivated successfully.
+     * @return "Restored successfully" if it is restored successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
-     * @throws AppException(ResponseCode.FAILURE_CATEGORY_REACTIVATE) if it is deleted fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/reactivate-by-id")
-    public ResponseEntity<?> reactivateById(@RequestParam Long id) {
-        categoryService.reactivateById(id);
-        return super.success("Reactivated successfully");
+    @PutMapping("/admin/restore-by-id")
+    public ResponseEntity<?> restoreById(@RequestParam Long id) {
+        categoryService.restoreById(id);
+        return super.success("Restored successfully");
     }
 }

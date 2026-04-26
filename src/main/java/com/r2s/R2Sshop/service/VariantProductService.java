@@ -12,5 +12,5 @@ public interface VariantProductService {
     VariantProduct addByProductId(Long productId, VariantServiceDTORequest dtoRequest);
     VariantProduct updateById(Long id, Long productId, VariantServiceDTORequest dtoRequest);
     void deleteById(Long id);
-    void reactivateById(Long id);
+    void restoreById(Long id);
 }

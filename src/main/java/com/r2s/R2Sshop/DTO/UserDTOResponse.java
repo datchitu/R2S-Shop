@@ -19,6 +19,7 @@ public class UserDTOResponse {
     private String userName;
     private String email;
     private String phone;
+    private Integer status;
     private Boolean deleted;
 
     private List<CartSimpleDTOResponse> carts;
@@ -43,6 +44,7 @@ public class UserDTOResponse {
         this.userName = user.getUserName();
         this.email = user.getEmail();
         this.phone = user.getPhone();
+        this.status = user.getStatus();
         this.deleted = user.getDeleted();
         if (!ObjectUtils.isEmpty(user.getCarts())) {
                 this.carts = user.getCarts().stream()

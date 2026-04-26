@@ -15,12 +15,17 @@ public class CustomUserDetail implements UserDetails {
     private final String userName;
     private final String password;
     private final Set<GrantedAuthority> authorities; // ROLE_ADMIN
+    private final boolean isAccountNonLocked;
+    private final boolean isEnabled;
 
     public CustomUserDetail(User user) {
         this.userName = user.getUserName();
         this.password = user.getPassword();
         this.authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName())).collect(Collectors.toSet());
+
+        this.isAccountNonLocked = (user.getStatus() == 0);
+        this.isEnabled = (user.getDeleted().equals(false));
     }
 
     @Override
@@ -45,7 +50,7 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.isAccountNonLocked;
     }
 
     @Override
@@ -55,6 +60,6 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 }

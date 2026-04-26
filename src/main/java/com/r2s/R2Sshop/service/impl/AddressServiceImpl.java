@@ -128,7 +128,7 @@ public class AddressServiceImpl implements AddressService {
             throw new AppException(ResponseCode.ACCESS_DENIED);
         }
         if (Boolean.TRUE.equals(foundAddress.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_DELETED);
         }
         if (Objects.equals(foundAddress.getStreet(), dtoRequest.getStreet()) &&
                 Objects.equals(foundAddress.getCity(), dtoRequest.getCity()) &&
@@ -170,7 +170,7 @@ public class AddressServiceImpl implements AddressService {
             throw new AppException(ResponseCode.ACCESS_DENIED);
         }
         if (Boolean.TRUE.equals(foundAddress.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_DELETED);
         }
         if (Boolean.TRUE.equals(foundAddress.getDefaulted())) {
             throw new AppException(ResponseCode.DATA_ALREADY_DEFAULTED);
@@ -204,7 +204,7 @@ public class AddressServiceImpl implements AddressService {
             throw new AppException(ResponseCode.ACCESS_DENIED);
         }
         if (Boolean.TRUE.equals(foundAddress.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_DELETED);
         }
         Boolean wasDefault = foundAddress.getDefaulted();
         foundAddress.setDeleted(true);

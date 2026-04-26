@@ -44,7 +44,7 @@ public class User {
 
     private String phone;
 
-    private Boolean status = false;
+    private Integer status = 0;
 
     private Boolean deleted = false;
 

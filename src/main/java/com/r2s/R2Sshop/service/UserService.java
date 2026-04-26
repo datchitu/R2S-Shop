@@ -17,7 +17,8 @@ public interface UserService {
     User update(String userName, UserUpdateDTORequest user);
     void chargePassword(String userName, String oldPassword, String newPassword);
     void deleteById(Long id);
-    void reactivateById(Long id);
+    void restoreById(Long id);
     void blockById(Long id);
+    void blockPermanentlyById(Long id);
     void unblockById(Long id);
 }

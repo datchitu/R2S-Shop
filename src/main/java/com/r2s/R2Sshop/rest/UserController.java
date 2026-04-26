@@ -36,17 +36,13 @@ public class UserController extends BaseRestController{
      * This method is used to add a new user with new card for this user.
      * @param dtoRequest
      * @return user with cart information if user with cart is added successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if newUser is empty
      * @throws AppException(ResponseCode.INVALID_VALUE) if the passed-in parameter values such as
      * last name, first name, phone number, email, password or userRole are missing
      * @author HoangVu
-     * @since 1.5
+     * @since 1.6
      */
     @PostMapping
     public ResponseEntity<?> addWithCart(@Valid @RequestBody UserRegistrationDTORequest dtoRequest) {
-        if  (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         Map<String, Object> data = userService.registerWithCart(dtoRequest);
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("user", new UserDTOResponse((User) data.get("user")));
@@ -64,10 +60,10 @@ public class UserController extends BaseRestController{
      * @return the user list entity if the data is retrieved successfully.
      * @throws AppException(ResponseCode.INVALID_PARAM) if status is outside the value (-1, 0, 1)
      * @author HoangVu
-     * @since 1.5
+     * @since 1.6
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping("/admin")
     public ResponseEntity<?> getAllByDeleted(@RequestParam(defaultValue = "-1") Integer status,
                                              @RequestParam(defaultValue = "0") Integer offset,
                                              @RequestParam(defaultValue = "2") Integer limit) {
@@ -87,8 +83,9 @@ public class UserController extends BaseRestController{
      * This method returns user info from token(userName).
      * @return user info entity from token(userName)
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
+    @PreAuthorize("hasRole('USER")
     @GetMapping("/get-my-profile")
     public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
         User foundUser = userService.findByUserName(userDetails.getUsername());
@@ -101,19 +98,16 @@ public class UserController extends BaseRestController{
      * This method returns user info from token(userName) after successful update.
      * @param userDTORequest
      * @return user info entity from token(userName)
-     * @throws AppException(ResponseCode.NO_PARAM) if userDTORequest is empty
      * @throws AppException(ResponseCode.INVALID_VALUE) if the passed-in parameter values such as
      * firstName, lastName, email, phone
      * @throws AppException(ResponseCode.FAILURE_USER_UPDATE) if update unsuccessful
      * @author HoangVu
-     * @since 1.5
+     * @since 1.6
      */
+    @PreAuthorize("hasRole('USER")
     @PutMapping
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
                                     @Valid @RequestBody UserUpdateDTORequest userDTORequest) {
-        if (ObjectUtils.isEmpty(userDTORequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         User updateUser = userService.update(userDetails.getUsername(), userDTORequest);
         return super.success(new UserDTOResponse(updateUser));
     }
@@ -121,64 +115,98 @@ public class UserController extends BaseRestController{
      * Charge password user.
      * <p>
      * This method charges user password.
+     * @param dtoRequest
      * @return success
-     * @throws AppException(ResponseCode.NO_PARAM) if userDTORequest is empty
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * oldPassword, newPassword
      * @throws AppException(ResponseCode.FAILURE_PASSWORD_CHARGE) if charge failure
      * @author HoangVu
-     * @since 1.4
+     * @since 1.5
      */
+    @PreAuthorize("hasRole('USER")
     @PutMapping("/change-password")
     public ResponseEntity<?> chargePassword(@AuthenticationPrincipal UserDetails userDetails,
-                                            @Valid @RequestBody PasswordDTORequest password) {
-        if (ObjectUtils.isEmpty(password)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
+                                            @Valid @RequestBody PasswordDTORequest dtoRequest) {
         userService.chargePassword(userDetails.getUsername(),
-                password.getOldPassword(), password.getNewPassword());
+                dtoRequest.getOldPassword(), dtoRequest.getNewPassword());
         return super.success("Charged successfully");
     }
     /**
      * Delete user by id.
      * <p>
      * This method delete user by id, with the id as the input parameter.
-     * @param id
+     * @return "Deleted successfully" if it is deleted successfully.
+     * @throws AppException(ResponseCode.USER_NOT_FOUND) if the User cannot be found by userName
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    @DeleteMapping("/delete-by-id")
-    public ResponseEntity<?> deleteById(@RequestParam Long id) {
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/delete-by-user-name")
+    public ResponseEntity<?> deleteByUserName(@AuthenticationPrincipal UserDetails userDetails) {
+        String userName = userDetails.getUsername();
+        User foundUser = userService.findByUserName(userName);
+        Long id = foundUser.getId();
         userService.deleteById(id);
         return super.success("Deleted successfully");
     }
     /**
-     * Reactivate user by id.
+     * Delete user by id for admin.
      * <p>
-     * This method reactivate user by id, with the id as the input parameter.
+     * This method delete user by id for admin, with the id as the input parameter.
+     * @return "Deleted successfully" if it is deleted successfully.
      * @param id
      * @author HoangVu
      * @since 1.0
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/reactivate-by-id")
-    public ResponseEntity<?> reactivateById(@RequestParam Long id) {
-        userService.reactivateById(id);
-        return super.success("Reactivated successfully");
+    @DeleteMapping("/admin/delete-by-id")
+    public ResponseEntity<?> deleteByIdForAdmin(@RequestParam Long id) {
+        userService.deleteById(id);
+        return super.success("Deleted successfully");
+    }
+    /**
+     * Restore user by id.
+     * <p>
+     * This method restore user by id, with the id as the input parameter.
+     * @return "Restored successfully" if it is restored successfully.
+     * @param id
+     * @author HoangVu
+     * @since 1.1
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/admin/restore-by-id")
+    public ResponseEntity<?> restoreById(@RequestParam Long id) {
+        userService.restoreById(id);
+        return super.success("Restored successfully");
     }
     /**
      * Block user by id.
      * <p>
      * This method block user by id, with the id as the input parameter.
      * @param id
+     * @return "Blocked successfully" if it is blocked successfully.
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/block-by-id")
+    @DeleteMapping("/admin/block-by-id")
     public ResponseEntity<?> blockById(@RequestParam Long id) {
         userService.blockById(id);
+        return super.success("Blocked successfully");
+    }
+    /**
+     * Permanently block user by id.
+     * <p>
+     * This method Permanently block user by id, with the id as the input parameter.
+     * @param id
+     * @return "Blocked successfully" if it is blocked successfully.
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/admin/block-permanently-by-id")
+    public ResponseEntity<?> blockPermanentlyById(@RequestParam Long id) {
+        userService.blockPermanentlyById(id);
         return super.success("Blocked successfully");
     }
     /**
@@ -186,11 +214,12 @@ public class UserController extends BaseRestController{
      * <p>
      * This method unblock user by id, with the id as the input parameter.
      * @param id
+     * @return "Unblocked successfully" if it is unblocked successfully.
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/unblock-by-id")
+    @PutMapping("/admin/unblock-by-id")
     public ResponseEntity<?> unblockById(@RequestParam Long id) {
         userService.unblockById(id);
         return super.success("Unblocked successfully");

@@ -130,7 +130,7 @@ public class VariantProductServiceImpl implements VariantProductService {
         Product foundProduct = productService.findById(productId);
         VariantProduct foundVariantProduct = findById(id);
         if (Boolean.TRUE.equals(foundVariantProduct.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_DELETED);
         }
         if (Objects.equals(foundVariantProduct.getName(), dtoRequest.getName()) &&
             Objects.equals(foundVariantProduct.getPrice(), dtoRequest.getPrice()) &&
@@ -156,37 +156,37 @@ public class VariantProductServiceImpl implements VariantProductService {
      * @param id
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_NOT_FOUND)
      * if variant product does not exist in the database
-     * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
+     * @throws AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_DELETED)
      * if variant product already been deleted in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public void deleteById(Long id) {
         VariantProduct foundVariantProduct = findById(id);
         if (Boolean.TRUE.equals(foundVariantProduct.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_DELETED);
         }
         foundVariantProduct.setDeleted(true);
         variantProductRepository.save(foundVariantProduct);
     }
     /**
-     * Reactivate variant product by id.
+     * Restore variant product by id.
      * <p>
-     * This method reactivates variant product by id, with the id as the input parameter.
+     * This method restores variant product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_NOT_FOUND)
      * if variant product does not exist in the database
-     * @throws AppException(ResponseCode.DATA_ALREADY_REACTIVATED)
-     * if variant product already been reactivated in the database
+     * @throws AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_RESTORED)
+     * if variant product already been restored in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
-    public void reactivateById(Long id) {
+    public void restoreById(Long id) {
         VariantProduct foundVariantProduct = findById(id);
         if (Boolean.FALSE.equals(foundVariantProduct.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_REACTIVATED);
+            throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_RESTORED);
         }
         foundVariantProduct.setDeleted(false);
         variantProductRepository.save(foundVariantProduct);

@@ -214,17 +214,13 @@ public class OrderController extends BaseRestController{
      * @return order information by id if it is updated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * id is missing
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('USER')")
     @PutMapping
     public ResponseEntity<?> updateById(@AuthenticationPrincipal UserDetails userDetails,
                                         @RequestParam Long id, @RequestBody OrderDTORequest dtoRequest) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         String userName = userDetails.getUsername();;
         Order updatedOrder = orderService.updateById(id, userName, dtoRequest);
         return super.success(new OrderDTOResponse(updatedOrder));

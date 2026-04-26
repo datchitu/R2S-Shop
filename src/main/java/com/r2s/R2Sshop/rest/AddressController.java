@@ -60,19 +60,15 @@ public class AddressController extends BaseRestController{
      * This method is used to add a new address with userName.
      * @param dtoRequest
      * @return address information with userName if it is added successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * street, city, country, receiverName or phoneNumber are missing
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<?> addWithUserName(@Valid @RequestBody AddressDTORequest dtoRequest,
                                              @AuthenticationPrincipal UserDetails userDetails) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         String userName = userDetails.getUsername();
         Address insertedAddress = addressService.addWithUser(userName, dtoRequest);
         return super.success(new AddressDTOResponse(insertedAddress));
@@ -85,20 +81,16 @@ public class AddressController extends BaseRestController{
      * @param dtoRequest
      * @return address information with userName if it is updated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * street, city, country, receiverName or phoneNumber are missing
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @PreAuthorize("hasRole('USER')")
     @PutMapping
     public ResponseEntity<?> updateByIdAndUserName(@RequestParam Long id,
                                  @Valid @RequestBody AddressDTORequest dtoRequest,
                                  @AuthenticationPrincipal UserDetails userDetails) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         String userName = userDetails.getUsername();
         Address updatedAddress = addressService.updateByIdAndUserName(userName, id, dtoRequest);
         return super.success(new AddressDTOResponse(updatedAddress));

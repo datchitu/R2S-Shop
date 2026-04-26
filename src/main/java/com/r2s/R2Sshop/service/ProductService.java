@@ -12,5 +12,5 @@ public interface ProductService {
     Product addByCategoryId(Long categoryId, ProductDTORequest dtoRequest);
     Product updateById(Long id, Long categoryId, ProductDTORequest dtoRequest);
     void deleteById(Long id);
-    void reactivateById(Long id);
+    void restoreById(Long id);
 }

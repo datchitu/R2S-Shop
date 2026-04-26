@@ -85,20 +85,15 @@ public class VariantProductController extends BaseRestController {
      * @return information of variant product if the add process is successful
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * productId is missing
-     * @throws AppException(ResponseCode.NO_PARAM) if the passed-in parameter values such as
-     * dtoRequest is missing
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * name, price, color, modelYear and quantity are missing
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<?> addByProductId(@RequestParam Long productId,
                                             @Valid @RequestBody VariantServiceDTORequest dtoRequest) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         VariantProduct insertedVariantProduct = variantProductService.addByProductId(
                 productId, dtoRequest);
         return super.success(new VariantProductDTOResponse(insertedVariantProduct));
@@ -113,18 +108,14 @@ public class VariantProductController extends BaseRestController {
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * id and productId are missing
      * @return variant product information by id if it is updated successfully.
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping
+    @PutMapping("/admin")
     public ResponseEntity<?> updateById(@RequestParam Long id,
                                         @RequestParam Long productId,
                                         @Valid @RequestBody VariantServiceDTORequest dtoRequest) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         VariantProduct updatedVariantProduct = variantProductService.updateById(id, productId, dtoRequest);
         return super.success(new VariantProductDTOResponse(updatedVariantProduct));
     }
@@ -136,28 +127,28 @@ public class VariantProductController extends BaseRestController {
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete-by-id")
+    @DeleteMapping("/admin/delete-by-id")
     public ResponseEntity<?> deleteById(@RequestParam Long id) {
         variantProductService.deleteById(id);
         return super.success("Deleted successfully");
     }
     /**
-     * Reactivate variant product.
+     * Restore variant product.
      * <p>
-     * This method is used to reactivate variant product by id.
+     * This method is used to restore variant product by id.
      * @param id
-     * @return "Reactivated successfully" if it is reactivated successfully.
+     * @return "Restored successfully" if it is restored successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/reactivate-by-id")
-    public ResponseEntity<?> reactivateById(@RequestParam Long id) {
-        variantProductService.reactivateById(id);
-        return super.success("Reactivated successfully");
+    @PutMapping("/admin/restore-by-id")
+    public ResponseEntity<?> restoreById(@RequestParam Long id) {
+        variantProductService.restoreById(id);
+        return super.success("Restored successfully");
     }
 }

@@ -99,7 +99,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category updateById(Long id, CategoryDTORequest dtoRequest) {
         Category foundCategory = findById(id);
         if (Boolean.TRUE.equals(foundCategory.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_DELETED);
         }
         if (Objects.equals(foundCategory.getName(), dtoRequest.getName())) {
             throw new AppException(ResponseCode.IMMUTABLE);
@@ -117,34 +117,34 @@ public class CategoryServiceImpl implements CategoryService {
      * This method deletes category by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
-     * @throws AppException(ResponseCode.DATA_ALREADY_DELETED) if category already been deleted in the database
+     * @throws AppException(ResponseCode.CATEGORY_ALREADY_DELETED) if category already been deleted in the database
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @Override
     public void deleteById(Long id) {
         Category foundCategory = findById(id);
         if (Boolean.TRUE.equals(foundCategory.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.CATEGORY_ALREADY_DELETED);
         }
         foundCategory.setDeleted(true);
         categoryRepository.save(foundCategory);
     }
     /**
-     * Reactivate category by id.
+     * Restore category by id.
      * <p>
      * This method reactives category by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.CATEGORY_NOT_FOUND) if category does not exist in the database
-     * @throws AppException(ResponseCode.DATA_ALREADY_DELETED) if category already been deleted in the database
+     * @throws AppException(ResponseCode.CATEGORY_ALREADY_RESTORED) if category already been restore in the database
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @Override
-    public void reactivateById(Long id) {
+    public void restoreById(Long id) {
         Category foundCategory = findById(id);
         if (Boolean.FALSE.equals(foundCategory.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.CATEGORY_ALREADY_RESTORED);
         }
         foundCategory.setDeleted(false);
         categoryRepository.save(foundCategory);

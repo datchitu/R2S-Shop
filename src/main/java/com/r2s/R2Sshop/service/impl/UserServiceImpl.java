@@ -208,22 +208,22 @@ public class UserServiceImpl implements UserService {
         userRepository.save(foundUser);
     }
     /**
-     * Reactivate user by id.
+     * Restore user by id.
      * <p>
-     * This method reactivates user by id, with the id as the input parameter.
+     * This method restores user by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.USER_NOT_FOUND)
      * if user does not exist in the database
-     * @throws AppException(ResponseCode.USER_ALREADY_REACTIVATED)
-     * if user already been reactivated in the database
+     * @throws AppException(ResponseCode.USER_ALREADY_RESTORED)
+     * if user already been restored in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
-    public void reactivateById(Long id) {
+    public void restoreById(Long id) {
         User foundUser = findById(id);
         if (Boolean.FALSE.equals(foundUser.getDeleted())) {
-            throw new AppException(ResponseCode.USER_ALREADY_REACTIVATED);
+            throw new AppException(ResponseCode.USER_ALREADY_RESTORED);
         }
         foundUser.setDeleted(false);
         userRepository.save(foundUser);
@@ -243,10 +243,31 @@ public class UserServiceImpl implements UserService {
     @Override
     public void blockById(Long id) {
         User foundUser = findById(id);
-        if (Boolean.TRUE.equals(foundUser.getDeleted())) {
+        if (foundUser.getStatus() == 1) {
             throw new AppException(ResponseCode.USER_ALREADY_BLOCKED);
         }
-        foundUser.setStatus(true);
+        foundUser.setStatus(1);
+        userRepository.save(foundUser);
+    }
+    /**
+     * Block permanently user by id.
+     * <p>
+     * This method permanently blocks user by id, with the id as the input parameter.
+     * @param id
+     * @throws AppException(ResponseCode.USER_NOT_FOUND)
+     * if user does not exist in the database
+     * @throws AppException(ResponseCode.USER_ALREADY_BLOCKED_PERMANENT)
+     * if user already been permanently blocked in the database
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public void blockPermanentlyById(Long id) {
+        User foundUser = findById(id);
+        if (foundUser.getStatus() == 2) {
+            throw new AppException(ResponseCode.USER_ALREADY_BLOCKED_PERMANENT);
+        }
+        foundUser.setStatus(2);
         userRepository.save(foundUser);
     }
     /**
@@ -258,16 +279,21 @@ public class UserServiceImpl implements UserService {
      * if user does not exist in the database
      * @throws AppException(ResponseCode.USER_ALREADY_UNBLOCKED)
      * if user already been unblocked in the database
+     * @throws AppException(ResponseCode.USER_ALREADY_BLOCKED_PERMANENT)
+     * if user already been permanently blocked in the database
      * @author HoangVu
      * @since 1.0
      */
     @Override
     public void unblockById(Long id) {
         User foundUser = findById(id);
-        if (Boolean.FALSE.equals(foundUser.getStatus())) {
+        if (foundUser.getStatus() == 0) {
             throw new AppException(ResponseCode.USER_ALREADY_UNBLOCKED);
         }
-        foundUser.setStatus(false);
+        if (foundUser.getStatus() == 2) {
+            throw new AppException(ResponseCode.USER_ALREADY_BLOCKED_PERMANENT);
+        }
+        foundUser.setStatus(0);
         userRepository.save(foundUser);
     }
 }

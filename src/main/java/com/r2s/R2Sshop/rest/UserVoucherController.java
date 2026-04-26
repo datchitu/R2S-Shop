@@ -160,20 +160,15 @@ public class UserVoucherController extends BaseRestController{
      * This method is used to add a new userVoucher with user and voucher for admin.
      * @param dtoRequest
      * @return information of userVoucher if the add process is successful
-     * @throws AppException(ResponseCode.NO_PARAM) if the passed-in parameter values such as
-     * dtoRequest is missing
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * userId, voucherId and expireDate are missing
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin")
     public ResponseEntity<?> addWithUserAndVoucherForAdmin(@Valid @RequestBody UserVoucherDTORequest dtoRequest,
                                                            @RequestParam Long userId, @RequestParam Long voucherId) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         UserVoucher insertedUserVoucher = userVoucherService.addWithUserAndVoucher(dtoRequest, userId, voucherId);
         return super.success(new UserVoucherDTOResponse(insertedUserVoucher));
     }
@@ -183,20 +178,15 @@ public class UserVoucherController extends BaseRestController{
      * This method is used to add a new userVoucher with user and voucher for staff.
      * @param dtoRequest
      * @return information of userVoucher if the add process is successful
-     * @throws AppException(ResponseCode.NO_PARAM) if the passed-in parameter values such as
-     * dtoRequest is missing
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * userId, voucherId and expireDate are missing
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('STAFF')")
     @PostMapping("/staff")
     public ResponseEntity<?> addWithUserAndVoucherForStaff(@Valid @RequestBody UserVoucherDTORequest dtoRequest,
                                                            @RequestParam Long userId, @RequestParam Long voucherId) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         UserVoucher insertedUserVoucher = userVoucherService.addWithUserAndVoucher(dtoRequest, userId, voucherId);
         return super.success(new UserVoucherDTOResponse(insertedUserVoucher));
     }
@@ -206,20 +196,15 @@ public class UserVoucherController extends BaseRestController{
      * This method is used to update userVoucher by id for admin.
      * @param dtoRequest
      * @return information of userVoucher if the add process is successful
-     * @throws AppException(ResponseCode.NO_PARAM) if the passed-in parameter values such as
-     * dtoRequest is missing
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * expireDate is missing
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin")
     public ResponseEntity<?> updateByIdForAdmin(@RequestParam Long id,
                                                 @Valid @RequestBody UserVoucherDTORequest dtoRequest) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         UserVoucher updatedUserVoucher = userVoucherService.updateById(id, dtoRequest);
         return super.success(new UserVoucherDTOResponse(updatedUserVoucher));
     }
@@ -229,20 +214,15 @@ public class UserVoucherController extends BaseRestController{
      * This method is used to update userVoucher by id for staff.
      * @param dtoRequest
      * @return information of userVoucher if the add process is successful
-     * @throws AppException(ResponseCode.NO_PARAM) if the passed-in parameter values such as
-     * dtoRequest is missing
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * expireDate is missing
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('STAFF')")
     @PutMapping("/staff")
     public ResponseEntity<?> updateByIdForStaff(@RequestParam Long id,
-                                        @Valid @RequestBody UserVoucherDTORequest dtoRequest) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
+                                                @Valid @RequestBody UserVoucherDTORequest dtoRequest) {
         UserVoucher updatedUserVoucher = userVoucherService.updateById(id, dtoRequest);
         return super.success(new UserVoucherDTOResponse(updatedUserVoucher));
     }

@@ -34,12 +34,12 @@ public class JwtUtils {
         return createToken(claims, userName);
     }
 
-    private static String createToken(Map<String, Object> claims, String email) {
+    private static String createToken(Map<String, Object> claims, String userName) {
         long currentTime = System.currentTimeMillis();
         long expiredTimeInMillis = 30 * 60 * 1_000L; // 30m * 60s * 1000ms
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(email)
+                .setSubject(userName)
                 .setIssuedAt(new Date(currentTime))
                 .setExpiration(new Date(currentTime + expiredTimeInMillis))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)

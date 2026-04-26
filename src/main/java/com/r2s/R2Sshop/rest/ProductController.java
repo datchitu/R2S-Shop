@@ -84,21 +84,14 @@ public class ProductController extends BaseRestController{
      * @throws AppException(ResponseCode.MISSING_PARAM) if categoryId is empty
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * name is missing
-     * @throws AppException(ResponseCode.INSERT_FAILURE) if it is added fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<?> addByCategoryId(@RequestParam Long categoryId,
                                              @Valid @RequestBody ProductDTORequest dtoRequest) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         Product insertedProduct = productService.addByCategoryId(categoryId, dtoRequest);
-        if (ObjectUtils.isEmpty(insertedProduct)) {
-            throw new AppException(ResponseCode.INSERT_FAILURE);
-        }
         return super.success(new ProductDTOResponse(insertedProduct));
     }
     /**
@@ -110,20 +103,16 @@ public class ProductController extends BaseRestController{
      * @param dtoRequest
      * @return product information by id if it is updated successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if categoryId or id are empty
-     * @throws AppException(ResponseCode.NO_PARAM) if dtoRequest is empty
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
      * name is missing
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping
+    @PutMapping("/admin")
     public ResponseEntity<?> updateById(@RequestParam Long id,
                                         @RequestParam Long categoryId,
                                         @Valid @RequestBody ProductDTORequest dtoRequest) {
-        if (ObjectUtils.isEmpty(dtoRequest)) {
-            throw new AppException(ResponseCode.NO_PARAM);
-        }
         Product updatedProduct = productService.updateById(id, categoryId, dtoRequest);
         return super.success(new ProductDTOResponse(updatedProduct));
     }
@@ -134,31 +123,29 @@ public class ProductController extends BaseRestController{
      * @param id
      * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
-     * @throws AppException(ResponseCode.FAILURE_PRODUCT_DELETE) if it is deleted fails
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete-by-id")
+    @DeleteMapping("/admin/delete-by-id")
     public ResponseEntity<?> deleteById(@RequestParam Long id) {
         productService.deleteById(id);
         return super.success("Deleted successfully");
     }
     /**
-     * Reactivate product.
+     * Restore product.
      * <p>
-     * This method is used to reactivate product by id.
+     * This method is used to restore product by id.
      * @param id
-     * @return "Reactivated successfully" if it is reactivated successfully.
+     * @return "Restored successfully" if it is restored successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if id is empty
-     * @throws AppException(ResponseCode.FAILURE_PRODUCT_REACTIVATE) if it is deleted fails
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/reactivate-by-id")
-    public ResponseEntity<?> reactivateById(@RequestParam Long id) {
-        productService.reactivateById(id);
-        return super.success("Reactivated successfully");
+    @PutMapping("/admin/restore-by-id")
+    public ResponseEntity<?> restoreById(@RequestParam Long id) {
+        productService.restoreById(id);
+        return super.success("Restored successfully");
     }
 }

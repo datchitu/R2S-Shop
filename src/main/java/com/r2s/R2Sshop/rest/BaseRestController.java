@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -108,21 +110,6 @@ public class BaseRestController{
         return buildErrorResponse(ResponseCode.FAILURE_SIGNIN, null);
     }
     /**
-     * Configure AuthenticationException with Builder.
-     * <p>
-     * This method configures the AuthenticationException with Builder and then reports the status HttpStatus error,
-     * returns the information including.
-     * code, message and timestamp if an exception occurs.
-     * @param authenticationEx
-     * @return buildErrorResponse(ResponseCode.FAILURE_LOGIN)
-     * @author HoangVu
-     * @since 1.1
-     */
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<?> handelAuthenticationException(AuthenticationException authenticationEx) {
-        return buildErrorResponse(ResponseCode.AUTHENTICATION_ERROR, null);
-    }
-    /**
      * Configure MissingServletRequestParameterException with Builder.
      * <p>
      * This method configures the MissingServletRequestParameterException with Builder
@@ -163,7 +150,7 @@ public class BaseRestController{
      * and then reports the status HttpStatus error,
      * returns the message.
      * @param objOtmstcLkgFlrEx
-     * @return message if any information is missing
+     * @return message if not match version
      * @author HoangVu
      * @since 1.1
      */
@@ -171,6 +158,36 @@ public class BaseRestController{
     public ResponseEntity<?> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException
                                                                         objOtmstcLkgFlrEx) {
         return buildErrorResponse(ResponseCode.REQUEST_IS_CONFLICT, null);
+    }
+    /**
+     * Configure LockedException with Builder.
+     * <p>
+     * This method configures the LockedException with Builder
+     * and then reports the status HttpStatus error,
+     * returns the message.
+     * @param lockedException
+     * @return message if the account has been looked
+     * @author HoangVu
+     * @since 1.0
+     */
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<?> handleLockedAccount(LockedException lockedException) {
+        return buildErrorResponse(ResponseCode.IS_LOCKED, null);
+    }
+    /**
+     * Configure DisabledException with Builder.
+     * <p>
+     * This method configures the DisabledException with Builder
+     * and then reports the status HttpStatus error,
+     * returns the message.
+     * @param disabledException
+     * @return message if the account has been deleted
+     * @author HoangVu
+     * @since 1.0
+     */
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<?> handleDisabledAccount(DisabledException disabledException) {
+        return buildErrorResponse(ResponseCode.IS_DELETED, null);
     }
 }
 

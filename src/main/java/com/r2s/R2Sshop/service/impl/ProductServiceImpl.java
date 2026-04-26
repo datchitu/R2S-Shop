@@ -120,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
         Category foundCategory = categoryService.findById(categoryId);
         Product foundProduct = findById(id);
         if (Boolean.TRUE.equals(foundProduct.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_DELETED);
         }
         if (Objects.equals(foundProduct.getName(), dtoRequest.getName()) &&
             Objects.equals(foundProduct.getCategory(), foundCategory)){
@@ -139,36 +139,36 @@ public class ProductServiceImpl implements ProductService {
      * This method deletes product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
-     * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
+     * @throws AppException(ResponseCode.PRODUCT_ALREADY_DELETED)
      * if product already been deleted in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public void deleteById(Long id) {
         Product foundProduct = findById(id);
         if (Boolean.TRUE.equals(foundProduct.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_DELETED);
+            throw new AppException(ResponseCode.PRODUCT_ALREADY_DELETED);
         }
         foundProduct.setDeleted(true);
         productRepository.save(foundProduct);
     }
     /**
-     * Reactivate product by id.
+     * Restore product by id.
      * <p>
-     * This method reactivates product by id, with the id as the input parameter.
+     * This method restores product by id, with the id as the input parameter.
      * @param id
      * @throws AppException(ResponseCode.PRODUCT_NOT_FOUND) if product does not exist in the database
-     * @throws AppException(ResponseCode.DATA_ALREADY_REACTIVATED)
-     * if product already been reactivated in the database
+     * @throws AppException(ResponseCode.PRODUCT_ALREADY_RESTORED)
+     * if product already been restored in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
-    public void reactivateById(Long id) {
+    public void restoreById(Long id) {
         Product foundProduct = findById(id);
         if (Boolean.FALSE.equals(foundProduct.getDeleted())) {
-            throw new AppException(ResponseCode.DATA_ALREADY_REACTIVATED);
+            throw new AppException(ResponseCode.PRODUCT_ALREADY_RESTORED);
         }
         foundProduct.setDeleted(false);
         productRepository.save(foundProduct);
