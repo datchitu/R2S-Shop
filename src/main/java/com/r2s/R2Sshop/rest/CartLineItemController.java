@@ -182,13 +182,15 @@ public class CartLineItemController extends BaseRestController{
      * @throws AppException(ResponseCode.CART_LINE_ITEM_ALREADY_DELETED)
      * if cartLineItem already been deleted in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @PreAuthorize("hasRole('USER')")
     @PutMapping
-    public ResponseEntity<?> updateById(@RequestParam Long id,
+    public ResponseEntity<?> updateById(@AuthenticationPrincipal UserDetails userDetails,
+                                        @RequestParam Long id,
                                         @Valid @RequestBody CartLineItemDTORequest dtoRequest) {
-        CartLineItem updatedCartLineItem = cartLineItemService.updateById(id, dtoRequest);
+        String userName = userDetails.getUsername();
+        CartLineItem updatedCartLineItem = cartLineItemService.updateById(id, userName, dtoRequest);
         return super.success(new CartLineItemDTOResponse(updatedCartLineItem));
     }
     /**
@@ -201,12 +203,14 @@ public class CartLineItemController extends BaseRestController{
      * @throws AppException(ResponseCode.CART_LINE_ITEM_ALREADY_DELETED)
      * if cartLineItem already been deleted in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping
-    public ResponseEntity<?> deleteById(@RequestParam Long id) {
-        cartLineItemService.deleteById(id);
+    public ResponseEntity<?> deleteById(@AuthenticationPrincipal UserDetails userDetails,
+                                        @RequestParam Long id) {
+        String userName = userDetails.getUsername();
+        cartLineItemService.deleteById(id, userName);
         return super.success("Deleted successfully");
     }
 }

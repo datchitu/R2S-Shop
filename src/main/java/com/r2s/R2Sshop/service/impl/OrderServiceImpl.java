@@ -143,37 +143,37 @@ public class OrderServiceImpl implements OrderService {
      * @return information of order if the add process is successful
      * @throws AppException(ResponseCode.USER_NOT_FOUND) if user does not found by userName
      * @throws AppException(ResponseCode.CART_NOT_FOUND) if cart does not found by id
-     * @throws AppException(ResponseCode.ACCESS_DENIED) if cart is not owned by the user
+     * @throws AppException(ResponseCode.ACCESS_DENIED) if cart and address is not owned by the user
      * @throws AppException(ResponseCode.CART_ALREADY_ORDERED) if cart already been ordered
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     @Transactional
-    public Order create(String userName, Long cartId, OrderDTORequest dtoRequest, Long addressId) {
+    public void create(String userName, Cart cart, OrderDTORequest dtoRequest, Long addressId) {
         User foundUser = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
 
-        Cart foundCart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new AppException(ResponseCode.CART_NOT_FOUND));
-        if (!foundCart.getUser().getUserName().equals(userName)) {
+        if (!cart.getUser().getUserName().equals(userName)) {
             throw new RuntimeException(ResponseCode.ACCESS_DENIED.getMessage());
         }
 
-        if (orderRepository.findByCartId(cartId)) {
+        if (orderRepository.existsByCartId(cart.getId())) {
             throw new AppException(ResponseCode.CART_ALREADY_ORDERED);
         }
-
         Address foundAddress = addressRepository.findById(addressId)
                 .orElseThrow(() -> new AppException(ResponseCode.ADDRESS_NOT_FOUND));
+        if (!foundAddress.getUser().getUserName().equals(userName)) {
+            throw new AppException(ResponseCode.ACCESS_DENIED);
+        }
         Order newOrder = modelMapper.map(dtoRequest, Order.class);
-        newOrder.setCartId(cartId);
-        newOrder.setTotalPrice(foundCart.getTotalPrice());
+        newOrder.setCartId(cart.getId());
+        newOrder.setTotalPrice(cart.getTotalPrice());
         newOrder.setUser(foundUser);
         newOrder.setAddress(foundAddress);
-        Order savedOrder = orderRepository.save(newOrder);
+        Order savedOrder = orderRepository.saveAndFlush(newOrder);
 
-        List<CartLineItem> cartLineItems = foundCart.getCartLineItems();
+        List<CartLineItem> cartLineItems = cart.getCartLineItems();
         List<OrderItem> orderItems = cartLineItems.stream()
                 .filter(cartLineItem -> !cartLineItem.getDeleted())
                 .map(cartLineItem -> {
@@ -187,11 +187,9 @@ public class OrderServiceImpl implements OrderService {
                     orderItem.setQuantity(cartLineItem.getQuantity());
                     return orderItem;
                 }).toList();
-        orderItemRepository.saveAll(orderItems);
+        orderItemRepository.saveAllAndFlush(orderItems);
 
-        cartLineItemRepository.deleteAllActiveItemsByCartId(cartId);
-
-        return savedOrder;
+        cartLineItemRepository.deleteAllActiveItemsByCartId(cart.getId());
     }
     /**
      * Update order.

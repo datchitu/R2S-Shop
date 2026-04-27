@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface CartLineItemService {
     CartLineItem findById(Long id);
+    CartLineItem findByIdAndUserName(Long id, String userName);
     Page<CartLineItem> findAllByCartIdAndDeleted(Long cartId, Integer status,
                                                  Pageable pageable);
     Page<CartLineItem> myCartLineItem(String userName, Pageable pageable);
@@ -16,6 +17,6 @@ public interface CartLineItemService {
                                     CartLineItemDTORequest dtoRequest);
     CartLineItem addToCartWithProduct(String userName, Long variantProductId,
                                       CartLineItemDTORequest dtoRequest);
-    CartLineItem updateById(Long id, CartLineItemDTORequest dtoRequest);
-    void deleteById(Long id);
+    CartLineItem updateById(Long id, String userName, CartLineItemDTORequest dtoRequest);
+    void deleteById(Long id, String userName);
 }

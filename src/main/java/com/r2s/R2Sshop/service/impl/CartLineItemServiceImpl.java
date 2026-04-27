@@ -50,6 +50,28 @@ public class CartLineItemServiceImpl implements CartLineItemService {
                 .orElseThrow(() -> new AppException(ResponseCode.CART_LINE_ITEM_NOT_FOUND));
     }
     /**
+     * Return cartLineItem by id and userName.
+     * <p>
+     * This method returns cartLineItem by id and userName, with the id as the input parameter
+     * @param id
+     * @return Information of cartLineItem by id
+     * @throws AppException(ResponseCode.CART_LINE_ITEM_NOT_FOUND)
+     * if the cartLineItem cannot be found by id
+     * @throws AppException(ResponseCode.ACCESS_DENIED) if the userName does not match
+     * the userName retrieved from the cart's user
+     * @author HoangVu
+     * @since 1.0
+     */
+    @Override
+    public CartLineItem findByIdAndUserName(Long id, String userName) {
+        CartLineItem foundCartLineItem = cartLineItemRepository.findById(id)
+                .orElseThrow(() -> new AppException(ResponseCode.CART_LINE_ITEM_NOT_FOUND));
+        if (!foundCartLineItem.getCart().getUser().getUserName().equals(userName)) {
+            throw new AppException(ResponseCode.ACCESS_DENIED);
+        }
+        return foundCartLineItem;
+    }
+    /**
      * Return cartLineItem list by deleted.
      * <p>
      * This method returns all cartLineItem by cartId and deleted
@@ -179,10 +201,10 @@ public class CartLineItemServiceImpl implements CartLineItemService {
      * @author HoangVu
      * @since 1.1
      */
-    @Transactional
     @Override
-    public CartLineItem updateById(Long id, CartLineItemDTORequest dtoRequest) {
-        CartLineItem foundCartLineItem = findById(id);
+    @Transactional
+    public CartLineItem updateById(Long id, String userName, CartLineItemDTORequest dtoRequest) {
+        CartLineItem foundCartLineItem = findByIdAndUserName(id, userName);
         if (Boolean.TRUE.equals(foundCartLineItem.getDeleted())) {
             throw new AppException(ResponseCode.CART_LINE_ITEM_ALREADY_DELETED);
         }
@@ -206,8 +228,9 @@ public class CartLineItemServiceImpl implements CartLineItemService {
      * @since 1.0
      */
     @Override
-    public void deleteById(Long id) {
-        CartLineItem foundCartLineItem = findById(id);
+    @Transactional
+    public void deleteById(Long id, String userName) {
+        CartLineItem foundCartLineItem = findByIdAndUserName(id, userName);
         if (Boolean.TRUE.equals(foundCartLineItem.getDeleted())) {
             throw new AppException(ResponseCode.CART_LINE_ITEM_ALREADY_DELETED);
         }

@@ -2,6 +2,7 @@ package com.r2s.R2Sshop.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import java.util.Set;
 @Table(name = "roles")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Tsid
     private Long id;
 
     @Column(name = "role_name",nullable = false)

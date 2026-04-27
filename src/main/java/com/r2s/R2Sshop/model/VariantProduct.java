@@ -28,6 +28,9 @@ public class VariantProduct {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(unique = true, nullable = false)
+    private String code;
+
     @Column(nullable = false)
     private BigDecimal price;
 

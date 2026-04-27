@@ -97,7 +97,7 @@ public class CartController extends BaseRestController{
     @PutMapping("/payment-by-card")
     public ResponseEntity<?> paymentByCard(@AuthenticationPrincipal UserDetails userDetails,
                                            @Valid @RequestBody OrderDTORequest dtoRequest,
-                                           @RequestParam Long userVoucherId,
+                                           @RequestParam(required = false) Long userVoucherId,
                                            @RequestParam Long addressId) {
         cartService.paymentByCard(userDetails.getUsername(), userVoucherId,
                 dtoRequest, addressId);
@@ -119,7 +119,7 @@ public class CartController extends BaseRestController{
     @PutMapping("/payment-by-cash")
     public ResponseEntity<?> paymentByCash(@AuthenticationPrincipal UserDetails userDetails,
                                            @Valid @RequestBody OrderDTORequest dtoRequest,
-                                           @RequestParam Long userVoucherId,
+                                           @RequestParam(required = false) Long userVoucherId,
                                            @RequestParam Long addressId) {
         cartService.paymentByCash(userDetails.getUsername(), userVoucherId,
                 dtoRequest, addressId);

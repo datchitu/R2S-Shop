@@ -1,6 +1,7 @@
 package com.r2s.R2Sshop.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,10 +20,10 @@ import java.util.List;
 @Table(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Tsid
     private Long id;
 
-    @Column(name = "cart_id", nullable = false)
+    @Column(name = "cart_id", nullable = false, unique = true)
     private Long cartId;
 
     @Column(name = "delivery_time", nullable = false)

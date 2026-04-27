@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 public class VariantServiceDTORequest {
     @NotBlank(message = "Name cannot be empty !!!")
     private String name;
+    @NotBlank(message = "Code cannot be empty !!!")
+    private String code;
     @NotNull(message = "Price cannot be empty !!!")
     @Min(value = 0, message = "Price must be greater than or equal to 0 !!!")
     private BigDecimal price;

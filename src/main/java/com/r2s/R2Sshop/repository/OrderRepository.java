@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByStatusAndUserUserName(@Param("status") Boolean status,
                                             @Param("userName") String userName,
                                             Pageable pageable);
-    boolean findByCartId(Long cartId);
+    boolean existsByCartId(Long cartId);
 
     Optional<Order> findByIdAndUserUserName(Long id, String userName);
 

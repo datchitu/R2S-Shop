@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 public class VariantProductDTOResponse {
     private Long id;
     private String name;
+    private String code;
     private BigDecimal price;
     private String color;
     private String model_year;
@@ -23,14 +24,15 @@ public class VariantProductDTOResponse {
      * Customize the output variant product information as a JSON file.
      * <p>
      * This method customizes the output variant product information, including
-     * ID, name, price, color, modelYear, quantity, deleted, productId, productName as a JSON file.
+     * ID, name, code, price, color, modelYear, quantity, deleted, productId, productName as a JSON file.
      * @param variantProduct
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     public VariantProductDTOResponse(VariantProduct variantProduct) {
         this.id = variantProduct.getId();;
         this.name = variantProduct.getName();
+        this.code = variantProduct.getCode();
         this.price = variantProduct.getPrice();
         this.color = variantProduct.getColor();;
         this.model_year = variantProduct.getModelYear();;

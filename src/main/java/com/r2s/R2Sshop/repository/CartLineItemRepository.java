@@ -37,8 +37,11 @@ public interface CartLineItemRepository extends JpaRepository<CartLineItem, Long
     BigDecimal sumTotalPriceByCartId(@Param("cartId") Long cartId);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE CartLineItem cli SET cli.deleted = true " +
+    @Query("UPDATE CartLineItem cli " +
+            "SET cli.deleted = true, cli.quantity = 0, cli.totalPrice = 0 " +
             "WHERE cli.cart.id = :cartId " +
             "And cli.deleted = false")
     void deleteAllActiveItemsByCartId(@Param("cartId") Long cartId);
+
+    boolean existsByCartIdAndDeleted(Long cartId, Boolean deleted);
 }

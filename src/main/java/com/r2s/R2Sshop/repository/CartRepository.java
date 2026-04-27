@@ -10,5 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
-    Optional<Cart> findByPaymentStatusAndUserUserName(Boolean paymentStatus, String userName);
+    @Query("SELECT c FROM Cart c LEFT JOIN FETCH c.cartLineItems " +
+            "WHERE c.paymentStatus = :paymentStatus AND c.user.userName = :userName")
+    Optional<Cart> findByPaymentStatusAndUserUserName(@Param("paymentStatus") Boolean paymentStatus,
+                                                      @Param("userName") String userName);
 }

@@ -18,7 +18,7 @@ public interface UserService {
     void chargePassword(String userName, String oldPassword, String newPassword);
     void deleteById(Long id);
     void restoreById(Long id);
-    void blockById(Long id);
-    void blockPermanentlyById(Long id);
-    void unblockById(Long id);
+    void lockById(Long id);
+    void lockPermanentlyById(Long id);
+    void unlockById(Long id);
 }

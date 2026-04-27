@@ -2,6 +2,7 @@ package com.r2s.R2Sshop.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,7 @@ import java.util.List;
         @UniqueConstraint(columnNames = {"street", "city", "user_id", "deleted"})})
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Tsid
     private Long id;
 
     @Column(nullable = false)

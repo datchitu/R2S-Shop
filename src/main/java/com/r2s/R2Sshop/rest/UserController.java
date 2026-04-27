@@ -180,48 +180,48 @@ public class UserController extends BaseRestController{
         return super.success("Restored successfully");
     }
     /**
-     * Block user by id.
+     * Lock user by id.
      * <p>
-     * This method block user by id, with the id as the input parameter.
+     * This method lock user by id, with the id as the input parameter.
      * @param id
-     * @return "Blocked successfully" if it is blocked successfully.
+     * @return "Locked successfully" if it is locked successfully.
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/admin/block-by-id")
-    public ResponseEntity<?> blockById(@RequestParam Long id) {
-        userService.blockById(id);
-        return super.success("Blocked successfully");
+    @DeleteMapping("/admin/lock-by-id")
+    public ResponseEntity<?> lockById(@RequestParam Long id) {
+        userService.lockById(id);
+        return super.success("Locked successfully");
     }
     /**
-     * Permanently block user by id.
+     * Permanently lock user by id.
      * <p>
-     * This method Permanently block user by id, with the id as the input parameter.
+     * This method permanently block user by id, with the id as the input parameter.
      * @param id
-     * @return "Blocked successfully" if it is blocked successfully.
+     * @return "Locked successfully" if it is locked successfully.
      * @author HoangVu
      * @since 1.0
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/admin/block-permanently-by-id")
-    public ResponseEntity<?> blockPermanentlyById(@RequestParam Long id) {
-        userService.blockPermanentlyById(id);
-        return super.success("Blocked successfully");
+    @DeleteMapping("/admin/lock-permanently-by-id")
+    public ResponseEntity<?> lockPermanentlyById(@RequestParam Long id) {
+        userService.lockPermanentlyById(id);
+        return super.success("Locked successfully");
     }
     /**
-     * Unblock user by id.
+     * Unlock user by id.
      * <p>
      * This method unblock user by id, with the id as the input parameter.
      * @param id
-     * @return "Unblocked successfully" if it is unblocked successfully.
+     * @return "Unlocked successfully" if it is unlocked successfully.
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/admin/unblock-by-id")
-    public ResponseEntity<?> unblockById(@RequestParam Long id) {
-        userService.unblockById(id);
-        return super.success("Unblocked successfully");
+    @PutMapping("/admin/unlock-by-id")
+    public ResponseEntity<?> unlockById(@RequestParam Long id) {
+        userService.unlockById(id);
+        return super.success("Unlocked successfully");
     }
 }

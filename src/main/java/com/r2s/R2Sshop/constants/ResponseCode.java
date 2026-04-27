@@ -41,8 +41,8 @@ public enum ResponseCode {
     DATA_ALREADY_DEFAULTED(2026, "The data has been set to default", HttpStatus.BAD_REQUEST),
     USER_ALREADY_DELETED(2027, "User already been deleted", HttpStatus.BAD_REQUEST),
     USER_ALREADY_RESTORED(2028, "User already been restored", HttpStatus.BAD_REQUEST),
-    USER_ALREADY_BLOCKED(2029, "User already been blocked", HttpStatus.BAD_REQUEST),
-    USER_ALREADY_UNBLOCKED(2030, "User already been unblocked", HttpStatus.BAD_REQUEST),
+    USER_ALREADY_LOCKED(2029, "User already been locked", HttpStatus.BAD_REQUEST),
+    USER_ALREADY_UNLOCKED(2030, "User already been unlocked", HttpStatus.BAD_REQUEST),
     PRODUCT_ALREADY_EXISTS(2031, "Product already exists", HttpStatus.BAD_REQUEST),
     VARIANT_PRODUCT_ALREADY_EXISTS(2032, "Variant product already exists", HttpStatus.BAD_REQUEST),
     VOUCHER_ALREADY_EXISTS(2021, "Voucher already exists", HttpStatus.BAD_REQUEST),
@@ -77,7 +77,7 @@ public enum ResponseCode {
     CATEGORY_ALREADY_RESTORED(2055, "Category already been restored", HttpStatus.BAD_REQUEST),
     PRODUCT_ALREADY_DELETED(2056, "Product already been deleted", HttpStatus.BAD_REQUEST),
     PRODUCT_ALREADY_RESTORED(2057, "Product already been restored", HttpStatus.BAD_REQUEST),
-    USER_ALREADY_BLOCKED_PERMANENT(2058, "User already been permanently blocked",
+    USER_ALREADY_LOCKED_PERMANENT(2058, "User already been permanently locked",
             HttpStatus.BAD_REQUEST),
     INSERT_FAILURE(4001, "Insert failure", HttpStatus.INTERNAL_SERVER_ERROR);
 

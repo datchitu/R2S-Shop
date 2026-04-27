@@ -118,11 +118,11 @@ public class VariantProductServiceImpl implements VariantProductService {
      * @throws AppException(ResponseCode.DATA_ALREADY_DELETED)
      * if variant product already been deleted in the database
      * @throws AppException(ResponseCode.IMMUTABLE)
-     * if the name, price, color, modelYear, quantity and product remains unchanged
+     * if the name, code, price, color, modelYear, quantity and product remains unchanged
      * @throws AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_EXISTS)
      * if variant product already been existed in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Transactional
     @Override
@@ -133,6 +133,7 @@ public class VariantProductServiceImpl implements VariantProductService {
             throw new AppException(ResponseCode.VARIANT_PRODUCT_ALREADY_DELETED);
         }
         if (Objects.equals(foundVariantProduct.getName(), dtoRequest.getName()) &&
+            Objects.equals(foundVariantProduct.getCode(), dtoRequest.getCode()) &&
             Objects.equals(foundVariantProduct.getPrice(), dtoRequest.getPrice()) &&
             Objects.equals(foundVariantProduct.getColor(), dtoRequest.getColor()) &&
             Objects.equals(foundVariantProduct.getModelYear(), dtoRequest.getModelYear()) &&

@@ -114,8 +114,11 @@ public class CartServiceImpl implements CartService {
      * @param dtoRequest
      * @param addressId
      * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by id
+     * @throws AppException(ResponseCode.CART_ALREADY_PAID) if the cart has been paid
+     * @throws AppException(ResponseCode.CART_IS_EMPTY) if the cart is empty
+     * @throws AppException(ResponseCode.ACCESS_DENIED) if voucher is not owned by the user
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @Override
     @Transactional
@@ -126,14 +129,17 @@ public class CartServiceImpl implements CartService {
             throw new AppException(ResponseCode.CART_ALREADY_PAID);
         }
 
-        if (ObjectUtils.isEmpty(foundCart.getCartLineItems())) {
+        if (!cartLineItemRepository.existsByCartIdAndDeleted(foundCart.getId(), false)) {
             throw new AppException(ResponseCode.CART_IS_EMPTY);
         }
 
         BigDecimal totalPrice = updateTotalPrice(foundCart.getId());
 
-        if (!ObjectUtils.isEmpty(userVoucherId)) {
+        if (userVoucherId != null) {
             UserVoucher foundUserVoucher = userVoucherService.useById(userVoucherId);
+            if (!foundUserVoucher.getUser().getUserName().equals(userName)) {
+                throw new AppException(ResponseCode.ACCESS_DENIED);
+            }
             BigDecimal discount = BigDecimal.valueOf(foundUserVoucher.getVoucher().getDiscount());
             BigDecimal discountFactor = BigDecimal.ONE.subtract(discount);
             totalPrice = totalPrice.multiply(discountFactor.setScale(2, RoundingMode.HALF_UP));
@@ -144,9 +150,10 @@ public class CartServiceImpl implements CartService {
         foundCart.setPaidAt(localDateTime);
         foundCart.setTotalPrice(totalPrice);
 
-        cartRepository.save(foundCart);
+        cartRepository.saveAndFlush(foundCart);
 
-        orderService.create(userName, foundCart.getId(), dtoRequest, addressId);
+        orderService.create(userName, foundCart, dtoRequest, addressId);
+
     }
     /**
      * Payment by cash and apply voucher (if available) and create order by userName.
@@ -158,9 +165,11 @@ public class CartServiceImpl implements CartService {
      * @param dtoRequest
      * @param addressId
      * @throws AppException(ResponseCode.CART_NOT_FOUND) if the cart cannot be found by userName
-     *
+     * @throws AppException(ResponseCode.CART_ALREADY_PAID) if the cart has been paid
+     * @throws AppException(ResponseCode.CART_IS_EMPTY) if the cart is empty
+     * @throws AppException(ResponseCode.ACCESS_DENIED) if voucher is not owned by the user
      * @author HoangVu
-     * @since 1.3
+     * @since 1.4
      */
     @Override
     @Transactional
@@ -171,25 +180,29 @@ public class CartServiceImpl implements CartService {
             throw new AppException(ResponseCode.CART_ALREADY_PAID);
         }
 
-        if (ObjectUtils.isEmpty(foundCart.getCartLineItems())) {
+        if (!cartLineItemRepository.existsByCartIdAndDeleted(foundCart.getId(), false)) {
             throw new AppException(ResponseCode.CART_IS_EMPTY);
         }
 
         BigDecimal totalPrice = updateTotalPrice(foundCart.getId());
         if (!ObjectUtils.isEmpty(userVoucherId)) {
             UserVoucher foundUserVoucher = userVoucherService.useById(userVoucherId);
+            if (!foundUserVoucher.getUser().getUserName().equals(userName)) {
+                throw new AppException(ResponseCode.ACCESS_DENIED);
+            }
             BigDecimal discount = BigDecimal.valueOf(foundUserVoucher.getVoucher().getDiscount());
             BigDecimal discountFactor = BigDecimal.ONE.subtract(discount);
             totalPrice = totalPrice.multiply(discountFactor.setScale(2, RoundingMode.HALF_UP)) ;
+            foundCart.setUserVoucher(foundUserVoucher);
         }
         foundCart.setPaymentType(false);
         foundCart.setPaymentStatus(true);
         foundCart.setPaidAt(localDateTime);
         foundCart.setTotalPrice(totalPrice);
 
-        cartRepository.save(foundCart);
+        cartRepository.saveAndFlush(foundCart);
 
-        orderService.create(userName, foundCart.getId(), dtoRequest, addressId);
+        orderService.create(userName, foundCart, dtoRequest, addressId);
     }
     /**
      * SetStatus by id.

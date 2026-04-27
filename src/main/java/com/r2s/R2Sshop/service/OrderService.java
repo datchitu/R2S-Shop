@@ -2,6 +2,7 @@ package com.r2s.R2Sshop.service;
 
 
 import com.r2s.R2Sshop.DTO.OrderDTORequest;
+import com.r2s.R2Sshop.model.Cart;
 import com.r2s.R2Sshop.model.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ public interface OrderService {
     Page<Order> findAllByDeliveryStatusAndUserName(Integer status, String userName,
                                                    Pageable pageable);
     Page<Order> myOrder(Integer status, String userName, Pageable pageable);
-    Order create(String userName, Long cartId, OrderDTORequest dtoRequest, Long addressId);
+    void create(String userName, Cart cart, OrderDTORequest dtoRequest, Long addressId);
     Order updateById(Long id, String userName, OrderDTORequest dtoRequest);
     void chargeAddress(Long id, String userName, Long addressId);
     void setDeliveryStatus(Long id);

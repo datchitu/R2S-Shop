@@ -86,7 +86,7 @@ public class VariantProductController extends BaseRestController {
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * productId is missing
      * @throws ResponseCode.INVALID_VALUE if the passed-in parameter values such as
-     * name, price, color, modelYear and quantity are missing
+     * name, code, price, color, modelYear and quantity are missing
      * @author HoangVu
      * @since 1.2
      */
