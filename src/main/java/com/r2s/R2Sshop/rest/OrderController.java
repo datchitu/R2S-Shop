@@ -44,21 +44,6 @@ public class OrderController extends BaseRestController{
         return super.success(new OrderDTOResponse(foundOrder));
     }
     /**
-     * Return order by id for staff.
-     * <p>
-     * This method returns order by id for staff, with the id as the input parameter.
-     * @param id
-     * @return order by id
-     * @author HoangVu
-     * @since 1.0
-     */
-    @PreAuthorize("hasRole('STAFF')")
-    @GetMapping("/staff/get-by-id")
-    public ResponseEntity<?> getByIdForStaff(@RequestParam(name = "id", required = false) Long id) {
-        Order foundOrder = orderService.findById(id, null);
-        return super.success(new OrderDTOResponse(foundOrder));
-    }
-    /**
      * Return order by id for admin.
      * <p>
      * This method returns order by id for admin, with the id as the input parameter.
@@ -74,36 +59,19 @@ public class OrderController extends BaseRestController{
         return super.success(new OrderDTOResponse(foundOrder));
     }
     /**
-     * Return order list by deliveryStatus for staff.
+     * Return order by id for staff.
      * <p>
-     * This method returns order list by deliveryStatus for staff
-     * (With the passed-in status -1, return all works;
-     * with 0, return all by deliveryStatus == false works;
-     * and otherwise, it's return all by deliveryStatus == true),
-     * with the status as the input parameter
-     * and pagination is applied.
-     * @param offset
-     * @param limit
-     * @param status (-1, 0, 1)
-     * @return the order list by status if the data is retrieved successfully.
-     * @throws AppException(ResponseCode.INVALID_PARAM) if status is outside the value (-1, 0, 1)
+     * This method returns order by id for staff, with the id as the input parameter.
+     * @param id
+     * @return order by id
      * @author HoangVu
      * @since 1.0
      */
     @PreAuthorize("hasRole('STAFF')")
-    @GetMapping("/staff/get-all-by-delivery-status")
-    public ResponseEntity<?> getAllByDeliveryStatusForStaff(@RequestParam(defaultValue = "-1") Integer status,
-                                                            @RequestParam(defaultValue = "0") Integer offset,
-                                                            @RequestParam(defaultValue = "10") Integer limit) {
-        if (!Arrays.asList(-1, 0, 1).contains(status)) {
-            throw new AppException(ResponseCode.INVALID_PARAM);
-        }
-        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
-        Page<Order> orderPage = orderService.findAllByDeliveryStatus(status, pageable);
-        List<OrderDTOResponse> responses = orderPage.stream()
-                .map(OrderDTOResponse :: new)
-                .collect(Collectors.toList());
-        return super.success(responses);
+    @GetMapping("/staff/get-by-id")
+    public ResponseEntity<?> getByIdForStaff(@RequestParam(name = "id", required = false) Long id) {
+        Order foundOrder = orderService.findById(id, null);
+        return super.success(new OrderDTOResponse(foundOrder));
     }
     /**
      * Return order list by deliveryStatus for admin.
@@ -138,6 +106,38 @@ public class OrderController extends BaseRestController{
         return super.success(responses);
     }
     /**
+     * Return order list by deliveryStatus for staff.
+     * <p>
+     * This method returns order list by deliveryStatus for staff
+     * (With the passed-in status -1, return all works;
+     * with 0, return all by deliveryStatus == false works;
+     * and otherwise, it's return all by deliveryStatus == true),
+     * with the status as the input parameter
+     * and pagination is applied.
+     * @param offset
+     * @param limit
+     * @param status (-1, 0, 1)
+     * @return the order list by status if the data is retrieved successfully.
+     * @throws AppException(ResponseCode.INVALID_PARAM) if status is outside the value (-1, 0, 1)
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('STAFF')")
+    @GetMapping("/staff/get-all-by-delivery-status")
+    public ResponseEntity<?> getAllByDeliveryStatusForStaff(@RequestParam(defaultValue = "-1") Integer status,
+                                                            @RequestParam(defaultValue = "0") Integer offset,
+                                                            @RequestParam(defaultValue = "10") Integer limit) {
+        if (!Arrays.asList(-1, 0, 1).contains(status)) {
+            throw new AppException(ResponseCode.INVALID_PARAM);
+        }
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id").ascending());
+        Page<Order> orderPage = orderService.findAllByDeliveryStatus(status, pageable);
+        List<OrderDTOResponse> responses = orderPage.stream()
+                .map(OrderDTOResponse :: new)
+                .collect(Collectors.toList());
+        return super.success(responses);
+    }
+    /**
      * Return order list by deliveryStatus and userName.
      * <p>
      * This method returns order list by deliveryStatus and userName
@@ -152,11 +152,11 @@ public class OrderController extends BaseRestController{
      * @return the order list by status if the data is retrieved successfully.
      * @throws AppException(ResponseCode.INVALID_PARAM) if status is outside the value (-1, 0, 1)
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("get-all-by-delivery-status")
-    public ResponseEntity<?> getAllByDeliveryStatusAndUserName(@AuthenticationPrincipal UserDetails userDetails,
+    @GetMapping("/get-my-order-by-delivery-status")
+    public ResponseEntity<?> getMyOrderByDeliveryStatus(@AuthenticationPrincipal UserDetails userDetails,
                                                                @RequestParam(defaultValue = "-1") Integer status,
                                                                @RequestParam(defaultValue = "0") Integer offset,
                                                                @RequestParam(defaultValue = "5") Integer limit) {
@@ -246,23 +246,6 @@ public class OrderController extends BaseRestController{
         return super.success("Updated address successfully");
     }
     /**
-     * Set deliveryStatus by id for staff.
-     * <p>
-     * This method is used to set deliveryStatus by id for staff.
-     * @param id
-     * @return "StatusDelivery has been successfully set" if it is set successfully.
-     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
-     * id is missing
-     * @author HoangVu
-     * @since 1.0
-     */
-    @PreAuthorize("hasRole('STAFF')")
-    @PutMapping("/staff/set-delivery-status-by-id")
-    public ResponseEntity<?> setDeliveryStatusByIdForStaff(@RequestParam Long id) {
-        orderService.setDeliveryStatus(id);
-        return super.success("StatusDelivery has been successfully set");
-    }
-    /**
      * Set deliveryStatus by id for admin.
      * <p>
      * This method is used to set deliveryStatus by id for admin.
@@ -276,6 +259,23 @@ public class OrderController extends BaseRestController{
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/set-status-delivery-by-id")
     public ResponseEntity<?> setDeliveryStatusByIdForAdmin(@RequestParam Long id) {
+        orderService.setDeliveryStatus(id);
+        return super.success("StatusDelivery has been successfully set");
+    }
+    /**
+     * Set deliveryStatus by id for staff.
+     * <p>
+     * This method is used to set deliveryStatus by id for staff.
+     * @param id
+     * @return "StatusDelivery has been successfully set" if it is set successfully.
+     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * id is missing
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('STAFF')")
+    @PutMapping("/staff/set-delivery-status-by-id")
+    public ResponseEntity<?> setDeliveryStatusByIdForStaff(@RequestParam Long id) {
         orderService.setDeliveryStatus(id);
         return super.success("StatusDelivery has been successfully set");
     }
@@ -318,23 +318,6 @@ public class OrderController extends BaseRestController{
         return super.success("reactivated successfully");
     }
     /**
-     * Delete by id for staff.
-     * <p>
-     * This method is used to delete order by id for staff.
-     * @param id
-     * @return "Deleted successfully" if it is deleted successfully.
-     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
-     * id is missing
-     * @author HoangVu
-     * @since 1.0
-     */
-    @PreAuthorize("hasRole('STAFF')")
-    @DeleteMapping("/staff/delete-by-id")
-    public ResponseEntity<?> deleteByIdForStaff(@RequestParam Long id) {
-        orderService.deleteById(id);
-        return super.success("Deleted successfully");
-    }
-    /**
      * Delete by id for admin.
      * <p>
      * This method is used to delete order by id for admin.
@@ -352,21 +335,21 @@ public class OrderController extends BaseRestController{
         return super.success("Deleted successfully");
     }
     /**
-     * Restore by id for staff.
+     * Delete by id for staff.
      * <p>
-     * This method is used to restore order by id for staff.
+     * This method is used to delete order by id for staff.
      * @param id
-     * @return "Restored successfully" if it is restored successfully.
+     * @return "Deleted successfully" if it is deleted successfully.
      * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
      * id is missing
      * @author HoangVu
      * @since 1.0
      */
     @PreAuthorize("hasRole('STAFF')")
-    @PutMapping("/staff/restore-by-id")
-    public ResponseEntity<?> restoreByIdForStaff(@RequestParam Long id) {
-        orderService.restoreById(id);
-        return super.success("Restored successfully");
+    @DeleteMapping("/staff/delete-by-id")
+    public ResponseEntity<?> deleteByIdForStaff(@RequestParam Long id) {
+        orderService.deleteById(id);
+        return super.success("Deleted successfully");
     }
     /**
      * Restore by id for admin.
@@ -382,6 +365,23 @@ public class OrderController extends BaseRestController{
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/restore-by-id")
     public ResponseEntity<?> restoreByIdForAdmin(@RequestParam Long id) {
+        orderService.restoreById(id);
+        return super.success("Restored successfully");
+    }
+    /**
+     * Restore by id for staff.
+     * <p>
+     * This method is used to restore order by id for staff.
+     * @param id
+     * @return "Restored successfully" if it is restored successfully.
+     * @throws AppException(ResponseCode.MISSING_PARAM) if the passed-in parameter values such as
+     * id is missing
+     * @author HoangVu
+     * @since 1.0
+     */
+    @PreAuthorize("hasRole('STAFF')")
+    @PutMapping("/staff/restore-by-id")
+    public ResponseEntity<?> restoreByIdForStaff(@RequestParam Long id) {
         orderService.restoreById(id);
         return super.success("Restored successfully");
     }

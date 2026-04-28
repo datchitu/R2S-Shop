@@ -15,7 +15,8 @@ public interface OrderService {
     Page<Order> findAllByDeliveryStatusAndUserName(Integer status, String userName,
                                                    Pageable pageable);
     Page<Order> myOrder(Integer status, String userName, Pageable pageable);
-    void create(String userName, Cart cart, OrderDTORequest dtoRequest, Long addressId);
+    void create(String userName, Cart cart, OrderDTORequest dtoRequest,
+                Long addressId, Double discount);
     Order updateById(Long id, String userName, OrderDTORequest dtoRequest);
     void chargeAddress(Long id, String userName, Long addressId);
     void setDeliveryStatus(Long id);

@@ -118,7 +118,7 @@ public class CartServiceImpl implements CartService {
      * @throws AppException(ResponseCode.CART_IS_EMPTY) if the cart is empty
      * @throws AppException(ResponseCode.ACCESS_DENIED) if voucher is not owned by the user
      * @author HoangVu
-     * @since 1.4
+     * @since 1.5
      */
     @Override
     @Transactional
@@ -134,13 +134,15 @@ public class CartServiceImpl implements CartService {
         }
 
         BigDecimal totalPrice = updateTotalPrice(foundCart.getId());
+        Double finalDiscount = 0.0;
 
         if (userVoucherId != null) {
             UserVoucher foundUserVoucher = userVoucherService.useById(userVoucherId);
             if (!foundUserVoucher.getUser().getUserName().equals(userName)) {
                 throw new AppException(ResponseCode.ACCESS_DENIED);
             }
-            BigDecimal discount = BigDecimal.valueOf(foundUserVoucher.getVoucher().getDiscount());
+            finalDiscount = foundUserVoucher.getVoucher().getDiscount();
+            BigDecimal discount = BigDecimal.valueOf(finalDiscount);
             BigDecimal discountFactor = BigDecimal.ONE.subtract(discount);
             totalPrice = totalPrice.multiply(discountFactor.setScale(2, RoundingMode.HALF_UP));
         }
@@ -150,9 +152,9 @@ public class CartServiceImpl implements CartService {
         foundCart.setPaidAt(localDateTime);
         foundCart.setTotalPrice(totalPrice);
 
-        cartRepository.saveAndFlush(foundCart);
+        cartRepository.save(foundCart);
 
-        orderService.create(userName, foundCart, dtoRequest, addressId);
+        orderService.create(userName, foundCart, dtoRequest, addressId, finalDiscount);
 
     }
     /**
@@ -169,7 +171,7 @@ public class CartServiceImpl implements CartService {
      * @throws AppException(ResponseCode.CART_IS_EMPTY) if the cart is empty
      * @throws AppException(ResponseCode.ACCESS_DENIED) if voucher is not owned by the user
      * @author HoangVu
-     * @since 1.4
+     * @since 1.5
      */
     @Override
     @Transactional
@@ -185,12 +187,15 @@ public class CartServiceImpl implements CartService {
         }
 
         BigDecimal totalPrice = updateTotalPrice(foundCart.getId());
+        Double finalDiscount = 0.0;
+
         if (!ObjectUtils.isEmpty(userVoucherId)) {
             UserVoucher foundUserVoucher = userVoucherService.useById(userVoucherId);
             if (!foundUserVoucher.getUser().getUserName().equals(userName)) {
                 throw new AppException(ResponseCode.ACCESS_DENIED);
             }
-            BigDecimal discount = BigDecimal.valueOf(foundUserVoucher.getVoucher().getDiscount());
+            finalDiscount = foundUserVoucher.getVoucher().getDiscount();
+            BigDecimal discount = BigDecimal.valueOf(finalDiscount);
             BigDecimal discountFactor = BigDecimal.ONE.subtract(discount);
             totalPrice = totalPrice.multiply(discountFactor.setScale(2, RoundingMode.HALF_UP)) ;
             foundCart.setUserVoucher(foundUserVoucher);
@@ -200,9 +205,9 @@ public class CartServiceImpl implements CartService {
         foundCart.setPaidAt(localDateTime);
         foundCart.setTotalPrice(totalPrice);
 
-        cartRepository.saveAndFlush(foundCart);
+        cartRepository.save(foundCart);
 
-        orderService.create(userName, foundCart, dtoRequest, addressId);
+        orderService.create(userName, foundCart, dtoRequest, addressId, finalDiscount);
     }
     /**
      * SetStatus by id.
@@ -213,13 +218,13 @@ public class CartServiceImpl implements CartService {
      * @throws AppException(ResponseCode.CART_NOT_YET_PAID) if the cart is not yet paid for
      * @throws AppException(ResponseCode.INSUFFICIENT_STOCK) if the variant product out of stock
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     @Transactional
     public void setStatus(Long id) {
         Cart foundCart = findById(id);
-        if (Boolean.TRUE.equals(foundCart.getPaymentStatus())) {
+        if (!Boolean.TRUE.equals(foundCart.getPaymentStatus())) {
             throw new AppException(ResponseCode.CART_NOT_YET_PAID);
         }
 
@@ -239,6 +244,7 @@ public class CartServiceImpl implements CartService {
         }
 
         foundCart.setStatus(true);
-        cartRepository.save(foundCart);
+        cartRepository.saveAndFlush(foundCart);
+        cartLineItemRepository.deleteAllActiveItemsByCartId(foundCart.getId());
     }
 }

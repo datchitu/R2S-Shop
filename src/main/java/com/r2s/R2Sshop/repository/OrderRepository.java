@@ -20,8 +20,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                             Pageable pageable);
     boolean existsByCartId(Long cartId);
 
-    Optional<Order> findByIdAndUserUserName(Long id, String userName);
-
     @Query("SELECT o FROM Order o " +
             "WHERE (:deliveryStatus IS NULL OR o.deliveryStatus = :deliveryStatus)")
     Page<Order> findAllByDeliveryStatus(@Param("deliveryStatus") Boolean deliveryStatus, Pageable pageable);

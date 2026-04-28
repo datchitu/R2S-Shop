@@ -26,13 +26,15 @@ public class Order {
     @Column(name = "cart_id", nullable = false, unique = true)
     private Long cartId;
 
+    private String note;
+
     @Column(name = "delivery_time", nullable = false)
     private LocalDateTime deliveryTime;
 
-    private String note;
-
     @Column(name = "delivery_status")
     private Boolean deliveryStatus = false;
+
+    private Double discount = 0.0;
 
     private Boolean status = false;
 

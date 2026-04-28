@@ -174,14 +174,19 @@ public class UserVoucherServiceImpl implements UserVoucherService {
      * if userVoucher does not exist in the database
      * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_DELETED)
      * if userVoucher already been deleted in the database
+     * @throws AppException(ResponseCode.USERVOUCHER_ALREADY_USED)
+     * if userVoucher already been used in the database
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     public void deleteById(Long id) {
         UserVoucher foundUserVoucher = findById(id);
         if (Boolean.TRUE.equals(foundUserVoucher.getDeleted())) {
             throw new AppException(ResponseCode.USERVOUCHER_ALREADY_DELETED);
+        }
+        if (foundUserVoucher.getStatus() == 2) {
+            throw new AppException(ResponseCode.USERVOUCHER_ALREADY_USED);
         }
         foundUserVoucher.setDeleted(true);
         userVoucherRepository.save(foundUserVoucher);

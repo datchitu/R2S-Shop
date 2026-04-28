@@ -20,7 +20,10 @@ public interface VariantProductRepository extends JpaRepository<VariantProduct, 
     boolean existsByName(String name);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE VariantProduct vp SET vp.quantity = vp.quantity - :quantity " +
+    @Query("UPDATE VariantProduct vp " +
+            "SET vp.quantity = vp.quantity - :quantity, " +
+            "vp.version = vp.version + 1, " +
+            "vp.updatedAt = CURRENT_TIMESTAMP " +
             "WHERE vp.id = :id AND vp.quantity >= :quantity")
     int decreaseStock(@Param("id") Long id, @Param("quantity") Integer quantity);
 }

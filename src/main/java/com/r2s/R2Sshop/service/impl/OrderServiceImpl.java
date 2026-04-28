@@ -39,17 +39,21 @@ public class OrderServiceImpl implements OrderService {
      * @param id
      * @return order by id
      * @throws AppException(ResponseCode.ORDER_NOT_FOUND) if the order cannot be found by id
+     * @throws AppException(ResponseCode.ACCESS_DENIED) if the order is not owned by the user
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public Order findById(Long id, String userName) {
-        if (userName == null) {
-            return orderRepository.findById(id)
-                    .orElseThrow(() -> new AppException(ResponseCode.ORDER_NOT_FOUND));
-        }
-        return orderRepository.findByIdAndUserUserName(id, userName)
+        Order foundOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ResponseCode.ORDER_NOT_FOUND));
+        if (userName == null) {
+            return foundOrder;
+        }
+        if (!foundOrder.getUser().getUserName().equals(userName)) {
+            throw new AppException(ResponseCode.ACCESS_DENIED);
+        }
+        return foundOrder;
     }
     /**
      * Return order list by deliveryStatus.
@@ -137,7 +141,7 @@ public class OrderServiceImpl implements OrderService {
      * and add new orderItem list
      * and delete all cartLineItem by user and cart.
      * @param userName
-     * @param cartId
+     * @param cart
      * @param dtoRequest
      * @param addressId
      * @return information of order if the add process is successful
@@ -146,11 +150,12 @@ public class OrderServiceImpl implements OrderService {
      * @throws AppException(ResponseCode.ACCESS_DENIED) if cart and address is not owned by the user
      * @throws AppException(ResponseCode.CART_ALREADY_ORDERED) if cart already been ordered
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     @Transactional
-    public void create(String userName, Cart cart, OrderDTORequest dtoRequest, Long addressId) {
+    public void create(String userName, Cart cart, OrderDTORequest dtoRequest,
+                       Long addressId, Double discount) {
         User foundUser = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new AppException(ResponseCode.USER_NOT_FOUND));
 
@@ -171,7 +176,8 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setTotalPrice(cart.getTotalPrice());
         newOrder.setUser(foundUser);
         newOrder.setAddress(foundAddress);
-        Order savedOrder = orderRepository.saveAndFlush(newOrder);
+        newOrder.setDiscount(discount);
+        Order savedOrder = orderRepository.save(newOrder);
 
         List<CartLineItem> cartLineItems = cart.getCartLineItems();
         List<OrderItem> orderItems = cartLineItems.stream()
@@ -187,9 +193,7 @@ public class OrderServiceImpl implements OrderService {
                     orderItem.setQuantity(cartLineItem.getQuantity());
                     return orderItem;
                 }).toList();
-        orderItemRepository.saveAllAndFlush(orderItems);
-
-        cartLineItemRepository.deleteAllActiveItemsByCartId(cart.getId());
+        orderItemRepository.saveAll(orderItems);
     }
     /**
      * Update order.
@@ -200,23 +204,31 @@ public class OrderServiceImpl implements OrderService {
      * @param dtoRequest
      * @return order information by id if it is updated successfully.
      * @throws AppException(ResponseCode.ORDER_NOT_FOUND) if order does not found
-     * @throws AppException(ResponseCode.IMMUTABLE) if expireDate remains unchanged
+     * @throws AppException(ResponseCode.ACCESS_DENIED) if the order is not owned by the user
+     * @throws AppException(ResponseCode.ORDER_ALREADY_DELETED)
+     * if order already been deleted in the database
      * @throws AppException(ResponseCode.ORDER_ALREADY_DELIVERED)
      * if order already been delivered in the database
+     * @throws AppException(ResponseCode.IMMUTABLE) if expireDate remains unchanged
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     @Transactional
     public Order updateById(Long id, String userName, OrderDTORequest dtoRequest) {
         Order foundOrder = findById(id, userName);
-        if (foundOrder.getDeliveryTime().isEqual(dtoRequest.getDeliveryTime()) &&
-                foundOrder.getNote().equals(dtoRequest.getNote())) {
-            throw new AppException(ResponseCode.IMMUTABLE);
+
+        if (Boolean.TRUE.equals(foundOrder.getDeleted())) {
+            throw new AppException(ResponseCode.ORDER_ALREADY_DELETED);
         }
 
         if (Boolean.TRUE.equals(foundOrder.getDeliveryStatus())) {
             throw new AppException(ResponseCode.ORDER_ALREADY_DELIVERED);
+        }
+
+        if (foundOrder.getDeliveryTime().isEqual(dtoRequest.getDeliveryTime()) &&
+                foundOrder.getNote().equals(dtoRequest.getNote())) {
+            throw new AppException(ResponseCode.IMMUTABLE);
         }
 
         modelMapper.map(dtoRequest, foundOrder);
@@ -230,19 +242,36 @@ public class OrderServiceImpl implements OrderService {
      * @param userName
      * @param addressId
      * @throws AppException(ResponseCode.ORDER_NOT_FOUND) if order does not found
+     * @throws AppException(ResponseCode.ACCESS_DENIED) if the order and address is not owned by the user
+     * @throws AppException(ResponseCode.ORDER_ALREADY_DELETED)
+     * if order already been deleted in the database
+     * @throws AppException(ResponseCode.ORDER_ALREADY_DELIVERED)
+     * if order already been delivered in the database
      * @throws AppException(ResponseCode.IMMUTABLE) if address is remains unchanged
      * @author HoangVu
-     * @since 1.0
+     * @since 1.1
      */
     @Override
     @Transactional
     public void chargeAddress(Long id, String userName, Long addressId) {
         Order foundOrder = findById(id, userName);
+
+        if (Boolean.TRUE.equals(foundOrder.getDeleted())) {
+            throw new AppException(ResponseCode.ORDER_ALREADY_DELETED);
+        }
+
+        if (Boolean.TRUE.equals(foundOrder.getDeliveryStatus())) {
+            throw new AppException(ResponseCode.ORDER_ALREADY_DELIVERED);
+        }
+
         if (foundOrder.getAddress().getId().equals(addressId)) {
             throw new AppException(ResponseCode.IMMUTABLE);
         }
         Address foundAddress = addressRepository.findById(addressId)
                 .orElseThrow(() -> new AppException(ResponseCode.ADDRESS_NOT_FOUND));
+        if (!foundAddress.getUser().getUserName().equals(userName)) {
+            throw new AppException(ResponseCode.ACCESS_DENIED);
+        }
         foundOrder.setAddress(foundAddress);
         orderRepository.save(foundOrder);
     }
@@ -255,16 +284,21 @@ public class OrderServiceImpl implements OrderService {
      * if order does not exist in the database
      * @throws AppException(ResponseCode.ORDER_ALREADY_DELIVERED)
      * if order already been delivered in the database
+     * @throws AppException(ResponseCode.ORDER_ALREADY_CANCELED)
+     * if order already been canceled in the database
      * @throws AppException(ResponseCode.ORDER_ALREADY_DELETED)
      * if order already been deleted in the database
      * @author HoangVu
-     * @since 1.2
+     * @since 1.3
      */
     @Override
     public void setDeliveryStatus(Long id) {
         Order foundOrder = findById(id, null);
         if (Boolean.TRUE.equals(foundOrder.getDeliveryStatus())) {
             throw new AppException(ResponseCode.ORDER_ALREADY_DELIVERED);
+        }
+        if (Boolean.TRUE.equals(foundOrder.getStatus())) {
+            throw new AppException(ResponseCode.ORDER_ALREADY_CANCELED);
         }
         if (Boolean.TRUE.equals(foundOrder.getDeleted())) {
             throw  new AppException(ResponseCode.ORDER_ALREADY_DELETED);
@@ -308,8 +342,10 @@ public class OrderServiceImpl implements OrderService {
      * if order does not exist in the database
      * @throws AppException(ResponseCode.ORDER_ALREADY_REACTIVATED)
      * if order already been reactivated in the database
+     * @throws AppException(ResponseCode.ORDER_ALREADY_DELETED)
+     * if order already been deleted in the database
      * @author HoangVu
-     * @since 1.1
+     * @since 1.3
      */
     @Override
     public void reactivateById(Long id, String userName) {
@@ -317,7 +353,10 @@ public class OrderServiceImpl implements OrderService {
         if (Boolean.FALSE.equals(foundOrder.getStatus())) {
             throw new AppException(ResponseCode.ORDER_ALREADY_REACTIVATED);
         }
-        foundOrder.setStatus(true);
+        if (Boolean.TRUE.equals(foundOrder.getDeleted())) {
+            throw new AppException(ResponseCode.ORDER_ALREADY_DELETED);
+        }
+        foundOrder.setStatus(false);
         orderRepository.save(foundOrder);
     }
     /**
