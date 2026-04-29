@@ -30,8 +30,9 @@ public class OrderItemServiceImpl implements OrderItemService {
      * @param id
      * @return order item by id
      * @throws AppException(ResponseCode.ORDER_ITEM_NOT_FOUND) if the order item cannot be found by id
+     * @throws AppException(ResponseCode.ACCESS_DENIED) if the orderItem is not owned by the user
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public OrderItem findById(Long id, String userName) {
@@ -39,8 +40,13 @@ public class OrderItemServiceImpl implements OrderItemService {
             return orderItemRepository.findById(id)
                     .orElseThrow(() -> new AppException(ResponseCode.ORDER_ITEM_NOT_FOUND));
         }
-        return orderItemRepository.findByIdAndUserName(id, userName)
+        OrderItem foundOrderItem = orderItemRepository.findById(id)
                 .orElseThrow(() -> new AppException(ResponseCode.ORDER_ITEM_NOT_FOUND));
+        if (!foundOrderItem.getOrder().getUser().getUserName().equals(userName)) {
+            throw new AppException(ResponseCode.ACCESS_DENIED);
+        }
+
+        return foundOrderItem;
     }
     /**
      * Return order item list by orderId.
@@ -51,19 +57,18 @@ public class OrderItemServiceImpl implements OrderItemService {
      * @param pageable
      * @return order item list by orderId
      * @throws AppException(ResponseCode.ORDER_NOT_FOUND) if the order cannot be found by id
+     * @throws AppException(ResponseCode.ACCESS_DENIED) if the order is not owned by the user
      * @author HoangVu
-     * @since 1.1
+     * @since 1.2
      */
     @Override
     public Page<OrderItem> findAllByOrderId(Long orderId, Pageable pageable, String userName) {
+        orderService.findById(orderId, userName);
         Page<OrderItem> orderItems;
         if (userName == null) {
             orderItems = orderItemRepository.findAllByOrderId(orderId, pageable);
         } else {
             orderItems = orderItemRepository.findAllByOrderIdAndUserName(orderId, userName, pageable);
-        }
-        if (ObjectUtils.isEmpty(orderItems)) {
-            throw new AppException(ResponseCode.ORDER_ITEM_NOT_FOUND);
         }
         return orderItems;
     }

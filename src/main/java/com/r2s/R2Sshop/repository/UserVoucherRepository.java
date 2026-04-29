@@ -28,12 +28,12 @@ public interface UserVoucherRepository extends JpaRepository<UserVoucher, Long> 
     @Query("SELECT uv FROM UserVoucher uv WHERE uv.id = :id")
     Optional<UserVoucher> findByIdWithLock(Long id);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying()
     @Query("UPDATE UserVoucher uv SET uv.status = :status " +
             "WHERE uv.voucher.id = :voucherId AND uv.status <> :status")
     int chargeStatusAllByVoucherId(@Param("voucherId") Long voucherId, @Param("status") Integer status);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying()
     @Query("UPDATE UserVoucher uv SET uv.status = 0 " +
             "WHERE uv.voucher.id = :voucherId AND uv.status = 1")
     int disableAllByVoucherId(@Param("voucherId") Long voucherId);

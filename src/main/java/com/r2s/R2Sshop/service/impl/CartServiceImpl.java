@@ -236,8 +236,6 @@ public class CartServiceImpl implements CartService {
             );
 
             if (updatedRows == 0) {
-//                String variantProductName = cartLineItem.getVariantProduct().getName();
-//                throw AppException.(ResponseCode.INSUFFICIENT_STOCK, "VariantProduct " + variantProductName);
                 throw new AppException(ResponseCode.INSUFFICIENT_STOCK);
             }
 

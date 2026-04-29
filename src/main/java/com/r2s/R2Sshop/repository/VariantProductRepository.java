@@ -19,7 +19,7 @@ public interface VariantProductRepository extends JpaRepository<VariantProduct, 
 
     boolean existsByName(String name);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying()
     @Query("UPDATE VariantProduct vp " +
             "SET vp.quantity = vp.quantity - :quantity, " +
             "vp.version = vp.version + 1, " +
