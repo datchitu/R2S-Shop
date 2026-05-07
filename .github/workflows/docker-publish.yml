@@ -27,7 +27,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ secrets.DOCKER_USERNAME}}/r2sshop-app
+          images: ${{ secrets.DOCKER_USERNAME }}/r2sshop-app
           tags: |
             type=semver,pattern={{version}}
             type=raw,value=latest
